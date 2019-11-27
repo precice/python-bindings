@@ -125,9 +125,9 @@ from mpi4py import MPI # Initialize MPI
 # Contributors
 
 * [Benjamin Rüth](https://github.com/BenjaminRueth)
+* [Ishaan Desai](https://github.com/IshaanDesai)
+* [Saumitra Vinay Joshi](https://github.com/saumiJ) contributed first working prototype in [`3db9c9` on `precice/precice`](https://github.com/precice/precice/commit/3db9c95e527db1e1cacb2fd116a5ce13ee877513)
 * [Frédéric Simonis](https://github.com/fsimonis)
 * [Florian Lindner](https://github.com/floli)
 * [Benjamin Uekermann](https://github.com/uekerman)
-* [Ishaan Desai](https://github.com/IshaanDesai)
-* [Saumitra Vinay Joshi](https://github.com/saumiJ)
 * [Gerasimos Chourdakis](https://github.com/MakisH)
