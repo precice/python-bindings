@@ -124,10 +124,10 @@ from mpi4py import MPI # Initialize MPI
 
 # Contributors
 
-* Benjamin Rüth
-* Frédéric Simonis
-* Florian Lindner
-* Benjamin Uekermann
-* Ishaan Desai
-* Saumitra Vinay Joshi
-* Gerasimos Chourdakis
+* [Benjamin Rüth](https://github.com/BenjaminRueth)
+* [Frédéric Simonis](https://github.com/fsimonis)
+* [Florian Lindner](https://github.com/floli)
+* [Benjamin Uekermann](https://github.com/uekerman)
+* [Ishaan Desai](https://github.com/IshaanDesai)
+* [Saumitra Vinay Joshi](https://github.com/saumiJ)
+* [Gerasimos Chourdakis](https://github.com/MakisH)
