@@ -1,2 +1,2 @@
 # The following files are ignored by Git
-.idea # Pycharm related file
+.idea/ # Pycharm related folder

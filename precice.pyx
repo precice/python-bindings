@@ -9,6 +9,7 @@ import numpy as np
 cimport numpy as np
 cimport cython
 from mpi4py import MPI
+from error_handling import check1D, check2D
 
 
 from cpython.version cimport PY_MAJOR_VERSION  # important for determining python version in order to properly normalize string input. See http://docs.cython.org/en/latest/src/tutorial/strings.html#general-notes-about-c-strings and https://github.com/precice/precice/issues/68 .
