@@ -24,7 +24,21 @@ cdef bytes convert(s):
     else:
         raise TypeError("Could not convert.")
 
-
+## @package docstring
+#  @brief Main Application Programming Interface of preCICE
+#
+#  To adapt a solver to preCICE, follow the following main structure:
+#
+#  -# Create an object of SolverInterface with Interface()
+#  -# Configure the object with Interface::configure()
+#  -# Initialize preCICE with Interface::initialize()
+#  -# Advance to the next (time)step with Interface::advance()
+#  -# Finalize preCICE with Interface::finalize()
+#
+#  @note
+#  We use solver, simulation code, and participant as synonyms.
+#  The preferred name in the documentation is participant.
+#
 cdef class Interface:
     # construction and configuration
     # constructor
@@ -37,83 +51,292 @@ cdef class Interface:
     def __dealloc__ (self):
         del self.thisptr
 
-    # configure
+    ## @brief Configures preCICE from the given xml file.
+    #
+    #  Only after the configuration a usable state of a SolverInterface
+    #  object is achieved. However, most of the functionalities in preCICE can be
+    #  used only after initialize() has been called. Some actions, e.g. specifying
+    #  the solvers interface mesh, have to be done before initialize is called.
+
+    #  In configure, the following is done:
+    #  - The XML configuration for preCICE is parsed and all objects containing
+    #    data are created, but not necessarily filled with data.
+    #  - Communication between master and slaves is established.
+    #
+    #  @pre configure() has not yet been called
+    #
+    #  @param[in] configuration_file_name Name (with path) of the xml configuration file to be read.
+    #
     def configure (self, configuration_file_name):
         self.thisptr.configure (convert(configuration_file_name))
 
     # steering methods
-    # initialize
+    ## @brief Fully initializes preCICE
+    #
+    #  @pre configure() has been called successfully.
+    #  @pre initialize() has not yet been called.
+    #
+    #  @post Parallel communication to the coupling partner/s is setup.
+    #  @post Meshes are exchanged between coupling partners and the parallel partitions are created.
+    #  @post [Serial Coupling Scheme] If the solver is not starting the simulation, coupling data is received
+    #  from the coupling partner's first computation.
+    #
+    #  @return Maximum length of first timestep to be computed by the solver.
+    #
     def initialize (self):
         return self.thisptr.initialize ()
 
-    # initialize data
+    ## @brief Initializes coupling data.
+    #
+    #  The starting values for coupling data are zero by default.
+    #
+    #  To provide custom values, first set the data using the Data Access methods and
+    #  call this method to finally exchange the data.
+    #
+    #  \par Serial Coupling Scheme
+    #  Only the first participant has to call this method, the second participant
+    #  receives the values on calling initialize().
+    #
+    #  \par Parallel Coupling Scheme
+    #  Values in both directions are exchanged.
+    #  Both participants need to call initializeData().
+    #
+    #  @pre initialize() has been called successfully.
+    #  @pre The action WriteInitialData is required
+    #  @pre advance() has not yet been called.
+    #  @pre finalize() has not yet been called.
+    #
+    #  @post Initial coupling data was exchanged.
+    #
+    #  @see Interface()::is_action_required()
+    #  @see precice()::constants()::actionWriteInitialData()
+    #
     def initialize_data (self):
         self.thisptr.initializeData ()
 
-    # advance in time
+    ## @brief Advances preCICE after the solver has computed one timestep.
+    #
+    #  @param[in] computed_timestep_length Length of timestep used by the solver.
+    #
+    #  @pre initialize() has been called successfully.
+    #  @pre The solver has computed one timestep.
+    #  @pre The solver has written all coupling data.
+    #  @pre finalize() has not yet been called.
+    #
+    #  @post Coupling data values specified in the configuration are exchanged.
+    #  @post Coupling scheme state (computed time, computed timesteps, ...) is updated.
+    #  @post The coupling state is logged.
+    #  @post Configured data mapping schemes are applied.
+    #  @post [Second Participant] Configured post processing schemes are applied.
+    #  @post Meshes with data are exported to files if configured.
+    #
+    #  @return Maximum length of next timestep to be computed by solver.
+    #
     def advance (self, double computed_timestep_length):
         return self.thisptr.advance (computed_timestep_length)
 
-    # finalize preCICE
+    ## @brief Finalizes preCICE.
+    #
+    #  @pre initialize() has been called successfully.
+    #
+    #  @post Communication channels are closed.
+    #  @post Meshes and data are deallocated
+    #
+    #  @see is_coupling_ongoing()
+    #
     def finalize (self):
         self.thisptr.finalize ()
 
     # status queries
-    # get dimensions
+    ## @brief Returns the number of spatial dimensions configured.
+    #
+    #  @returns the configured dimension
+    #
+    #  Currently, two and three dimensional problems can be solved using preCICE.
+    #  The dimension is specified in the XML configuration.
+    #
+    #  @pre configure() has been called successfully.
+    #
     def get_dimensions (self):
         return self.thisptr.getDimensions ()
 
-    # check if coupling is going on
+    ## @brief Checks if the coupled simulation is still ongoing.
+    #
+    #  @returns whether the coupling is ongoing.
+    #
+    #  A coupling is ongoing as long as
+    #  - the maximum number of timesteps has not been reached, and
+    #  - the final time has not been reached.
+    #
+    #  @pre initialize() has been called successfully.
+    #
+    #  @see advance()
+    #
+    #  @note
+    #  The user should call finalize() after this function returns false.
+    #
     def is_coupling_ongoing (self):
         return self.thisptr.isCouplingOngoing ()
 
-    # check if data is available to be read
+    ## @brief Checks if new data to be read is available.
+    #
+    #  @returns whether new data is available to be read.
+    #
+    #  Data is classified to be new, if it has been received while calling
+    #  initialize() and before calling advance(), or in the last call of advance().
+    #  This is always true, if a participant does not make use of subcycling, i.e.
+    #  choosing smaller timesteps than the limits returned in intitialize() and
+    #  advance().
+    #
+    #  @pre initialize() has been called successfully.
+    #
+    #  @note
+    #  It is allowed to read data even if this function returns false.
+    #  This is not recommended due to performance reasons.
+    #  Use this function to prevent unnecessary reads.
+    #
     def is_read_data_available (self):
         return self.thisptr.isReadDataAvailable ()
 
-    # check if write data is needed
+    ## @brief Checks if new data has to be written before calling advance().
+    #
+    #  @param[in] computed_timestep_length Length of timestep used by the solver.
+    #
+    #  @return whether new data has to be written.
+    #
+    #  This is always true, if a participant does not make use of subcycling, i.e.
+    #  choosing smaller timesteps than the limits returned in intitialize() and
+    #  advance().
+    #
+    #  @pre initialize() has been called successfully.
+    #
+    #  @note
+    #  It is allowed to write data even if this function returns false.
+    #  This is not recommended due to performance reasons.
+    #  Use this function to prevent unnecessary writes.
+    #
     def is_write_data_required (self, double computed_timestep_length):
         return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
-    # check if time-step is complete
+    ## @brief Checks if the current coupling timestep is completed.
+    #
+    #  @returns whether the timestep is complete.
+    #
+    #  The following reasons require several solver time steps per coupling time
+    #  step:
+    #  - A solver chooses to perform subcycling.
+    #  - An implicit coupling timestep iteration is not yet converged.
+    #
+    #  @pre initialize() has been called successfully.
+    #
     def is_timestep_complete (self):
         return self.thisptr.isTimestepComplete ()
 
-    # returns whether the solver has to evaluate the surrogate model representation
+    ## @brief Returns whether the solver has to evaluate the surrogate model representation.
+    #
+    #  @deprecated
+    #  Only necessary for deprecated manifold mapping.
+    #
+    #  @returns whether the surrogate model has to be evaluated.
+    #
+    #  @note
+    #  The solver may still have to evaluate the fine model representation.
+    #
+    #  @see has_to_evaluate_fine_model()
+    #
     def has_to_evaluate_surrogate_model (self):
         return self.thisptr.hasToEvaluateSurrogateModel ()
 
-    # checks if the solver has to evaluate the fine model representation
+    ## @brief Checks if the solver has to evaluate the fine model representation.
+    #
+    #  @deprecated
+    #  Only necessary for deprecated manifold mapping.
+    #
+    #  @returns whether the fine model has to be evaluated.
+    #
+    #  @note
+    #  The solver may still have to evaluate the surrogate model representation.
+    #
+    #  @see has_to_evaluate_surrogate_model()
+    #
     def has_to_evaluate_fine_model (self):
         return self.thisptr.hasToEvaluateFineModel ()
 
     # action methods
-    # check if action is needed
+    ## @brief Checks if the provided action is required.
+    #
+    #  @param[in] action the name of the action
+    #  @returns whether the action is required
+    #
+    #  Some features of preCICE require a solver to perform specific actions, in
+    #  order to be in valid state for a coupled simulation. A solver is made
+    #  eligible to use those features, by querying for the required actions,
+    #  performing them on demand, and calling fulfilledAction() to signalize
+    #  preCICE the correct behavior of the solver.
+    #
+    #  @see fulfilled_action()
+    #  @see cplscheme::constants
+    #
     def is_action_required (self, action):
         return self.thisptr.isActionRequired (action)
 
-    # notify of action being fulfilled
+    ## @brief Indicates preCICE that a required action has been fulfilled by a solver.
+    #
+    #  @pre The solver fulfilled the specified action.
+    #
+    #  @param[in] action the name of the action
+    #
+    #  @see require_action()
+    #  @see cplscheme::constants
+    #
     def fulfilled_action (self, action):
         self.thisptr.fulfilledAction (action)
 
     # mesh access
-    # hasMesh
+    ## @brief Checks if the mesh with given name is used by a solver.
+    #
+    #  @param[in] mesh_name the name of the mesh
+    #  @returns whether the mesh is used.
+    #
     def has_mesh(self, mesh_name):
         return self.thisptr.hasMesh (convert(mesh_name))
 
-    # get mesh ID
+    ## @brief Returns the ID belonging to the mesh with given name.
+    #
+    #  @param[in] mesh_name the name of the mesh
+    #  @returns the id of the corresponding mesh
+    #
     def get_mesh_id (self, mesh_name):
         return self.thisptr.getMeshID (convert(mesh_name))
 
-    # get mesh IDs
+    ## @brief Returns a id-set of all used meshes by this participant.
+    #
+    #  @returns the set of ids.
+    #
     def get_mesh_ids (self):
         return self.thisptr.getMeshIDs ()
 
-    # returns a handle to a created mesh
+    ## @brief Returns a handle to a created mesh.
+    #
+    #  @param[in] mesh_name the name of the mesh
+    #  @returns the handle to the mesh
+    #
+    #  @see precice::MeshHandle
+    #
     def get_mesh_handle(self, mesh_name):
         raise Exception("The API method get_mesh_handle is not yet available for the Python bindings.")
 
-    # creates a mesh vertex
+    ## @brief Creates a mesh vertex
+    #
+    #  @param[in] mesh_id the id of the mesh to add the vertex to.
+    #  @param[in] position a pointer to the coordinates of the vertex.
+    #  @returns the id of the created vertex
+    #
+    #  @pre initialize() has not yet been called
+    #  @pre count of available elements at position matches the configured dimension
+    #
+    #  @see get_dimensions()
+    #
     def set_mesh_vertex(self, mesh_id, position):
         if not isinstance(position, np.ndarray):
             position = np.asarray(position)
@@ -123,11 +346,30 @@ cdef class Interface:
         vertex_id = self.thisptr.setMeshVertex(mesh_id, <const double*>_position.data)
         return vertex_id
 
-    # returns the number of vertices of a mesh
+    ## @brief Returns the number of vertices of a mesh.
+    #
+    #  @param[in] mesh_id the id of the mesh
+    #  @returns the amount of the vertices of the mesh
+    #
     def get_mesh_vertex_size (self, mesh_id):
         return self.thisptr.getMeshVertexSize(mesh_id)
 
-    # creates multiple mesh vertices
+    ## @brief Creates multiple mesh vertices
+    #
+    #  @param[in] mesh_id the id of the mesh to add the vertices to.
+    #  @param[in] size Number of vertices to create
+    #  @param[in] positions a pointer to the coordinates of the vertices
+    #             The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+    #             The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+    #
+    #  @param[out] ids The ids of the created vertices
+    #
+    #  @pre initialize() has not yet been called
+    #  @pre count of available elements at positions matches the configured dimension * size
+    #  @pre count of available elements at ids matches size
+    #
+    #  @see get_dimensions()
+    #
     def set_mesh_vertices (self, mesh_id, positions):
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
@@ -138,7 +380,20 @@ cdef class Interface:
         self.thisptr.setMeshVertices (mesh_id, size, <const double*>_positions.data, <int*>_ids.data)
         return _ids
 
-    # get vertex positions for multiple vertex ids from a given mesh
+    ## @brief Get vertex positions for multiple vertex ids from a given mesh
+    #
+    #  @param[in] mesh_id the id of the mesh to read the vertices from.
+    #  @param[in] size Number of vertices to lookup
+    #  @param[in] ids The ids of the vertices to lookup
+    #  @param[out] positions a pointer to memory to write the coordinates to
+    #             The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+    #             The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+    #
+    #  @pre count of available elements at positions matches the configured dimension * size
+    #  @pre count of available elements at ids matches size
+    #
+    #  @see get_dimensions()
+    #
     def get_mesh_vertices(self, mesh_id, ids):
         cdef np.ndarray[int, ndim=1] _ids = np.ascontiguousarray(ids, dtype=np.int32)
         size = _ids.size
@@ -146,7 +401,20 @@ cdef class Interface:
         self.thisptr.getMeshVertices (mesh_id, size, <const int*>_ids.data, <double*>_positions.data)
         return _positions.reshape((size, self.get_dimensions()))
 
-    # gets mesh vertex IDs from positions
+    ## @brief Gets mesh vertex IDs from positions.
+    #
+    #  @param[in] mesh_id ID of the mesh to retrieve positions from
+    #  @param[in] size Number of vertices to lookup.
+    #  @param[in] positions Positions to find ids for.
+    #             The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+    #             The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+    #  @param[out] ids IDs corresponding to positions.
+    #
+    #  @pre count of available elements at positions matches the configured dimension * size
+    #  @pre count of available elements at ids matches size
+    #
+    #  @note prefer to reuse the IDs returned from calls to set_mesh_vertex() and set_mesh_vertices().
+    #
     def get_mesh_vertex_ids_from_positions (self, mesh_id, positions):
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
@@ -157,40 +425,141 @@ cdef class Interface:
         self.thisptr.getMeshVertexIDsFromPositions (mesh_id, size, <const double*>_positions.data, <int*>_ids.data)
         return _ids
 
-    # sets mesh edge from vertex IDs, returns edge ID
+    ## @brief Sets mesh edge from vertex IDs, returns edge ID.
+    #
+    #  @param[in] mesh_id ID of the mesh to add the edge to
+    #  @param[in] firstVertexID ID of the first vertex of the edge
+    #  @param[in] secondVertexID ID of the second vertex of the edge
+    #
+    #  @return the ID of the edge
+    #
+    #  @pre vertices with firstVertexID and secondVertexID were added to the mesh with the ID meshID
+    #
     def set_mesh_edge (self, mesh_id, first_vertex_id, second_vertex_id):
         return self.thisptr.setMeshEdge (mesh_id, first_vertex_id, second_vertex_id)
 
-    # sets mesh triangle from edges
+    ## @brief Sets mesh triangle from edge IDs
+    #
+    #  @param[in] mesh_id ID of the mesh to add the triangle to
+    #  @param[in] first_edge_id ID of the first edge of the triangle
+    #  @param[in] second_edge_id ID of the second edge of the triangle
+    #  @param[in] third_edge_id ID of the third edge of the triangle
+    #
+    #  @pre edges with first_edge_id, second_edge_id, and third_edge_id were added to the mesh with the ID meshID
+    #
     def set_mesh_triangle (self, mesh_id, first_edge_id, second_edge_id, third_edge_id):
         self.thisptr.setMeshTriangle (mesh_id, first_edge_id, second_edge_id, third_edge_id)
 
-    # sets mesh triangle from vertices
+    ## @brief Sets mesh triangle from vertex IDs.
+    #
+    #  @warning
+    #  This routine is supposed to be used, when no edge information is available
+    #  per se. Edges are created on the fly within preCICE. This routine is
+    #  significantly slower than the one using edge IDs, since it needs to check,
+    #  whether an edge is created already or not.
+    #
+    #  @param[in] mesh_id ID of the mesh to add the triangle to
+    #  @param[in] first_vertex_id ID of the first vertex of the triangle
+    #  @param[in] second_vertex_id ID of the second vertex of the triangle
+    #  @param[in] third_vertex_id ID of the third vertex of the triangle
+    #
+    #  @pre edges with first_vertex_id, second_vertex_id, and third_vertex_id were added to the mesh with the ID meshID
+    #
     def set_mesh_triangle_with_edges (self, mesh_id, first_vertex_id, second_vertex_id, third_vertex_id):
         self.thisptr.setMeshTriangleWithEdges (mesh_id, first_vertex_id, second_vertex_id, third_vertex_id)
 
-    # sets mesh quad from edges
+    ## @brief Sets mesh Quad from edge IDs.
+    #
+    #  @param[in] mesh_id ID of the mesh to add the Quad to
+    #  @param[in] first_edge_id ID of the first edge of the Quad
+    #  @param[in] second_edge_id ID of the second edge of the Quad
+    #  @param[in] third_edge_id ID of the third edge of the Quad
+    #  @param[in] fourth_edge_id ID of the forth edge of the Quad
+    #
+    #  @pre edges with first_edge_id, second_edge_id, third_edge_id, and fourth_edge_id were added to the mesh with the ID mesh_id
+    #
+    #  @warning Quads are not fully implemented yet.
+    #
     def set_mesh_quad (self, mesh_id, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id):
         self.thisptr.setMeshQuad (mesh_id, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id)
 
-    # sets mesh quad from vertices
+    ## @brief Sets surface mesh quadrangle from vertex IDs.
+    #
+    #  @warning
+    #  This routine is supposed to be used, when no edge information is available
+    #  per se. Edges are created on the fly within preCICE. This routine is
+    #  significantly slower than the one using edge IDs, since it needs to check,
+    #  whether an edge is created already or not.
+    #
+    #  @param[in] mesh_id ID of the mesh to add the Quad to
+    #  @param[in] first_vertex_id ID of the first vertex of the Quad
+    #  @param[in] second_vertex_id ID of the second vertex of the Quad
+    #  @param[in] third_vertex_id ID of the third vertex of the Quad
+    #  @param[in] fourth_vertex_id ID of the fourth vertex of the Quad
+    #
+    #  @pre edges with first_vertex_id, second_vertex_id, third_vertex_id, and fourth_vertex_id were added to the mesh with the ID mesh_id
+    #
     def set_mesh_quad_with_edges (self, mesh_id, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
         self.thisptr.setMeshQuadWithEdges (mesh_id, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id)
 
     # data access
-    # hasData
+    ## @brief Checks if the data with given name is used by a solver and mesh.
+    #
+    #  @param[in] data_name the name of the data
+    #  @param[in] mesh_id the id of the associated mesh
+    #  @returns whether the mesh is used.
+    #
     def has_data (self, str data_name, mesh_id):
         return self.thisptr.hasData(convert(data_name), mesh_id)
 
+    ## @brief Returns the ID of the data associated with the given name and mesh.
+    #
+    #  @param[in] data_name the name of the data
+    #  @param[in] mesh_id the id of the associated mesh
+    #
+    #  @returns the id of the corresponding data
+    #
     def get_data_id (self, str data_name, mesh_id):
         return self.thisptr.getDataID (convert(data_name), mesh_id)
 
+    ## @brief Computes and maps all read data mapped to the mesh with given ID.
+    #
+    #  This is an explicit request to map read data to the Mesh associated with toMeshID.
+    #  It also computes the mapping if necessary.
+    #
+    #  @pre A mapping to to_mesh_id was configured.
+    #
     def map_read_data_to (self, to_mesh_id):
         self.thisptr.mapReadDataTo (to_mesh_id)
 
+    ## @brief Computes and maps all write data mapped from the mesh with given ID.
+    #
+    #  This is an explicit request to map write data from the Mesh associated with fromMeshID.
+    #  It also computes the mapping if necessary.
+    #
+    #  @pre A mapping from from_mesh_id was configured.
+    #
     def map_write_data_from (self, from_mesh_id):
         self.thisptr.mapWriteDataFrom (from_mesh_id)
 
+    ## @brief Writes vector data given as block.
+    #
+    #  This function writes values of specified vertices to a dataID.
+    #  Values are provided as a block of continuous memory.
+    #  valueIndices contains the indices of the vertices
+    #
+    #  The 2D-format of values is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+    #  The 3D-format of values is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+    #
+    #  @param[in] data_id ID to write to.
+    #  @param[in] value_indices Indices of the vertices.
+    #  @param[in] values pointer to the vector values.
+    #
+    #  @pre count of available elements at values matches the configured dimension * size
+    #  @pre count of available elements at valueIndices matches the given size
+    #  @pre initialize() has been called
+    #
+    #  @see Interface::set_mesh_vertex()
     def write_block_vector_data (self, data_id, value_indices, values):
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
@@ -202,6 +571,23 @@ cdef class Interface:
         size = value_indices.size
         self.thisptr.writeBlockVectorData (data_id, size, <const int*>_value_indices.data, <const double*>_values.data)
 
+    ## @brief Writes vector data to a vertex
+    #
+    #  This function writes a value of a specified vertex to a dataID.
+    #  Values are provided as a block of continuous memory.
+    #
+    #  The 2D-format of value is (x, y)
+    #  The 3D-format of value is (x, y, z)
+    #
+    #  @param[in] data_id ID to write to.
+    #  @param[in] value_index Index of the vertex.
+    #  @param[in] value pointer to the vector value.
+    #
+    #  @pre count of available elements at value matches the configured dimension
+    #  @pre initialize() has been called
+    #
+    #  @see Interface::set_mesh_vertex()
+    #
     def write_vector_data (self, data_id, value_index, value):
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
@@ -210,6 +596,22 @@ cdef class Interface:
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
         self.thisptr.writeVectorData (data_id, value_index, <const double*>_value.data)
 
+    ## @brief Writes scalar data given as block.
+    #
+    #  This function writes values of specified vertices to a dataID.
+    #  Values are provided as a block of continuous memory.
+    #  valueIndices contains the indices of the vertices
+    #
+    #  @param[in] data_id ID to write to.
+    #  @param[in] value_indices Indices of the vertices.
+    #  @param[in] values pointer to the values.
+    #
+    #  @pre count of available elements at values matches the given size
+    #  @pre count of available elements at valueIndices matches the given size
+    #  @pre initialize() has been called
+    #
+    #  @see Interface::set_mesh_vertex()
+    #
     def write_block_scalar_data (self, data_id, value_indices, values):
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
@@ -217,9 +619,41 @@ cdef class Interface:
         size = value_indices.size
         self.thisptr.writeBlockScalarData (data_id, size, <const int*>_value_indices.data, <const double*>_values.data)
 
+    ##  @brief Writes scalar data to a vertex
+    #
+    #  This function writes a value of a specified vertex to a dataID.
+    #
+    #  @param[in] data_id ID to write to.
+    #  @param[in] value_index Index of the vertex.
+    #  @param[in] value the value to write.
+    #
+    #  @pre initialize() has been called
+    #
+    #  @see Interface::set_mesh_vertex()
+    #
     def write_scalar_data (self, data_id, value_index, double value):
         self.thisptr.writeScalarData (data_id, value_index, value)
 
+    ## @brief Reads vector data into a provided block.
+    #
+    #  This function reads values of specified vertices from a dataID.
+    #  Values are read into a block of continuous memory.
+    #  valueIndices contains the indices of the vertices.
+    #
+    #  The 2D-format of values is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+    #  The 3D-format of values is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+    #
+    #  @param[in] data_id ID to read from.
+    #  @param[in] value_indices Indices of the vertices.
+    #
+    #  @pre count of available elements at values matches the configured dimension * size
+    #  @pre count of available elements at valueIndices matches the given size
+    #  @pre initialize() has been called
+    #
+    #  @post values contain the read data as specified in the above format.
+    #
+    #  @see Interface::set_mesh_vertex()
+    #
     def read_block_vector_data (self, data_id, value_indices):
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         size = _value_indices.size
@@ -228,12 +662,47 @@ cdef class Interface:
         self.thisptr.readBlockVectorData (data_id, size, <const int*>_value_indices.data, <double*>_values.data)
         return _values.reshape((size, dimensions))
 
+    ## @brief Reads vector data form a vertex
+    #
+    #  This function reads a value of a specified vertex from a dataID.
+    #  Values are provided as a block of continuous memory.
+    #
+    #  The 2D-format of value is (x, y)
+    #  The 3D-format of value is (x, y, z)
+    #
+    #  @param[in] data_id ID to read from.
+    #  @param[in] value_index Index of the vertex.
+    #
+    #  @pre count of available elements at value matches the configured dimension
+    #  @pre initialize() has been called
+    #
+    #  @post value contains the read data as specified in the above format.
+    #
+    #  @see Interface::set_mesh_vertex()
+    #
     def read_vector_data (self, data_id, value_index):
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
         self.thisptr.readVectorData (data_id, value_index, <double*>_value.data)
         return _value
 
+    ## @brief Reads scalar data as a block.
+    #
+    #  This function reads values of specified vertices from a dataID.
+    #  Values are provided as a block of continuous memory.
+    #  valueIndices contains the indices of the vertices.
+    #
+    #  @param[in] data_id ID to read from.
+    #  @param[in] value_indices Indices of the vertices.
+    #
+    #  @pre count of available elements at values matches the given size
+    #  @pre count of available elements at valueIndices matches the given size
+    #  @pre initialize() has been called
+    #
+    #  @post values contains the read data.
+    #
+    #  @see Interface::set_mesh_vertex()
+    #
     def read_block_scalar_data (self, data_id, value_indices):
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         size = _value_indices.size
@@ -241,16 +710,32 @@ cdef class Interface:
         self.thisptr.readBlockScalarData (data_id, size, <const int*>_value_indices.data, <double*>_values.data)
         return _values
 
+    ## @brief Reads scalar data of a vertex.
+    #
+    #  This function reads a value of a specified vertex from a dataID.
+    #
+    #  @param[in] data_id ID to read from.
+    #  @param[in] value_index Index of the vertex.
+    #
+    #  @pre initialize() has been called
+    #
+    #  @post value contains the read data.
+    #
+    #  @see Interface::set_mesh_vertex()
+    #
     def read_scalar_data (self, data_id, value_index):
         cdef double _value
         self.thisptr.readScalarData (data_id, value_index, _value)
         return _value
 
+## @brief Name of action for writing initial data.
 def action_write_initial_data ():
     return SolverInterface.actionWriteInitialData()
-   
+
+## @brief Name of action for writing iteration checkpoint.
 def action_write_iteration_checkpoint ():
     return SolverInterface.actionWriteIterationCheckpoint()
 
+## @brief Name of action for reading iteration checkpoint.
 def action_read_iteration_checkpoint ():
     return SolverInterface.actionReadIterationCheckpoint()
