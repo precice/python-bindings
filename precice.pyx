@@ -32,17 +32,14 @@ cdef class Interface:
     # construction and configuration
     # constructor
 
-    def __cinit__ (self, solver_name, solver_process_index, solver_process_size):
+    def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size):
         self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), solver_process_index, solver_process_size)
+        self.thisptr.configure (convert(configuration_file_name))
         pass
 
     # destructor
     def __dealloc__ (self):
         del self.thisptr
-
-    # configure
-    def configure (self, configuration_file_name):
-        self.thisptr.configure (convert(configuration_file_name))
 
     # steering methods
     # initialize
