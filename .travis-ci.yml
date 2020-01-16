@@ -1,0 +1,30 @@
+language: cpp
+dist: trusty
+sudo: false
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-6
+      - libopenmpi-dev
+      - openmpi-bin
+      - python-numpy
+      - libblas-dev
+      - liblapack-dev
+      - lcov
+
+jobs:
+  include:
+    - name: "Mock Test Python Bindings"
+      cache: false
+      before_install:
+        - pyenv global $(pyenv whence 2to3)  # activate all python versions
+        - PYTHONPATH=""
+        - PY_CMD=python3
+        - $PY_CMD -m pip install --user --upgrade pip wheel setuptools
+      install:
+        - pip3 install --user cython numpy mpi4py packaging
+      script:
+        - python3 setup.py test
