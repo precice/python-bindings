@@ -10,6 +10,7 @@ addons:
       - g++-6
       - libopenmpi-dev
       - openmpi-bin
+      - python-numpy
 
 jobs:
   include:
