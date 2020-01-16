@@ -27,4 +27,6 @@ jobs:
       install:
         - pip3 install --user cython numpy mpi4py packaging
       script:
+        - git clone --branch $TRAVIS_BRANCH https://github.com/precice/precice.git precice-core
+        - export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$TRAVIS_BUILD_DIR/precice-core/src
         - python3 setup.py test
