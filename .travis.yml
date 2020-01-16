@@ -8,6 +8,8 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-6
+      - libopenmpi-dev
+      - openmpi-bin
 
 jobs:
   include:
