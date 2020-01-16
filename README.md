@@ -1,6 +1,10 @@
 Python language bindings for preCICE
 ------------------------------------
 
+<a style="text-decoration: none" href="https://travis-ci.org/precice/python-bindings" target="_blank">
+    <img src="https://travis-ci.org/precice/python-bindings.svg?branch=develop" alt="Build status">
+</a>
+
 # Installing the package
 
 We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/precice/bindings/python/README.md#using-pip3) for the sake of simplicity.
