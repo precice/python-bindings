@@ -11,6 +11,7 @@ from distutils.command.install import install
 from distutils.command.build import build
 from packaging import version
 import pip
+import numpy
 
 assert(version.parse(pip.__version__) >= version.parse("10.0.1"))  # minimum version 10.0.1 is required. See https://github.com/precice/precice/wiki/Non%E2%80%93standard-APIs#python-bindings-version-of-pip3-is-too-old
 
@@ -64,6 +65,7 @@ def get_extensions(mpi_compiler_wrapper, is_test):
     compile_args += mpi_compile_args
     compile_args.append("-Wall")
     compile_args.append("-std=c++11")
+    compile_args.append("-I{}".format(numpy.get_include()))
 
     link_args += mpi_link_args
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, APPNAME) + ".pyx"]
