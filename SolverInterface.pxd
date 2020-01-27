@@ -99,6 +99,8 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void readScalarData (const int dataID, const int valueIndex, double& value)
 
+cdef extern from "precice/SolverInterface.hpp" namespace "precice":
+    string getVersionInformation()
 
 cdef extern from "precice/SolverInterface.hpp"  namespace "precice::constants":
     const string& actionWriteInitialData()
