@@ -7,7 +7,7 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
     cdef cppclass SolverInterface:
         # construction and configuration
 
-        SolverInterface (const string&, int, int) except +
+        SolverInterface (const string&, const string&, int, int) except +
 
         void configure (const string&)
 
