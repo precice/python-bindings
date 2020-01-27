@@ -243,6 +243,10 @@ cdef class Interface:
         self.thisptr.readScalarData (data_id, value_index, _value)
         return _value
 
+    # Provides current preCICE version information
+    def get_version_information(self):
+        return self.thisptr.getVersionInformation ()
+
 def action_write_initial_data ():
     return SolverInterface.actionWriteInitialData()
    
