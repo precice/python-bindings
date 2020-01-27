@@ -20,6 +20,7 @@ class SolverInterfaceImpl{};
 SolverInterface:: SolverInterface
 (
   const std::string& participantName,
+  const std::string& configurationFileName,
   int                solverProcessIndex,
   int                solverProcessSize )
 {
@@ -34,11 +35,6 @@ SolverInterface:: SolverInterface
 }
 
 SolverInterface::~SolverInterface() = default;
-
-void SolverInterface:: configure
-(
-  const std::string& configurationFileName )
-{}
 
 double SolverInterface:: initialize(){return -1;}
 
