@@ -30,8 +30,7 @@ cdef class Interface:
     # constructor
 
     def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size):
-        self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), solver_process_index, solver_process_size)
-        self.thisptr.configure (convert(configuration_file_name))
+        self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
         pass
 
     # destructor
