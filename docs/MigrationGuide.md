@@ -5,8 +5,8 @@ Migration Guide for Python language bindings for preCICE version 2.0
 
 ### 1. Python language bindings moved to a new repository in the preCICE Project
 
-Previously, the Python language bindings were part of the repository [`precice/precice`](). The bindings have now been
-moved to the independent repository [`precice/python-bindings`](https://github.com/precice/python-bindings).
+Previously, the Python language bindings were part of the repository [`precice/precice`](https://github.com/precice/precice). 
+The bindings have now been moved to the independent repository [`precice/python-bindings`](https://github.com/precice/python-bindings).
 
 The installation procedure is the same as before. Please refer to the [README](https://github.com/precice/python-bindings/blob/develop/README.md).
 
