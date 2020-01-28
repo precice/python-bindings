@@ -343,19 +343,19 @@ namespace constants {
 
 const std::string& actionWriteInitialData()
 {
-    static std::string dummy ("dummy");
+    static std::string dummy ("dummy_write_initial_data");
     return dummy;
 }
 
 const std::string& actionWriteIterationCheckpoint()
 {
-    static std::string dummy ("dummy");
+    static std::string dummy ("dummy_write_iteration");
     return dummy;
 }
 
 const std::string& actionReadIterationCheckpoint()
 {
-    static std::string dummy ("dummy");
+    static std::string dummy ("dummy_read_iteration");
     return dummy;
 }
 
