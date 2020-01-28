@@ -29,8 +29,13 @@ cdef class Interface:
     # construction and configuration
     # constructor
 
-    def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size):
-        self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
+    def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
+        cdef void* communicator_ptr
+        if communicator:
+            communicator_ptr = <void*> communicator
+            self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size, communicator_ptr)
+        else:
+            self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
         pass
 
     # destructor

@@ -34,6 +34,23 @@ SolverInterface:: SolverInterface
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
 }
 
+SolverInterface::SolverInterface(
+    const std::string& participantName,
+    const std::string& configurationFileName,
+    int                solverProcessIndex,
+    int                solverProcessSize,
+    void *             communicator)
+{
+  fake_read_write_buffer = std::vector<double>();
+  fake_dimensions = 3;
+  fake_mesh_id = 0;
+  fake_data_id = 15;
+  fake_data_name = "FakeData";
+  n_fake_vertices = 3;
+  fake_ids.resize(n_fake_vertices);
+  std::iota(fake_ids.begin(), fake_ids.end(), 0);
+}
+
 SolverInterface::~SolverInterface() = default;
 
 double SolverInterface:: initialize(){return -1;}
