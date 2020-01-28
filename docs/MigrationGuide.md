@@ -3,7 +3,14 @@ Migration Guide for Python language bindings for preCICE version 2.0
 
 # Steps to move from old Python API to the new API
 
-## 1. Solver Interface initialization call is changed
+### 1. Python language bindings moved to a new repository in the preCICE Project
+
+Previously the Python language bindings were part of the main preCICE repository. The bindings have now been
+moved to an [independent repository](https://github.com/precice/python-bindings)
+
+The installation procedure is same as mentioned in the [README](https://github.com/precice/python-bindings/blob/develop/README.md)
+
+### 2. Solver Interface initialization call is changed
 
 The solver interface initialization call now initializes the solver and also configures it using the configuration
 file provided by the user.
@@ -12,12 +19,12 @@ The previous calls were:
 interface = precice.Interface(solverName, processRank, processSize)
 interface.configure(configFileName)
 ```
-The calls have now been combined to:
+The calls have now been combined to one call:
 ```
 interface = precice.Interface(solverName, configFileName, processRank, processSize)
 ```
 
-## 2. Array updation is done by returning the appropriate array rather than implicit updating of function argument
+### 3. Array updation is done by returning the updated array
 
 In the old adapter the array of values which was generated or updated by a API function was passed as a function argument.
 This is now changed and the API function returns the appropriate which is intended to be computed or updated.
@@ -40,7 +47,7 @@ The new call is:
 readDataArray = interface.read_block_scalar_data(readDataID, vertexIDs)
 ```
 
-## 3. Reduced number of inputs arguments for API calls
+### 4. Reduced number of inputs arguments for API calls
 
 Unlike the old bindings, API calls now do not need the array size to be passed as an argument anymore. 
 For example let us consider the call `set_mesh_vertices`.
@@ -64,5 +71,21 @@ interface.write_block_vector_data(writeDataID, vertexIDs, writeDataArray)
 ```
 Analogously this same change is done for function call `write_block_scalar_data` and all other relevant functions.
 
-## 4. 
+### 5. Formatting of Numpy arrays is changed
+
+In the earlier bindings for a simulation in `D` dimensions, the Numpy array representing the coupling mesh having 
+`N` vertices was structed as `grid = np.zeros([D, N+1])`.
+The new structure now used is: `grid = np.zeros([N+1, D])`
+
+In the earlier bindings it was the users responsibility to flatten a multi-dimensional array before passing it to
+a API call. This is not not necessary as the API calls take care of this internally. For example let us consider
+the call `set_mesh_vertices`:
+The old call was:
+```
+interface.set_mesh_vertices(meshID, meshSize, grid.flatten('F'), vertexIDs)
+```
+This call is now modified to:
+```
+vertexIDs = interface.set_mesh_vertices(meshID, grid)
+```
 
