@@ -333,7 +333,7 @@ void SolverInterface:: readScalarData
     value = fake_read_write_buffer[0]; 
 }
 
-const std::string getVersionInformation()
+std::string getVersionInformation()
 {
     std::string dummy ("dummy");
     return dummy;
