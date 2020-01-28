@@ -243,8 +243,8 @@ cdef class Interface:
         return _value
 
 # Provides current preCICE version information
-def get_version_information():
-    return SolverInterface.getVersionInformation()
+    def get_version_information(self):
+        return self.getVersionInformation()
 
 def action_write_initial_data ():
     return SolverInterface.actionWriteInitialData()
