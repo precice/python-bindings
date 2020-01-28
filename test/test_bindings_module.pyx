@@ -4,6 +4,7 @@
 # run with python -m unittest tests.test_fenicsadapter
 
 cimport precice
+import precice
 from unittest import TestCase
 import numpy as np
 
@@ -261,5 +262,20 @@ class TestBindings(TestCase):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
         fake_data_name = "FakeData"  # compare to test/SolverInterface.cpp, fake_data_name
-        fake_data_ID = 15;  # compare to test/SolverInterface.cpp, fake_data_ID
+        fake_data_ID = 15  # compare to test/SolverInterface.cpp, fake_data_ID
         self.assertTrue(solver_interface.get_data_id(fake_data_name, fake_mesh_id) == fake_data_ID)
+
+    def test_action_write_initial_data(self):
+        return_constant = precice.action_write_initial_data()
+        dummy_constant = b"dummy_write_initial_data"  # compare to test/SolverInterface.cpp
+        self.assertEqual(return_constant, dummy_constant)
+
+    def test_action_write_iteration_checkpoint(self):
+        return_constant = precice.action_write_iteration_checkpoint()
+        dummy_constant = b"dummy_write_iteration"  # compare to test/SolverInterface.cpp
+        self.assertEqual(return_constant, dummy_constant)
+
+    def test_action_read_iteration_checkpoint(self):
+        return_constant = precice.action_read_iteration_checkpoint()
+        dummy_constant = b"dummy_read_iteration"  # compare to test/SolverInterface.cpp
+        self.assertEqual(return_constant, dummy_constant)
