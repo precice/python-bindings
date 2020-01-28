@@ -9,6 +9,8 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         SolverInterface (const string&, const string&, int, int) except +
 
+        SolverInterface (const string&, const string&, int, int, void*) except +
+
         void configure (const string&)
 
         # steering methods
