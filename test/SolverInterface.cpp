@@ -333,6 +333,12 @@ void SolverInterface:: readScalarData
     value = fake_read_write_buffer[0]; 
 }
 
+std::string getVersionInformation()
+{
+    std::string dummy ("dummy");
+    return dummy;
+}
+
 namespace constants {
 
 const std::string& actionWriteInitialData()

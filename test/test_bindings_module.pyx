@@ -265,6 +265,11 @@ class TestBindings(TestCase):
         fake_data_ID = 15  # compare to test/SolverInterface.cpp, fake_data_ID
         self.assertTrue(solver_interface.get_data_id(fake_data_name, fake_mesh_id) == fake_data_ID)
 
+    def test_get_version_information(self):
+        version_info = precice.get_version_information()
+        fake_version_info = b"dummy";  # compare to test/SolverInterface.cpp
+        self.assertEqual(version_info, fake_version_info)
+
     def test_action_write_initial_data(self):
         return_constant = precice.action_write_initial_data()
         dummy_constant = b"dummy_write_initial_data"  # compare to test/SolverInterface.cpp
