@@ -77,7 +77,7 @@ cdef class Interface:
         return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
     # check if time-step is complete
-    def is_timestep_complete (self):
+    def is_timewindow_complete (self):
         return self.thisptr.isTimestepComplete ()
 
     # returns whether the solver has to evaluate the surrogate model representation

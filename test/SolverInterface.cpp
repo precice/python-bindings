@@ -86,7 +86,7 @@ bool SolverInterface:: isWriteDataRequired
   return 0;
 }
 
-bool SolverInterface:: isTimestepComplete() const
+bool SolverInterface:: isTimeWindowComplete() const
 {
   return 0;
 }
