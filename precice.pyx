@@ -93,9 +93,9 @@ cdef class Interface:
     def is_action_required (self, action):
         return self.thisptr.isActionRequired (action)
 
-    # notify of action being fulfilled
-    def fulfilled_action (self, action):
-        self.thisptr.fulfilledAction (action)
+    # notify precice of action being fulfilled
+    def mark_action_fulfilled (self, action):
+        self.thisptr.markActionFulfilled (action)
 
     # mesh access
     # hasMesh

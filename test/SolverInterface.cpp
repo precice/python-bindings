@@ -98,7 +98,7 @@ bool SolverInterface:: isActionRequired
   return 0;
 }
 
-void SolverInterface:: fulfilledAction
+void SolverInterface:: markActionFulfilled
 (
   const std::string& action )
 {}

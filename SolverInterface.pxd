@@ -43,7 +43,7 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool isActionRequired (const string& action)
 
-        void fulfilledAction (const string& action)
+        void markActionFulfilled (const string& action)
 
         # mesh access
 
