@@ -33,7 +33,7 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool isWriteDataRequired (double computedTimestepLength)
 
-        bool isTimestepComplete()
+        bool isTimeWindowComplete()
 
         bool hasToEvaluateSurrogateModel ()
 

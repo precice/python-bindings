@@ -78,7 +78,7 @@ cdef class Interface:
 
     # check if time-step is complete
     def is_timewindow_complete (self):
-        return self.thisptr.isTimestepComplete ()
+        return self.thisptr.isTimeWindowComplete ()
 
     # returns whether the solver has to evaluate the surrogate model representation
     def has_to_evaluate_surrogate_model (self):
