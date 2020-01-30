@@ -40,13 +40,13 @@ while interface.is_coupling_ongoing():
    
     if interface.is_action_required(precice.action_write_iteration_checkpoint()):
         print("DUMMY: Writing iteration checkpoint")
-        interface.fulfilled_action(precice.action_write_iteration_checkpoint())
+        interface.mark_action_fulfilled(precice.action_write_iteration_checkpoint())
     
     dt = interface.advance(dt)
     
     if interface.is_action_required(precice.action_read_iteration_checkpoint()):
         print("DUMMY: Reading iteration checkpoint")
-        interface.fulfilled_action(precice.action_read_iteration_checkpoint())
+        interface.mark_action_fulfilled(precice.action_read_iteration_checkpoint())
     else:
         print("DUMMY: Advancing in time")
     

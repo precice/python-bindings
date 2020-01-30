@@ -86,7 +86,7 @@ bool SolverInterface:: isWriteDataRequired
   return 0;
 }
 
-bool SolverInterface:: isTimestepComplete() const
+bool SolverInterface:: isTimeWindowComplete() const
 {
   return 0;
 }
@@ -98,7 +98,7 @@ bool SolverInterface:: isActionRequired
   return 0;
 }
 
-void SolverInterface:: fulfilledAction
+void SolverInterface:: markActionFulfilled
 (
   const std::string& action )
 {}

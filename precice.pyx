@@ -77,8 +77,8 @@ cdef class Interface:
         return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
     # check if time-step is complete
-    def is_timestep_complete (self):
-        return self.thisptr.isTimestepComplete ()
+    def is_timewindow_complete (self):
+        return self.thisptr.isTimeWindowComplete ()
 
     # returns whether the solver has to evaluate the surrogate model representation
     def has_to_evaluate_surrogate_model (self):
@@ -93,9 +93,9 @@ cdef class Interface:
     def is_action_required (self, action):
         return self.thisptr.isActionRequired (action)
 
-    # notify of action being fulfilled
-    def fulfilled_action (self, action):
-        self.thisptr.fulfilledAction (action)
+    # notify precice of action being fulfilled
+    def mark_action_fulfilled (self, action):
+        self.thisptr.markActionFulfilled (action)
 
     # mesh access
     # hasMesh
