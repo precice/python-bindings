@@ -126,6 +126,22 @@ from mpi4py import MPI # Initialize MPI
 - In case the compilation fails with `shared_ptr.pxd not found` messages, check if you use the latest version of Cython.
 - If you want to use the old python bindings (released with preCICE version < 2.0.0), please refer to the documentation of the corresponding preCICE version
 
+# Troubleshooting
+
+### python bindings: version of pip3 is too old
+
+If you see the following error
+```
+error: option --single-version-externally-managed not recognized
+```
+your version of pip might be too old. Please update pip and try again. One possible way for updating pip is to run the following commands:
+```
+wget -q https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python3 get-pip.py
+```
+*Be aware that `python3 get-pip.py` might require root privileges.*
+
+Check your version of pip via `pip3 --version`. For version 8.1.1 and 9.0.1 we know that this problem occurs. *Remark:* you get versions 8.1.1 of pip if you use `sudo apt install python3-pip` on Ubuntu 16.04 (pip version 9.0.1 on Ubuntu 18.04)
+
 # Contributors
 
 * [Benjamin Rüth](https://github.com/BenjaminRueth)
