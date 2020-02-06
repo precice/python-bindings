@@ -224,126 +224,162 @@ cdef class Interface:
         """
         return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
-    ## @brief Checks if the current coupling timewindow is completed.
-    #
-    #  @returns whether the timestep is complete.
-    #
-    #  The following reasons require several solver time steps per coupling time
-    #  step:
-    #  - A solver chooses to perform subcycling.
-    #  - An implicit coupling timestep iteration is not yet converged.
-    #
-    #  @pre initialize() has been called successfully.
-    #
+
     def is_time_window_complete (self):
+        """
+        Checks if the current coupling timewindow is completed.
+        The following reasons require several solver time steps per coupling time step:
+            - A solver chooses to perform subcycling.
+            - An implicit coupling timestep iteration is not yet converged.
+
+        Previous calls:
+            initialize() has been called successfully.
+
+        Returns:
+            tag (bool): whether the timestep is complete.
+        """
         return self.thisptr.isTimeWindowComplete ()
 
-    ## @brief Returns whether the solver has to evaluate the surrogate model representation.
-    #
-    #  @deprecated
-    #  Only necessary for deprecated manifold mapping.
-    #
-    #  @returns whether the surrogate model has to be evaluated.
-    #
-    #  @note
-    #  The solver may still have to evaluate the fine model representation.
-    #
-    #  @see has_to_evaluate_fine_model()
-    #
+
     def has_to_evaluate_surrogate_model (self):
+        """
+        Returns whether the solver has to evaluate the surrogate model representation.
+        The solver may still have to evaluate the fine model representation.
+        DEPRECATED: Only necessary for deprecated manifold mapping.
+
+        Refer:
+            has_to_evaluate_fine_model()
+
+        Returns:
+            tag (bool): whether the surrogate model has to be evaluated.
+        """
         return self.thisptr.hasToEvaluateSurrogateModel ()
 
-    ## @brief Checks if the solver has to evaluate the fine model representation.
-    #
-    #  @deprecated
-    #  Only necessary for deprecated manifold mapping.
-    #
-    #  @returns whether the fine model has to be evaluated.
-    #
-    #  @note
-    #  The solver may still have to evaluate the surrogate model representation.
-    #
-    #  @see has_to_evaluate_surrogate_model()
-    #
+
     def has_to_evaluate_fine_model (self):
+        """
+        Checks if the solver has to evaluate the fine model representation.
+        The solver may still have to evaluate the surrogate model representation.
+        DEPRECATED: Only necessary for deprecated manifold mapping.
+
+        Refer:
+            has_to_evaluate_surrogate_model()
+
+        Returns:
+            tag (bool): whether the fine model has to be evaluated.
+        """
         return self.thisptr.hasToEvaluateFineModel ()
 
     # action methods
-    ## @brief Checks if the provided action is required.
-    #
-    #  @param[in] action the name of the action
-    #  @returns whether the action is required
-    #
-    #  Some features of preCICE require a solver to perform specific actions, in
-    #  order to be in valid state for a coupled simulation. A solver is made
-    #  eligible to use those features, by querying for the required actions,
-    #  performing them on demand, and calling fulfilledAction() to signalize
-    #  preCICE the correct behavior of the solver.
-    #
-    #  @see fulfilled_action()
-    #  @see cplscheme::constants
-    #
+
     def is_action_required (self, action):
+        """
+        Checks if the provided action is required.
+        Some features of preCICE require a solver to perform specific actions, in order to be
+        in valid state for a coupled simulation. A solver is made eligible to use those features,
+        by querying for the required actions, performing them on demand, and calling markActionfulfilled()
+        to signalize preCICE the correct behavior of the solver.
+
+        Parameters:
+           action (precice action): name of the action
+
+        Refer:
+            fulfilled_action()
+            cplscheme::constants
+
+        Returns:
+            tag (bool): returns True if action is required
+        """
         return self.thisptr.isActionRequired (action)
 
-    ## @brief Indicates preCICE that a required action has been fulfilled by a solver.
-    #
-    #  @pre The solver fulfilled the specified action.
-    #
-    #  @param[in] action the name of the action
-    #
-    #  @see require_action()
-    #  @see cplscheme::constants
-    #
+
     def mark_action_fulfilled (self, action):
+        """
+        Indicates preCICE that a required action has been fulfilled by a solver.
+
+        Parameters:
+            action (preCICE action): name of the action
+
+        Previous calls:
+            The solver fulfilled the specified action.
+
+        Refer:
+            require_action()
+            cplscheme::constants
+        """
         self.thisptr.markActionFulfilled (action)
 
     # mesh access
-    ## @brief Checks if the mesh with given name is used by a solver.
-    #
-    #  @param[in] mesh_name the name of the mesh
-    #  @returns whether the mesh is used.
-    #
+
     def has_mesh(self, mesh_name):
+        """
+        Checks if the mesh with the given name is used by a solver.
+
+        Parameters:
+            mesh_name (string): name of the mesh
+
+        Returns:
+            tag (bool): whether the mesh is used
+        """
         return self.thisptr.hasMesh (convert(mesh_name))
 
-    ## @brief Returns the ID belonging to the mesh with given name.
-    #
-    #  @param[in] mesh_name the name of the mesh
-    #  @returns the id of the corresponding mesh
-    #
+
     def get_mesh_id (self, mesh_name):
+        """
+        Returns the ID belonging to the mesh with given name.
+
+        Parameters:
+            mesh_name (string): name of the mesh
+
+        Returns:
+            id (int): ID of the corresponding mesh
+        """
         return self.thisptr.getMeshID (convert(mesh_name))
 
-    ## @brief Returns a id-set of all used meshes by this participant.
-    #
-    #  @returns the set of ids.
-    #
+
     def get_mesh_ids (self):
+        """
+        Returns the id-set of all used meshes by this participant.
+
+        Returns:
+            id_array (array of ints): Set of IDs
+        """
         return self.thisptr.getMeshIDs ()
 
-    ## @brief Returns a handle to a created mesh.
-    #
-    #  @param[in] mesh_name the name of the mesh
-    #  @returns the handle to the mesh
-    #
-    #  @see precice::MeshHandle
-    #
+
     def get_mesh_handle(self, mesh_name):
+        """
+        Returns a handle to a created mesh.
+
+        Parameters:
+            mesh_name (string): name of the mesh
+
+        Returns:
+            tag (pointer): Handle to the mesh
+
+        Refer:
+            precice::MeshHandle
+        """
         raise Exception("The API method get_mesh_handle is not yet available for the Python bindings.")
 
-    ## @brief Creates a mesh vertex
-    #
-    #  @param[in] mesh_id the id of the mesh to add the vertex to.
-    #  @param[in] position a pointer to the coordinates of the vertex.
-    #  @returns the id of the created vertex
-    #
-    #  @pre initialize() has not yet been called
-    #  @pre count of available elements at position matches the configured dimension
-    #
-    #  @see get_dimensions()
-    #
+
     def set_mesh_vertex(self, mesh_id, position):
+        """
+        Creates a mesh vertex
+
+        Parameters:
+            mesh_id (int): the id of the mesh to add the vertex to.
+            position (pointer): a pointer to the coordinates of the vertex.
+
+        Previous calls:
+            Count of available elements at position matches the configured dimension
+
+        Returns:
+            vertex_id (int): ID of the vertex which is set
+
+        Refer:
+            get_dimensions()
+        """
         if not isinstance(position, np.ndarray):
             position = np.asarray(position)
         dimensions = position.size
@@ -352,31 +388,39 @@ cdef class Interface:
         vertex_id = self.thisptr.setMeshVertex(mesh_id, <const double*>_position.data)
         return vertex_id
 
-    ## @brief Returns the number of vertices of a mesh.
-    #
-    #  @param[in] mesh_id the id of the mesh
-    #  @returns the amount of the vertices of the mesh
-    #
     def get_mesh_vertex_size (self, mesh_id):
+        """
+        Returns the number of vertices of a mesh
+
+        Parameters:
+            mesh_id (int): ID of the mesh
+
+        Returns:
+            sum (int): amount of vertices of the mesh
+        """
         return self.thisptr.getMeshVertexSize(mesh_id)
 
-    ## @brief Creates multiple mesh vertices
-    #
-    #  @param[in] mesh_id the id of the mesh to add the vertices to.
-    #  @param[in] size Number of vertices to create
-    #  @param[in] positions a pointer to the coordinates of the vertices
-    #             The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-    #             The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
-    #
-    #  @param[out] ids The ids of the created vertices
-    #
-    #  @pre initialize() has not yet been called
-    #  @pre count of available elements at positions matches the configured dimension * size
-    #  @pre count of available elements at ids matches size
-    #
-    #  @see get_dimensions()
-    #
     def set_mesh_vertices (self, mesh_id, positions):
+        """
+        Creates multiple mesh vertices
+
+        Parameters:
+            mesh_id (int): ID of the mesh to add the vertices to.
+            positions (pointer): a pointer to the coordinates of the vertices
+                                 The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+                                 The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+
+        Previous calls:
+            initialize() has not yet been called
+            count of available elements at positions matches the configured dimension * size
+            count of available elements at ids matches size
+
+        Returns:
+            ids (array): IDs of the created vertices
+
+        Refer:
+            get_dimensions()
+        """
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
         size, dimensions = positions.shape
@@ -386,42 +430,47 @@ cdef class Interface:
         self.thisptr.setMeshVertices (mesh_id, size, <const double*>_positions.data, <int*>_ids.data)
         return _ids
 
-    ## @brief Get vertex positions for multiple vertex ids from a given mesh
-    #
-    #  @param[in] mesh_id the id of the mesh to read the vertices from.
-    #  @param[in] size Number of vertices to lookup
-    #  @param[in] ids The ids of the vertices to lookup
-    #  @param[out] positions a pointer to memory to write the coordinates to
-    #             The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-    #             The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
-    #
-    #  @pre count of available elements at positions matches the configured dimension * size
-    #  @pre count of available elements at ids matches size
-    #
-    #  @see get_dimensions()
-    #
     def get_mesh_vertices(self, mesh_id, ids):
+        """
+        Get vertex positions for multiple vertex ids from a given mesh
+
+        Parameters:
+            mesh_id (int): ID of the mesh to read the vertices from.
+            ids (array): The ids of the vertices to lookup
+
+        Previous calls:
+            count of available elements at positions matches the configured dimension * size
+            count of available elements at ids matches size
+
+        Returns:
+            positions (pointer): a pointer to memory to write the coordinates to
+                                 The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+                                 The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+
+        Refer:
+            get_dimensions()
+        """
         cdef np.ndarray[int, ndim=1] _ids = np.ascontiguousarray(ids, dtype=np.int32)
         size = _ids.size
         cdef np.ndarray[double, ndim=1] _positions = np.empty(size * self.get_dimensions(), dtype=np.double)
         self.thisptr.getMeshVertices (mesh_id, size, <const int*>_ids.data, <double*>_positions.data)
         return _positions.reshape((size, self.get_dimensions()))
 
-    ## @brief Gets mesh vertex IDs from positions.
-    #
-    #  @param[in] mesh_id ID of the mesh to retrieve positions from
-    #  @param[in] size Number of vertices to lookup.
-    #  @param[in] positions Positions to find ids for.
-    #             The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-    #             The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
-    #  @param[out] ids IDs corresponding to positions.
-    #
-    #  @pre count of available elements at positions matches the configured dimension * size
-    #  @pre count of available elements at ids matches size
-    #
-    #  @note prefer to reuse the IDs returned from calls to set_mesh_vertex() and set_mesh_vertices().
-    #
     def get_mesh_vertex_ids_from_positions (self, mesh_id, positions):
+        """
+        Gets mesh vertex IDs from positions.
+        prefer to reuse the IDs returned from calls to set_mesh_vertex() and set_mesh_vertices().
+
+        Parameters:
+            mesh_id (int): ID of the mesh to retrieve positions from
+            positions (n dims array): Positions to find ids for.
+                                      The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+                                      The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+
+        Previous calls:
+            count of available elements at positions matches the configured dimension * size
+            count of available elements at ids matches size
+        """
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
         size, dimensions = positions.shape
@@ -431,142 +480,168 @@ cdef class Interface:
         self.thisptr.getMeshVertexIDsFromPositions (mesh_id, size, <const double*>_positions.data, <int*>_ids.data)
         return _ids
 
-    ## @brief Sets mesh edge from vertex IDs, returns edge ID.
-    #
-    #  @param[in] mesh_id ID of the mesh to add the edge to
-    #  @param[in] firstVertexID ID of the first vertex of the edge
-    #  @param[in] secondVertexID ID of the second vertex of the edge
-    #
-    #  @return the ID of the edge
-    #
-    #  @pre vertices with firstVertexID and secondVertexID were added to the mesh with the ID meshID
-    #
     def set_mesh_edge (self, mesh_id, first_vertex_id, second_vertex_id):
+        """
+        Sets mesh edge from vertex IDs, returns edge ID.
+
+        Parameters:
+            mesh_id (int): ID of the mesh to add the edge to
+            firstVertexID (int): ID of the first vertex of the edge
+            secondVertexID (int): ID of the second vertex of the edge
+
+        Previous calls:
+            vertices with firstVertexID and secondVertexID were added to the mesh with the ID meshID
+
+        Returns:
+            id (int): ID of the edge
+        """
         return self.thisptr.setMeshEdge (mesh_id, first_vertex_id, second_vertex_id)
 
-    ## @brief Sets mesh triangle from edge IDs
-    #
-    #  @param[in] mesh_id ID of the mesh to add the triangle to
-    #  @param[in] first_edge_id ID of the first edge of the triangle
-    #  @param[in] second_edge_id ID of the second edge of the triangle
-    #  @param[in] third_edge_id ID of the third edge of the triangle
-    #
-    #  @pre edges with first_edge_id, second_edge_id, and third_edge_id were added to the mesh with the ID meshID
-    #
     def set_mesh_triangle (self, mesh_id, first_edge_id, second_edge_id, third_edge_id):
+        """
+        Sets mesh triangle from edge IDs
+
+        Parameters:
+            mesh_id (int): ID of the mesh to add the triangle to
+            first_edge_id (int): ID of the first edge of the triangle
+            second_edge_id (int): ID of the second edge of the triangle
+            third_edge_id (int): ID of the third edge of the triangle
+
+        Previous calls:
+            edges with first_edge_id, second_edge_id, and third_edge_id were added to the mesh with the ID meshID
+        """
         self.thisptr.setMeshTriangle (mesh_id, first_edge_id, second_edge_id, third_edge_id)
 
-    ## @brief Sets mesh triangle from vertex IDs.
-    #
-    #  @warning
-    #  This routine is supposed to be used, when no edge information is available
-    #  per se. Edges are created on the fly within preCICE. This routine is
-    #  significantly slower than the one using edge IDs, since it needs to check,
-    #  whether an edge is created already or not.
-    #
-    #  @param[in] mesh_id ID of the mesh to add the triangle to
-    #  @param[in] first_vertex_id ID of the first vertex of the triangle
-    #  @param[in] second_vertex_id ID of the second vertex of the triangle
-    #  @param[in] third_vertex_id ID of the third vertex of the triangle
-    #
-    #  @pre edges with first_vertex_id, second_vertex_id, and third_vertex_id were added to the mesh with the ID meshID
-    #
     def set_mesh_triangle_with_edges (self, mesh_id, first_vertex_id, second_vertex_id, third_vertex_id):
+        """
+        Sets mesh triangle from vertex IDs.
+        WARNING: This routine is supposed to be used, when no edge information is available per se.
+        Edges are created on the fly within preCICE. This routine is significantly slower than the one
+        using edge IDs, since it needs to check, whether an edge is created already or not.
+
+        Parameters:
+            mesh_id (int): ID of the mesh to add the triangle to
+            first_vertex_id (int): ID of the first vertex of the triangle
+            second_vertex_id (int): ID of the second vertex of the triangle
+            third_vertex_id ID (int): of the third vertex of the triangle
+
+        Previous calls:
+            edges with first_vertex_id, second_vertex_id, and third_vertex_id were added to the mesh with the ID meshID
+        """
         self.thisptr.setMeshTriangleWithEdges (mesh_id, first_vertex_id, second_vertex_id, third_vertex_id)
 
-    ## @brief Sets mesh Quad from edge IDs.
-    #
-    #  @param[in] mesh_id ID of the mesh to add the Quad to
-    #  @param[in] first_edge_id ID of the first edge of the Quad
-    #  @param[in] second_edge_id ID of the second edge of the Quad
-    #  @param[in] third_edge_id ID of the third edge of the Quad
-    #  @param[in] fourth_edge_id ID of the forth edge of the Quad
-    #
-    #  @pre edges with first_edge_id, second_edge_id, third_edge_id, and fourth_edge_id were added to the mesh with the ID mesh_id
-    #
-    #  @warning Quads are not fully implemented yet.
-    #
     def set_mesh_quad (self, mesh_id, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id):
+        """
+        Sets mesh Quad from edge IDs.
+        WARNING: Quads are not fully implemented yet.
+
+        Parameters:
+            mesh_id (int): ID of the mesh to add the Quad to
+            first_edge_id (int): ID of the first edge of the Quad
+            second_edge_id (int): ID of the second edge of the Quad
+            third_edge_id (int): ID of the third edge of the Quad
+            fourth_edge_id (int): ID of the forth edge of the Quad
+
+        Previous calls:
+            edges with first_edge_id, second_edge_id, third_edge_id, and fourth_edge_id were added
+            to the mesh with the ID mesh_id
+        """
         self.thisptr.setMeshQuad (mesh_id, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id)
 
-    ## @brief Sets surface mesh quadrangle from vertex IDs.
-    #
-    #  @warning
-    #  This routine is supposed to be used, when no edge information is available
-    #  per se. Edges are created on the fly within preCICE. This routine is
-    #  significantly slower than the one using edge IDs, since it needs to check,
-    #  whether an edge is created already or not.
-    #
-    #  @param[in] mesh_id ID of the mesh to add the Quad to
-    #  @param[in] first_vertex_id ID of the first vertex of the Quad
-    #  @param[in] second_vertex_id ID of the second vertex of the Quad
-    #  @param[in] third_vertex_id ID of the third vertex of the Quad
-    #  @param[in] fourth_vertex_id ID of the fourth vertex of the Quad
-    #
-    #  @pre edges with first_vertex_id, second_vertex_id, third_vertex_id, and fourth_vertex_id were added to the mesh with the ID mesh_id
-    #
     def set_mesh_quad_with_edges (self, mesh_id, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
+        """
+        Sets surface mesh quadtriangle from vertex IDs.
+        WARNING: This routine is supposed to be used, when no edge information is available per se. Edges are
+                 created on the fly within preCICE. This routine is significantly slower than the one using
+                 edge IDs, since it needs to check, whether an edge is created already or not.
+
+        Parameters:
+            mesh_id (int): ID of the mesh to add the Quad to
+            first_vertex_id (int): ID of the first vertex of the Quad
+            second_vertex_id (int): ID of the second vertex of the Quad
+            third_vertex_id (int): ID of the third vertex of the Quad
+            fourth_vertex_id (int): ID of the fourth vertex of the Quad
+
+        Previous calls:
+            edges with first_vertex_id, second_vertex_id, third_vertex_id, and fourth_vertex_id were added
+            to the mesh with the ID mesh_id
+        """
         self.thisptr.setMeshQuadWithEdges (mesh_id, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id)
 
     # data access
-    ## @brief Checks if the data with given name is used by a solver and mesh.
-    #
-    #  @param[in] data_name the name of the data
-    #  @param[in] mesh_id the id of the associated mesh
-    #  @returns whether the mesh is used.
-    #
     def has_data (self, str data_name, mesh_id):
+        """
+        Checks if the data with given name is used by a solver and mesh.
+
+        Parameters:
+            data_name (string): the name of the data
+            mesh_id (int): ID of the associated mesh
+
+        Returns:
+            tag (bool): True if the mesh is used.
+        """
         return self.thisptr.hasData(convert(data_name), mesh_id)
 
-    ## @brief Returns the ID of the data associated with the given name and mesh.
-    #
-    #  @param[in] data_name the name of the data
-    #  @param[in] mesh_id the id of the associated mesh
-    #
-    #  @returns the id of the corresponding data
-    #
     def get_data_id (self, str data_name, mesh_id):
+        """
+        Returns the ID of the data associated with the given name and mesh.
+
+        Parameters:
+            data_name (string): the name of the data
+            mesh_id (int): ID of the associated mesh
+
+        Returns:
+            id (int): ID of the corresponding data
+        """
         return self.thisptr.getDataID (convert(data_name), mesh_id)
 
-    ## @brief Computes and maps all read data mapped to the mesh with given ID.
-    #
-    #  This is an explicit request to map read data to the Mesh associated with toMeshID.
-    #  It also computes the mapping if necessary.
-    #
-    #  @pre A mapping to to_mesh_id was configured.
-    #
     def map_read_data_to (self, to_mesh_id):
+        """
+        Computes and maps all read data mapped to the mesh with given ID.
+        This is an explicit request to map read data to the Mesh associated with toMeshID.
+        It also computes the mapping if necessary.
+
+        Parameters:
+            to_mesh_id (int): Id of mesh to map the read data to.
+
+        Previous calls:
+            A mapping to to_mesh_id was configured.
+        """
         self.thisptr.mapReadDataTo (to_mesh_id)
 
-    ## @brief Computes and maps all write data mapped from the mesh with given ID.
-    #
-    #  This is an explicit request to map write data from the Mesh associated with fromMeshID.
-    #  It also computes the mapping if necessary.
-    #
-    #  @pre A mapping from from_mesh_id was configured.
-    #
     def map_write_data_from (self, from_mesh_id):
+        """
+        Computes and maps all write data mapped from the mesh with given ID. This is an explicit request
+        to map write data from the Mesh associated with fromMeshID. It also computes the mapping if necessary.
+
+        Parameters:
+            from_mesh_id (int): ID from which to map write data
+
+        Previous calls:
+            A mapping from from_mesh_id was configured.
+        """
         self.thisptr.mapWriteDataFrom (from_mesh_id)
 
-    ## @brief Writes vector data given as block.
-    #
-    #  This function writes values of specified vertices to a dataID.
-    #  Values are provided as a block of continuous memory.
-    #  valueIndices contains the indices of the vertices
-    #
-    #  The 2D-format of values is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-    #  The 3D-format of values is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
-    #
-    #  @param[in] data_id ID to write to.
-    #  @param[in] value_indices Indices of the vertices.
-    #  @param[in] values pointer to the vector values.
-    #
-    #  @pre count of available elements at values matches the configured dimension * size
-    #  @pre count of available elements at valueIndices matches the given size
-    #  @pre initialize() has been called
-    #
-    #  @see Interface::set_mesh_vertex()
     def write_block_vector_data (self, data_id, value_indices, values):
+        """
+        Writes vector data given as block. This function writes values of specified vertices to a dataID.
+        Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices
+        The 2D-format of values is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+        The 3D-format of values is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+
+        Parameters:
+            data_id (int): ID to write to.
+            value_indices (array): Indices of the vertices.
+            values (pointer): a pointer to the vector values.
+
+        Previous calls:
+            count of available elements at values matches the configured dimension * size
+            count of available elements at valueIndices matches the given size
+            initialize() has been called
+
+        Refer:
+            Interface::set_mesh_vertex()
+        """
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
         size, dimensions = values.shape
@@ -577,24 +652,25 @@ cdef class Interface:
         size = value_indices.size
         self.thisptr.writeBlockVectorData (data_id, size, <const int*>_value_indices.data, <const double*>_values.data)
 
-    ## @brief Writes vector data to a vertex
-    #
-    #  This function writes a value of a specified vertex to a dataID.
-    #  Values are provided as a block of continuous memory.
-    #
-    #  The 2D-format of value is (x, y)
-    #  The 3D-format of value is (x, y, z)
-    #
-    #  @param[in] data_id ID to write to.
-    #  @param[in] value_index Index of the vertex.
-    #  @param[in] value pointer to the vector value.
-    #
-    #  @pre count of available elements at value matches the configured dimension
-    #  @pre initialize() has been called
-    #
-    #  @see Interface::set_mesh_vertex()
-    #
     def write_vector_data (self, data_id, value_index, value):
+        """
+        Wrties vector data to a vertex. This function writes a value of a specified vertex to a dataID.
+        Values are provided as a block of continuous memory.
+        The 2D-format of value is (x, y)
+        The 3D-format of value is (x, y, z)
+
+        Parameters:
+            data_id (int): ID to write to.
+            value_index (int): Index of the vertex.
+            value (pointer): pointer to the vector value.
+
+        Previous calls:
+            count of available elements at value matches the configured dimension
+            initialize() has been called
+
+        Refer:
+            Interface::set_mesh_vertex()
+        """
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
         dimensions = value.size
@@ -602,65 +678,71 @@ cdef class Interface:
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
         self.thisptr.writeVectorData (data_id, value_index, <const double*>_value.data)
 
-    ## @brief Writes scalar data given as block.
-    #
-    #  This function writes values of specified vertices to a dataID.
-    #  Values are provided as a block of continuous memory.
-    #  valueIndices contains the indices of the vertices
-    #
-    #  @param[in] data_id ID to write to.
-    #  @param[in] value_indices Indices of the vertices.
-    #  @param[in] values pointer to the values.
-    #
-    #  @pre count of available elements at values matches the given size
-    #  @pre count of available elements at valueIndices matches the given size
-    #  @pre initialize() has been called
-    #
-    #  @see Interface::set_mesh_vertex()
-    #
     def write_block_scalar_data (self, data_id, value_indices, values):
+        """
+        Writes scalar data given as a block. This function writes values of specified vertices to a dataID.
+        Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices
+
+        Parameters:
+            data_id (int): ID to write to.
+            value_indices (array): Indices of the vertices.
+            values (pointer): values to the values.
+
+        Previous calls:
+            count of available elements at values matches the given size
+            count of available elements at valueIndices matches the given size
+            initialize() has been called
+
+        Refer:
+            Interface::set_mesh_vertex()
+        """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
         assert(_values.size == _value_indices.size)
         size = value_indices.size
         self.thisptr.writeBlockScalarData (data_id, size, <const int*>_value_indices.data, <const double*>_values.data)
 
-    ##  @brief Writes scalar data to a vertex
-    #
-    #  This function writes a value of a specified vertex to a dataID.
-    #
-    #  @param[in] data_id ID to write to.
-    #  @param[in] value_index Index of the vertex.
-    #  @param[in] value the value to write.
-    #
-    #  @pre initialize() has been called
-    #
-    #  @see Interface::set_mesh_vertex()
-    #
     def write_scalar_data (self, data_id, value_index, double value):
+        """
+        Writes scalar data to a vertex
+        This function writes a value of a specified vertex to a dataID.
+
+        Parameters:
+            data_id (int): ID to write to.
+            value_index (int): Index of the vertex.
+            value (double): the value to write.
+
+        Previous calls:
+            initialize() has been called
+
+        Refer:
+            Interface::set_mesh_vertex()
+        """
         self.thisptr.writeScalarData (data_id, value_index, value)
 
-    ## @brief Reads vector data into a provided block.
-    #
-    #  This function reads values of specified vertices from a dataID.
-    #  Values are read into a block of continuous memory.
-    #  valueIndices contains the indices of the vertices.
-    #
-    #  The 2D-format of values is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-    #  The 3D-format of values is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
-    #
-    #  @param[in] data_id ID to read from.
-    #  @param[in] value_indices Indices of the vertices.
-    #
-    #  @pre count of available elements at values matches the configured dimension * size
-    #  @pre count of available elements at valueIndices matches the given size
-    #  @pre initialize() has been called
-    #
-    #  @post values contain the read data as specified in the above format.
-    #
-    #  @see Interface::set_mesh_vertex()
-    #
     def read_block_vector_data (self, data_id, value_indices):
+        """
+        Reads vector data into a provided block. This function reads values of specified vertices
+        from a dataID. Values are read into a block of continuous memory. valueIndices contains
+        the indices of the vertices.
+        The 2D-format of values is (d0x, d0y, d1x, d1y, ..., dnx, dny)
+        The 3D-format of values is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+
+        Parameters:
+            data_id (int): ID to read from.
+            value_indices (array): Indices of the vertices.
+
+        Previous calls:
+            count of available elements at values matches the configured dimension * size
+            count of available elements at valueIndices matches the given size
+            initialize() has been called
+
+        Returns:
+            values: values contain the read data as specified in the above format.
+
+        Refer:
+            Interface::set_mesh_vertex()
+        """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         size = _value_indices.size
         dimensions = self.get_dimensions()
@@ -668,84 +750,99 @@ cdef class Interface:
         self.thisptr.readBlockVectorData (data_id, size, <const int*>_value_indices.data, <double*>_values.data)
         return _values.reshape((size, dimensions))
 
-    ## @brief Reads vector data form a vertex
-    #
-    #  This function reads a value of a specified vertex from a dataID.
-    #  Values are provided as a block of continuous memory.
-    #
-    #  The 2D-format of value is (x, y)
-    #  The 3D-format of value is (x, y, z)
-    #
-    #  @param[in] data_id ID to read from.
-    #  @param[in] value_index Index of the vertex.
-    #
-    #  @pre count of available elements at value matches the configured dimension
-    #  @pre initialize() has been called
-    #
-    #  @post value contains the read data as specified in the above format.
-    #
-    #  @see Interface::set_mesh_vertex()
-    #
     def read_vector_data (self, data_id, value_index):
+        """
+        Reads vector data form a vertex. This function reads a value of a specified vertex
+        from a dataID. Values are provided as a block of continuous memory.
+        The 2D-format of value is (x, y)
+        The 3D-format of value is (x, y, z)
+
+        Parameters:
+            data_id (int): ID to read from.
+            value_index (int): Index of the vertex.
+
+        Previous calls:
+            count of available elements at value matches the configured dimension
+            initialize() has been called
+
+        Returns:
+            value: value contains the read data as specified in the above format.
+
+        Refer:
+            Interface::set_mesh_vertex()
+        """
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
         self.thisptr.readVectorData (data_id, value_index, <double*>_value.data)
         return _value
 
-    ## @brief Reads scalar data as a block.
-    #
-    #  This function reads values of specified vertices from a dataID.
-    #  Values are provided as a block of continuous memory.
-    #  valueIndices contains the indices of the vertices.
-    #
-    #  @param[in] data_id ID to read from.
-    #  @param[in] value_indices Indices of the vertices.
-    #
-    #  @pre count of available elements at values matches the given size
-    #  @pre count of available elements at valueIndices matches the given size
-    #  @pre initialize() has been called
-    #
-    #  @post values contains the read data.
-    #
-    #  @see Interface::set_mesh_vertex()
-    #
     def read_block_scalar_data (self, data_id, value_indices):
+        """
+        Reads scalar data as a block. This function reads values of specified vertices from a dataID.
+        Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices.
+
+        Parameters:
+            data_id (int): ID to read from.
+            value_indices (array): Indices of the vertices.
+
+        Previous calls:
+            count of available elements at values matches the given size
+            count of available elements at valueIndices matches the given size
+            initialize() has been called
+
+        Returns:
+            values (array): Contains the read data
+
+        Refer:
+            Interface::set_mesh_vertex()
+        """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         size = _value_indices.size
         cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
         self.thisptr.readBlockScalarData (data_id, size, <const int*>_value_indices.data, <double*>_values.data)
         return _values
 
-    ## @brief Reads scalar data of a vertex.
-    #
-    #  This function reads a value of a specified vertex from a dataID.
-    #
-    #  @param[in] data_id ID to read from.
-    #  @param[in] value_index Index of the vertex.
-    #
-    #  @pre initialize() has been called
-    #
-    #  @post value contains the read data.
-    #
-    #  @see Interface::set_mesh_vertex()
-    #
     def read_scalar_data (self, data_id, value_index):
+        """
+        Reads scalar data of a vertex. This function needs a value of a specified vertex from a dataID.
+
+        Parameters:
+            data_id (int): ID to read from.
+            value_index (int): Index of the vertex.
+
+        Previous calls:
+            initialize() has been called.
+
+        Returns:
+            value (double): contains the read value
+
+        Refer:
+            Interface::set_mesh_vertex()
+        """
         cdef double _value
         self.thisptr.readScalarData (data_id, value_index, _value)
         return _value
 
-## @brief Current preCICE version information.
 def get_version_information ():
+    """
+    Returns: Current preCICE version information
+    """
     return SolverInterface.getVersionInformation()
 
-## @brief Name of action for writing initial data.
 def action_write_initial_data ():
+    """
+    Returns: Name of action for writing initial data
+    """
     return SolverInterface.actionWriteInitialData()
 
-## @brief Name of action for writing iteration checkpoint.
 def action_write_iteration_checkpoint ():
+    """
+    Returns: Name of action for writing iteration checkpoint
+    """
     return SolverInterface.actionWriteIterationCheckpoint()
 
-## @brief Name of action for reading iteration checkpoint.
 def action_read_iteration_checkpoint ():
+    """
+    Returns: Name of action for reading iteration checkpoint
+    """
     return SolverInterface.actionReadIterationCheckpoint()
