@@ -24,26 +24,32 @@ cdef bytes convert(s):
     else:
         raise TypeError("Could not convert.")
 
-## @package docstring
-#  @brief Main Application Programming Interface of preCICE
-#
-#  To adapt a solver to preCICE, follow the following main structure:
-#
-#  -# Create an object of SolverInterface with Interface()
-#  -# Configure the object with Interface::configure()
-#  -# Initialize preCICE with Interface::initialize()
-#  -# Advance to the next (time)step with Interface::advance()
-#  -# Finalize preCICE with Interface::finalize()
-#
-#  @note
-#  We use solver, simulation code, and participant as synonyms.
-#  The preferred name in the documentation is participant.
-#
+
 cdef class Interface:
-    # construction and configuration
-    # constructor
+    """
+    Main Application Programming Interface of preCICE.
+    To adapt a solver to preCICE, follow the following main structure:
+        - Create an object of SolverInterface with Interface()
+        - Configure the object with Interface::configure()
+        - Initialize preCICE with Interface::initialize()
+        - Advance to the next (time)step with Interface::advance()
+        - Finalize preCICE with Interface::finalize()
+        - We use solver, simulation code, and participant as synonyms.
+        - The preferred name in the documentation is participant.
+    """
 
     def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
+        """
+        Constructor of Interface class.
+        Parameters:
+            solver_name (string): Name of the solver
+            configuration_file_name (string): Name of the preCICE config file
+            solver_process_index (int): Rank of the process
+            solver_process_size (int): Size of the process
+
+        Returns:
+            SolverInterface (pointer): Pointer pointing to the defined coupling interface
+        """
         cdef void* communicator_ptr
         if communicator:
             communicator_ptr = <void*> communicator
@@ -52,24 +58,25 @@ cdef class Interface:
             self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
         pass
 
-    # destructor
     def __dealloc__ (self):
+        """
+        Destructor of Interface class
+        """
         del self.thisptr
 
     # steering methods
-    ## @brief Fully initializes preCICE
-    #
-    #  @pre configure() has been called successfully.
-    #  @pre initialize() has not yet been called.
-    #
-    #  @post Parallel communication to the coupling partner/s is setup.
-    #  @post Meshes are exchanged between coupling partners and the parallel partitions are created.
-    #  @post [Serial Coupling Scheme] If the solver is not starting the simulation, coupling data is received
-    #  from the coupling partner's first computation.
-    #
-    #  @return Maximum length of first timestep to be computed by the solver.
-    #
+
     def initialize (self):
+        """
+        Fully initializes preCICE.
+        This function handles:
+            - Parallel communication to the coupling partner/s is setup.
+            - Meshes are exchanged between coupling partners and the parallel partitions are created.
+            - [Serial Coupling Scheme] If the solver is not starting the simulation, coupling data is received
+                                       from the coupling partner's first computation.
+        Returns:
+            Maximum length of first timestep to be computed by the solver.
+        """
         return self.thisptr.initialize ()
 
     ## @brief Initializes coupling data.
