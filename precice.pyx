@@ -79,136 +79,149 @@ cdef class Interface:
         """
         return self.thisptr.initialize ()
 
-    ## @brief Initializes coupling data.
-    #
-    #  The starting values for coupling data are zero by default.
-    #
-    #  To provide custom values, first set the data using the Data Access methods and
-    #  call this method to finally exchange the data.
-    #
-    #  \par Serial Coupling Scheme
-    #  Only the first participant has to call this method, the second participant
-    #  receives the values on calling initialize().
-    #
-    #  \par Parallel Coupling Scheme
-    #  Values in both directions are exchanged.
-    #  Both participants need to call initializeData().
-    #
-    #  @pre initialize() has been called successfully.
-    #  @pre The action WriteInitialData is required
-    #  @pre advance() has not yet been called.
-    #  @pre finalize() has not yet been called.
-    #
-    #  @post Initial coupling data was exchanged.
-    #
-    #  @see Interface()::is_action_required()
-    #  @see precice()::constants()::actionWriteInitialData()
-    #
+
     def initialize_data (self):
+        """
+        Initializes coupling data. The starting values for coupling data are zero by default.
+        To provide custom values, first set the data using the Data Access methods and
+        call this method to finally exchange the data.
+
+        Serial Coupling Scheme: Only the first participant has to call this method, the second participant
+            receives the values on calling initialize().
+
+        Parallel Coupling Scheme:
+            - Values in both directions are exchanged.
+            - Both participants need to call initializeData().
+
+        Previous calls:
+            initialize() has been called successfully.
+            The action WriteInitialData is required
+            advance() has not yet been called.
+            finalize() has not yet been called.
+
+        Tasks completed:
+            Initial coupling data was exchanged.
+
+        Refer:
+            Interface()::is_action_required()
+            precice()::constants()::actionWriteInitialData()
+        """
         self.thisptr.initializeData ()
 
-    ## @brief Advances preCICE after the solver has computed one timestep.
-    #
-    #  @param[in] computed_timestep_length Length of timestep used by the solver.
-    #
-    #  @pre initialize() has been called successfully.
-    #  @pre The solver has computed one timestep.
-    #  @pre The solver has written all coupling data.
-    #  @pre finalize() has not yet been called.
-    #
-    #  @post Coupling data values specified in the configuration are exchanged.
-    #  @post Coupling scheme state (computed time, computed timesteps, ...) is updated.
-    #  @post The coupling state is logged.
-    #  @post Configured data mapping schemes are applied.
-    #  @post [Second Participant] Configured post processing schemes are applied.
-    #  @post Meshes with data are exported to files if configured.
-    #
-    #  @return Maximum length of next timestep to be computed by solver.
-    #
+
     def advance (self, double computed_timestep_length):
+        """
+        Advances preCICE after the solver has computed one timestep.
+
+        Parameters:
+            computed_timestep_length (double): Length of timestep used by the solver.
+
+        Previous calls:
+            initialize() has been called successfully.
+            The solver has computed one timestep.
+            The solver has written all coupling data.
+            finalize() has not yet been called.
+
+        Tasks completed:
+            Coupling data values specified in the configuration are exchanged.
+            Coupling scheme state (computed time, computed timesteps, ...) is updated.
+            The coupling state is logged.
+            Configured data mapping schemes are applied.
+            [Second Participant] Configured post processing schemes are applied.
+            Meshes with data are exported to files if configured.
+
+        Returns:
+            max_timestep (double): Maximum length of next timestep to be computed by solver.
+        """
         return self.thisptr.advance (computed_timestep_length)
 
-    ## @brief Finalizes preCICE.
-    #
-    #  @pre initialize() has been called successfully.
-    #
-    #  @post Communication channels are closed.
-    #  @post Meshes and data are deallocated
-    #
-    #  @see is_coupling_ongoing()
-    #
+
     def finalize (self):
+        """
+        Finalizes preCICE.
+
+        Previous calls:
+            initialize() has been called successfully.
+
+        Tasks completed:
+            Communication channels are closed.
+            Meshes and data are deallocated
+
+        Refer:
+            is_coupling_ongoing()
+        """
         self.thisptr.finalize ()
 
     # status queries
-    ## @brief Returns the number of spatial dimensions configured.
-    #
-    #  @returns the configured dimension
-    #
-    #  Currently, two and three dimensional problems can be solved using preCICE.
-    #  The dimension is specified in the XML configuration.
-    #
-    #  @pre configure() has been called successfully.
-    #
+
     def get_dimensions (self):
+        """
+        Returns the number of spatial dimensions configured. Currently, two and three dimensional problems
+        can be solved using preCICE. The dimension is specified in the XML configuration.
+
+        Returns:
+            dimension (int): the configured dimension
+        """
         return self.thisptr.getDimensions ()
 
-    ## @brief Checks if the coupled simulation is still ongoing.
-    #
-    #  @returns whether the coupling is ongoing.
-    #
-    #  A coupling is ongoing as long as
-    #  - the maximum number of timesteps has not been reached, and
-    #  - the final time has not been reached.
-    #
-    #  @pre initialize() has been called successfully.
-    #
-    #  @see advance()
-    #
-    #  @note
-    #  The user should call finalize() after this function returns false.
-    #
+
     def is_coupling_ongoing (self):
+        """
+        Checks if the coupled simulation is still ongoing.
+        A coupling is ongoing as long as
+            - the maximum number of timesteps has not been reached, and
+            - the final time has not been reached.
+        The user should call finalize() after this function returns false.
+
+        Previous calls:
+           initialize() has been called successfully.
+
+        Refer:
+            advance()
+
+        Returns:
+            tag (bool): whether the coupling is ongoing.
+        """
         return self.thisptr.isCouplingOngoing ()
 
-    ## @brief Checks if new data to be read is available.
-    #
-    #  @returns whether new data is available to be read.
-    #
-    #  Data is classified to be new, if it has been received while calling
-    #  initialize() and before calling advance(), or in the last call of advance().
-    #  This is always true, if a participant does not make use of subcycling, i.e.
-    #  choosing smaller timesteps than the limits returned in intitialize() and
-    #  advance().
-    #
-    #  @pre initialize() has been called successfully.
-    #
-    #  @note
-    #  It is allowed to read data even if this function returns false.
-    #  This is not recommended due to performance reasons.
-    #  Use this function to prevent unnecessary reads.
-    #
+
     def is_read_data_available (self):
+        """
+        Checks if new data to be read is available. Data is classified to be new, if it has been received
+        while calling initialize() and before calling advance(), or in the last call of advance().
+        This is always true, if a participant does not make use of subcycling, i.e. choosing smaller
+        timesteps than the limits returned in intitialize() and advance().
+
+        It is allowed to read data even if this function returns false. This is not recommended
+        due to performance reasons. Use this function to prevent unnecessary reads.
+
+        Previous calls:
+           initialize() has been called successfully.
+
+        Returns:
+            tag (bool): whether new data is available to be read.
+        """
         return self.thisptr.isReadDataAvailable ()
 
-    ## @brief Checks if new data has to be written before calling advance().
-    #
-    #  @param[in] computed_timestep_length Length of timestep used by the solver.
-    #
-    #  @return whether new data has to be written.
-    #
-    #  This is always true, if a participant does not make use of subcycling, i.e.
-    #  choosing smaller timesteps than the limits returned in intitialize() and
-    #  advance().
-    #
-    #  @pre initialize() has been called successfully.
-    #
-    #  @note
-    #  It is allowed to write data even if this function returns false.
-    #  This is not recommended due to performance reasons.
-    #  Use this function to prevent unnecessary writes.
-    #
+
     def is_write_data_required (self, double computed_timestep_length):
+        """
+        Checks if new data has to be written before calling advance().
+        This is always true, if a participant does not make use of subcycling, i.e. choosing smaller
+        timesteps than the limits returned in intitialize() and advance().
+
+        It is allowed to write data even if this function returns false. This is not recommended
+        due to performance reasons. Use this function to prevent unnecessary writes.
+
+        Parameters:
+            computed_timestep_length (double): Length of timestep used by the solver.
+
+        Previous calls:
+            initialize() has been called successfully.
+
+        Returns:
+            tag (bool): whether new data has to be written.
+        """
         return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
     ## @brief Checks if the current coupling timewindow is completed.
