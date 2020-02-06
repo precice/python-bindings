@@ -339,7 +339,7 @@ cdef class Interface:
 
     def get_mesh_ids (self):
         """
-        Returns the id-set of all used meshes by this participant.
+        Returns the ID-set of all used meshes by this participant.
 
         Returns:
             id_array (array of ints): Set of IDs
@@ -350,6 +350,7 @@ cdef class Interface:
     def get_mesh_handle(self, mesh_name):
         """
         Returns a handle to a created mesh.
+        WARNING: This function is not yet implemented in preCICE
 
         Parameters:
             mesh_name (string): name of the mesh
@@ -368,7 +369,7 @@ cdef class Interface:
         Creates a mesh vertex
 
         Parameters:
-            mesh_id (int): the id of the mesh to add the vertex to.
+            mesh_id (int): ID of the mesh to add the vertex to.
             position (pointer): a pointer to the coordinates of the vertex.
 
         Previous calls:
@@ -396,7 +397,7 @@ cdef class Interface:
             mesh_id (int): ID of the mesh
 
         Returns:
-            sum (int): amount of vertices of the mesh
+            sum (int): number of vertices of the mesh
         """
         return self.thisptr.getMeshVertexSize(mesh_id)
 
@@ -406,9 +407,25 @@ cdef class Interface:
 
         Parameters:
             mesh_id (int): ID of the mesh to add the vertices to.
-            positions (pointer): a pointer to the coordinates of the vertices
-                                 The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-                                 The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+            positions (pointer): a pointer to the coordinates of the vertices.
+                Coordinates of vertices are stored in a numpy array [N x D] where
+                N = number of vertices and D = dimensions of geometry
+
+                Examples:
+                For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
+                >>> np.zeros([5, 2])
+                array([[x0, y0],
+                       [x1, y1],
+                       [x2, y2],
+                       [x3, y3],
+                       [x4, y4]])
+                For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
+                >>> np.zeros([5, 3])
+                array([[x0, y0, z0],
+                       [x1, y1, z1],
+                       [x2, y2, z2],
+                       [x3, y3, z3],
+                       [x4, y4, z4]])
 
         Previous calls:
             initialize() has not yet been called
@@ -416,7 +433,7 @@ cdef class Interface:
             count of available elements at ids matches size
 
         Returns:
-            ids (array): IDs of the created vertices
+            ids (numpy array): IDs of the created vertices
 
         Refer:
             get_dimensions()
@@ -436,16 +453,32 @@ cdef class Interface:
 
         Parameters:
             mesh_id (int): ID of the mesh to read the vertices from.
-            ids (array): The ids of the vertices to lookup
+            ids (numpy array): Numpy array of shape N (number of vertices) of IDs of the vertices to lookup
 
         Previous calls:
             count of available elements at positions matches the configured dimension * size
             count of available elements at ids matches size
 
         Returns:
-            positions (pointer): a pointer to memory to write the coordinates to
-                                 The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-                                 The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+            positions (pointer): a pointer to the coordinates of the vertices.
+                Coordinates of vertices are stored in a numpy array [N x D] where
+                N = number of vertices and D = dimensions of geometry
+
+                Examples:
+                For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
+                >>> np.zeros([5, 2])
+                array([[x0, y0],
+                       [x1, y1],
+                       [x2, y2],
+                       [x3, y3],
+                       [x4, y4]])
+                For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
+                >>> np.zeros([5, 3])
+                array([[x0, y0, z0],
+                       [x1, y1, z1],
+                       [x2, y2, z2],
+                       [x3, y3, z3],
+                       [x4, y4, z4]])
 
         Refer:
             get_dimensions()
@@ -463,9 +496,25 @@ cdef class Interface:
 
         Parameters:
             mesh_id (int): ID of the mesh to retrieve positions from
-            positions (n dims array): Positions to find ids for.
-                                      The 2D-format is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-                                      The 3D-format is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+            positions (pointer): a pointer to the coordinates of the vertices.
+                Coordinates of vertices are stored in a numpy array [N x D] where
+                N = number of vertices and D = dimensions of geometry
+
+                Examples:
+                For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
+                >>> np.zeros([5, 2])
+                array([[x0, y0],
+                       [x1, y1],
+                       [x2, y2],
+                       [x3, y3],
+                       [x4, y4]])
+                For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
+                >>> np.zeros([5, 3])
+                array([[x0, y0, z0],
+                       [x1, y1, z1],
+                       [x2, y2, z2],
+                       [x3, y3, z3],
+                       [x4, y4, z4]])
 
         Previous calls:
             count of available elements at positions matches the configured dimension * size
@@ -626,13 +675,28 @@ cdef class Interface:
         """
         Writes vector data given as block. This function writes values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices
-        The 2D-format of values is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-        The 3D-format of values is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+        Values are stored in a numpy array [N x D] where N = number of vertices and D = dimensions of geometry
+
+        Examples:
+        For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
+        >>> np.zeros([5, 2])
+        array([[x0, y0],
+               [x1, y1],
+               [x2, y2],
+               [x3, y3],
+               [x4, y4]])
+        For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
+        >>> np.zeros([5, 3])
+        array([[x0, y0, z0],
+               [x1, y1, z1],
+               [x2, y2, z2],
+               [x3, y3, z3],
+               [x4, y4, z4]])
 
         Parameters:
             data_id (int): ID to write to.
-            value_indices (array): Indices of the vertices.
-            values (pointer): a pointer to the vector values.
+            value_indices (numpy array): Indices of the vertices in numpy array of shape N
+            values (numpy array): vector values in the above format
 
         Previous calls:
             count of available elements at values matches the configured dimension * size
@@ -656,13 +720,13 @@ cdef class Interface:
         """
         Wrties vector data to a vertex. This function writes a value of a specified vertex to a dataID.
         Values are provided as a block of continuous memory.
-        The 2D-format of value is (x, y)
-        The 3D-format of value is (x, y, z)
+        The 2D-format of value is a numpy array of shape 2
+        The 3D-format of value is a numpy array of shape 3
 
         Parameters:
             data_id (int): ID to write to.
             value_index (int): Index of the vertex.
-            value (pointer): pointer to the vector value.
+            value (numpy array): numpy array of vector value
 
         Previous calls:
             count of available elements at value matches the configured dimension
@@ -681,12 +745,11 @@ cdef class Interface:
     def write_block_scalar_data (self, data_id, value_indices, values):
         """
         Writes scalar data given as a block. This function writes values of specified vertices to a dataID.
-        Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices
 
         Parameters:
             data_id (int): ID to write to.
             value_indices (array): Indices of the vertices.
-            values (pointer): values to the values.
+            values (numpy array): A numpy array of shape N carrying values to be written
 
         Previous calls:
             count of available elements at values matches the given size
@@ -725,8 +788,24 @@ cdef class Interface:
         Reads vector data into a provided block. This function reads values of specified vertices
         from a dataID. Values are read into a block of continuous memory. valueIndices contains
         the indices of the vertices.
-        The 2D-format of values is (d0x, d0y, d1x, d1y, ..., dnx, dny)
-        The 3D-format of values is (d0x, d0y, d0z, d1x, d1y, d1z, ..., dnx, dny, dnz)
+        Return values are stored in a numpy array [N x D] where N = number of vertices
+        and D = dimensions of geometry
+
+        Examples:
+        For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
+        >>> np.zeros([5, 2])
+        array([[x0, y0],
+               [x1, y1],
+               [x2, y2],
+               [x3, y3],
+               [x4, y4]])
+        For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
+        >>> np.zeros([5, 3])
+        array([[x0, y0, z0],
+               [x1, y1, z1],
+               [x2, y2, z2],
+               [x3, y3, z3],
+               [x4, y4, z4]])
 
         Parameters:
             data_id (int): ID to read from.
@@ -738,7 +817,7 @@ cdef class Interface:
             initialize() has been called
 
         Returns:
-            values: values contain the read data as specified in the above format.
+            values: numpy arrays in above format containing the read data.
 
         Refer:
             Interface::set_mesh_vertex()
@@ -754,8 +833,8 @@ cdef class Interface:
         """
         Reads vector data form a vertex. This function reads a value of a specified vertex
         from a dataID. Values are provided as a block of continuous memory.
-        The 2D-format of value is (x, y)
-        The 3D-format of value is (x, y, z)
+        The 2D-format of return value is a numpy array of shape 2
+        The 3D-format of return value is a numpy array of shape 3
 
         Parameters:
             data_id (int): ID to read from.
@@ -791,7 +870,7 @@ cdef class Interface:
             initialize() has been called
 
         Returns:
-            values (array): Contains the read data
+            values (array): Contains the read data in the form of a numpy array of shape N
 
         Refer:
             Interface::set_mesh_vertex()
