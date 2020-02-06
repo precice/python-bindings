@@ -43,32 +43,18 @@ cdef class Interface:
     # construction and configuration
     # constructor
 
-    def __cinit__ (self, solver_name, solver_process_index, solver_process_size):
-        self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), solver_process_index, solver_process_size)
+    def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
+        cdef void* communicator_ptr
+        if communicator:
+            communicator_ptr = <void*> communicator
+            self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size, communicator_ptr)
+        else:
+            self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
         pass
 
     # destructor
     def __dealloc__ (self):
         del self.thisptr
-
-    ## @brief Configures preCICE from the given xml file.
-    #
-    #  Only after the configuration a usable state of a SolverInterface
-    #  object is achieved. However, most of the functionalities in preCICE can be
-    #  used only after initialize() has been called. Some actions, e.g. specifying
-    #  the solvers interface mesh, have to be done before initialize is called.
-
-    #  In configure, the following is done:
-    #  - The XML configuration for preCICE is parsed and all objects containing
-    #    data are created, but not necessarily filled with data.
-    #  - Communication between master and slaves is established.
-    #
-    #  @pre configure() has not yet been called
-    #
-    #  @param[in] configuration_file_name Name (with path) of the xml configuration file to be read.
-    #
-    def configure (self, configuration_file_name):
-        self.thisptr.configure (convert(configuration_file_name))
 
     # steering methods
     ## @brief Fully initializes preCICE
@@ -218,7 +204,7 @@ cdef class Interface:
     def is_write_data_required (self, double computed_timestep_length):
         return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
-    ## @brief Checks if the current coupling timestep is completed.
+    ## @brief Checks if the current coupling timewindow is completed.
     #
     #  @returns whether the timestep is complete.
     #
@@ -229,8 +215,8 @@ cdef class Interface:
     #
     #  @pre initialize() has been called successfully.
     #
-    def is_timestep_complete (self):
-        return self.thisptr.isTimestepComplete ()
+    def is_time_window_complete (self):
+        return self.thisptr.isTimeWindowComplete ()
 
     ## @brief Returns whether the solver has to evaluate the surrogate model representation.
     #
@@ -289,8 +275,8 @@ cdef class Interface:
     #  @see require_action()
     #  @see cplscheme::constants
     #
-    def fulfilled_action (self, action):
-        self.thisptr.fulfilledAction (action)
+    def mark_action_fulfilled (self, action):
+        self.thisptr.markActionFulfilled (action)
 
     # mesh access
     ## @brief Checks if the mesh with given name is used by a solver.
@@ -727,6 +713,10 @@ cdef class Interface:
         cdef double _value
         self.thisptr.readScalarData (data_id, value_index, _value)
         return _value
+
+## @brief Current preCICE version information.
+def get_version_information ():
+    return SolverInterface.getVersionInformation()
 
 ## @brief Name of action for writing initial data.
 def action_write_initial_data ():

@@ -1,5 +1,9 @@
-Python language bindings for preCICE
-------------------------------------
+Python language bindings for the C++ library preCICE
+----------------------------------------------------
+
+<a style="text-decoration: none" href="https://travis-ci.org/precice/python-bindings" target="_blank">
+    <img src="https://travis-ci.org/precice/python-bindings.svg?branch=develop" alt="Build status">
+</a>
 
 # Installing the package
 
@@ -17,11 +21,11 @@ $ pip3 install --user .
 ```
 *note the dot at the end of the line*
 
-This will fetch cython, compile the bindings and finally install the precice package.
+This will fetch cython, compile the bindings and finally install the package pyprecice.
 
 ### preCICE at custom location (setting PATHS)
 
-If preCICE was installed in a custom prefix, or not installed at all, you have to extend the following environment variables:
+If preCICE (the C++ library) was installed in a custom prefix, or not installed at all, you have to extend the following environment variables:
 - `LIBRARY_PATH`, `LD_LIBRARY_PATH` to the library location, or `$prefix/lib`
 - `CPATH` either to the `src` directory or the `$prefix/include`
 
@@ -106,8 +110,8 @@ python3 setup.py test
 
 # Using with MPI
 
-If precice was compiled with MPI, you have to initialize MPI prior to configuring a SolverInterface.
-To do so, install the package `mpi4py` and import `MPI` in your python module.
+If preCICE was compiled with MPI, you have to initialize MPI prior to initializing the Interface object.
+To do so, install the package `mpi4py` and import `MPI`.
 
 ```
 $ pip3 install --user mpi4py
@@ -118,9 +122,25 @@ from mpi4py import MPI # Initialize MPI
 ```
 
 **NOTE:**
-- For an example of how `precice` can be used, refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API).
+- For an example of how `pyprecice` can be used, refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API).
 - In case the compilation fails with `shared_ptr.pxd not found` messages, check if you use the latest version of Cython.
-- If you want to use the old interface (precice version < 2.0.0), please refer to the documentation of the corresponding preCICE version
+- If you want to use the old python bindings (released with preCICE version < 2.0.0), please refer to the documentation of the corresponding preCICE version
+
+# Troubleshooting
+
+### python bindings: version of pip3 is too old
+
+If you see the following error
+```
+error: option --single-version-externally-managed not recognized
+```
+your version of pip might be too old. Please update pip and try again. One possible way for updating pip is to run the following commands:
+```
+wget -q https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python3 get-pip.py
+```
+*Be aware that `python3 get-pip.py` might require root privileges.*
+
+Check your version of pip via `pip3 --version`. For version 8.1.1 and 9.0.1 we know that this problem occurs. *Remark:* you get versions 8.1.1 of pip if you use `sudo apt install python3-pip` on Ubuntu 16.04 (pip version 9.0.1 on Ubuntu 18.04)
 
 # Contributors
 

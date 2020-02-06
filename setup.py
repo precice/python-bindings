@@ -11,12 +11,13 @@ from distutils.command.install import install
 from distutils.command.build import build
 from packaging import version
 import pip
+import numpy
 
 assert(version.parse(pip.__version__) >= version.parse("10.0.1"))  # minimum version 10.0.1 is required. See https://github.com/precice/precice/wiki/Non%E2%80%93standard-APIs#python-bindings-version-of-pip3-is-too-old
 
 # name of Interfacing API
-APPNAME = "precice"
-APPVERSION = "2.0.0"  # todo: should be replaced with precice.get_version() as soon as it exists , see https://github.com/precice/precice/issues/261
+APPNAME = "pyprecice"
+APPVERSION = "0.1.0"  # todo: should be replaced with precice.get_version() as soon as it exists , see https://github.com/precice/precice/issues/261
 
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -64,9 +65,10 @@ def get_extensions(mpi_compiler_wrapper, is_test):
     compile_args += mpi_compile_args
     compile_args.append("-Wall")
     compile_args.append("-std=c++11")
+    compile_args.append("-I{}".format(numpy.get_include()))
 
     link_args += mpi_link_args
-    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, APPNAME) + ".pyx"]
+    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "precice") + ".pyx"]
     test_sources = [os.path.join(PYTHON_BINDINGS_PATH, "test", "test_bindings_module" + ".pyx")]
     if not is_test:
         link_args.append("-lprecice")
@@ -76,7 +78,7 @@ def get_extensions(mpi_compiler_wrapper, is_test):
 
     return [
         Extension(
-                APPNAME,
+                "precice",
                 sources=bindings_sources,
                 libraries=[],
                 language="c++",
@@ -177,7 +179,7 @@ setup(
     name=APPNAME,
     version=APPVERSION,
     description='Python language bindings for preCICE coupling library',
-    url='https://github.com/precice/precice',
+    url='https://github.com/precice/python-bindings',
     author='the preCICE developers',
     author_email='info@precice.org',
     license='LGPL-3.0',
