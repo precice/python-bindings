@@ -17,7 +17,7 @@ assert(version.parse(pip.__version__) >= version.parse("10.0.1"))  # minimum ver
 
 # name of Interfacing API
 APPNAME = "pyprecice"
-APPVERSION = "2.0.0a1"  # todo: should be replaced with precice.get_version() as soon as it exists , see https://github.com/precice/precice/issues/261
+APPVERSION = "2.0.0a2"  # todo: should be replaced with precice.get_version() as soon as it exists , see https://github.com/precice/precice/issues/261
 
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 
