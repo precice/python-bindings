@@ -41,14 +41,22 @@ cdef class Interface:
     def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
         """
         Constructor of Interface class.
-        Parameters:
-            solver_name (string): Name of the solver
-            configuration_file_name (string): Name of the preCICE config file
-            solver_process_index (int): Rank of the process
-            solver_process_size (int): Size of the process
 
-        Returns:
-            SolverInterface (pointer): Pointer pointing to the defined coupling interface
+        Parameters
+        ----------
+        solver_name : string
+            Name of the solver
+        configuration_file_name : string
+            Name of the preCICE config file
+        solver_process_index : int
+            Rank of the process
+        solver_process_size : int
+            Size of the process
+
+        Returns
+        -------
+        SolverInterface : object
+            Object pointing to the defined coupling interface
         """
         cdef void* communicator_ptr
         if communicator:
@@ -74,7 +82,10 @@ cdef class Interface:
             - Meshes are exchanged between coupling partners and the parallel partitions are created.
             - [Serial Coupling Scheme] If the solver is not starting the simulation, coupling data is received
                                        from the coupling partner's first computation.
-        Returns:
+
+        Returns
+        -------
+        max_timestep : double
             Maximum length of first timestep to be computed by the solver.
         """
         return self.thisptr.initialize ()
@@ -92,6 +103,8 @@ cdef class Interface:
             - Values in both directions are exchanged.
             - Both participants need to call initializeData().
 
+        Notes
+        -----
         Previous calls:
             initialize() has been called successfully.
             The action WriteInitialData is required
@@ -108,9 +121,18 @@ cdef class Interface:
         """
         Advances preCICE after the solver has computed one timestep.
 
-        Parameters:
-            computed_timestep_length (double): Length of timestep used by the solver.
+        Parameters
+        ----------
+        computed_timestep_length : double
+            Length of timestep used by the solver.
 
+        Returns
+        -------
+        max_timestep : double
+            Maximum length of next timestep to be computed by solver.
+
+        Notes
+        -----
         Previous calls:
             initialize() has been called successfully.
             The solver has computed one timestep.
@@ -124,9 +146,6 @@ cdef class Interface:
             Configured data mapping schemes are applied.
             [Second Participant] Configured post processing schemes are applied.
             Meshes with data are exported to files if configured.
-
-        Returns:
-            max_timestep (double): Maximum length of next timestep to be computed by solver.
         """
         return self.thisptr.advance (computed_timestep_length)
 
@@ -135,12 +154,14 @@ cdef class Interface:
         """
         Finalizes preCICE.
 
+        Notes
+        -----
         Previous calls:
             initialize() has been called successfully.
 
         Tasks completed:
             Communication channels are closed.
-            Meshes and data are deallocated
+            Meshes and data are deallocated.
         """
         self.thisptr.finalize ()
 
@@ -151,8 +172,10 @@ cdef class Interface:
         Returns the number of spatial dimensions configured. Currently, two and three dimensional problems
         can be solved using preCICE. The dimension is specified in the XML configuration.
 
-        Returns:
-            dimension (int): the configured dimension
+        Returns
+        -------
+        dimension : int
+            The configured dimension.
         """
         return self.thisptr.getDimensions ()
 
@@ -165,11 +188,15 @@ cdef class Interface:
             - the final time has not been reached.
         The user should call finalize() after this function returns false.
 
+        Returns
+        -------
+        tag : bool
+            Whether the coupling is ongoing.
+
+        Notes
+        -----
         Previous calls:
            initialize() has been called successfully.
-
-        Returns:
-            tag (bool): whether the coupling is ongoing.
         """
         return self.thisptr.isCouplingOngoing ()
 
@@ -184,11 +211,15 @@ cdef class Interface:
         It is allowed to read data even if this function returns false. This is not recommended
         due to performance reasons. Use this function to prevent unnecessary reads.
 
+        Returns
+        -------
+        tag : bool
+            Whether new data is available to be read.
+
+        Notes
+        -----
         Previous calls:
            initialize() has been called successfully.
-
-        Returns:
-            tag (bool): whether new data is available to be read.
         """
         return self.thisptr.isReadDataAvailable ()
 
@@ -202,14 +233,20 @@ cdef class Interface:
         It is allowed to write data even if this function returns false. This is not recommended
         due to performance reasons. Use this function to prevent unnecessary writes.
 
-        Parameters:
-            computed_timestep_length (double): Length of timestep used by the solver.
+        Parameters
+        ----------
+        computed_timestep_length : double
+            Length of timestep used by the solver.
 
+        Returns
+        -------
+        tag : bool
+            Whether new data has to be written.
+
+        Notes
+        -----
         Previous calls:
             initialize() has been called successfully.
-
-        Returns:
-            tag (bool): whether new data has to be written.
         """
         return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
@@ -221,11 +258,15 @@ cdef class Interface:
             - A solver chooses to perform subcycling.
             - An implicit coupling timestep iteration is not yet converged.
 
+        Returns
+        -------
+            tag : bool
+                Whether the timestep is complete.
+
+        Notes
+        -----
         Previous calls:
             initialize() has been called successfully.
-
-        Returns:
-            tag (bool): whether the timestep is complete.
         """
         return self.thisptr.isTimeWindowComplete ()
 
@@ -236,8 +277,10 @@ cdef class Interface:
         The solver may still have to evaluate the fine model representation.
         DEPRECATED: Only necessary for deprecated manifold mapping.
 
-        Returns:
-            tag (bool): whether the surrogate model has to be evaluated.
+        Returns
+        -------
+            tag : bool
+                Whether the surrogate model has to be evaluated.
         """
         return self.thisptr.hasToEvaluateSurrogateModel ()
 
@@ -248,8 +291,10 @@ cdef class Interface:
         The solver may still have to evaluate the surrogate model representation.
         DEPRECATED: Only necessary for deprecated manifold mapping.
 
-        Returns:
-            tag (bool): whether the fine model has to be evaluated.
+        Returns
+        -------
+        tag : bool
+            Whether the fine model has to be evaluated.
         """
         return self.thisptr.hasToEvaluateFineModel ()
 
@@ -263,11 +308,15 @@ cdef class Interface:
         by querying for the required actions, performing them on demand, and calling markActionfulfilled()
         to signalize preCICE the correct behavior of the solver.
 
-        Parameters:
-           action (precice action): name of the action
+        Parameters
+        ----------
+        action : preCICE action
+            Name of the action.
 
-        Returns:
-            tag (bool): returns True if action is required
+        Returns
+        -------
+        tag : bool
+            Returns True if action is required.
         """
         return self.thisptr.isActionRequired (action)
 
@@ -276,9 +325,13 @@ cdef class Interface:
         """
         Indicates preCICE that a required action has been fulfilled by a solver.
 
-        Parameters:
-            action (preCICE action): name of the action
+        Parameters
+        ----------
+        action : preCICE action
+            Name of the action.
 
+        Notes
+        -----
         Previous calls:
             The solver fulfilled the specified action.
         """
@@ -290,11 +343,15 @@ cdef class Interface:
         """
         Checks if the mesh with the given name is used by a solver.
 
-        Parameters:
-            mesh_name (string): name of the mesh
+        Parameters
+        ----------
+        mesh_name : string
+            Name of the mesh.
 
-        Returns:
-            tag (bool): whether the mesh is used
+        Returns
+        -------
+        tag : bool
+            Returns true is the mesh is used.
         """
         return self.thisptr.hasMesh (convert(mesh_name))
 
@@ -303,11 +360,15 @@ cdef class Interface:
         """
         Returns the ID belonging to the mesh with given name.
 
-        Parameters:
-            mesh_name (string): name of the mesh
+        Parameters
+        ----------
+        mesh_name : string
+            Name of the mesh.
 
-        Returns:
-            id (int): ID of the corresponding mesh
+        Returns
+        -------
+        id : int
+            ID of the corresponding mesh.
         """
         return self.thisptr.getMeshID (convert(mesh_name))
 
@@ -316,8 +377,10 @@ cdef class Interface:
         """
         Returns the ID-set of all used meshes by this participant.
 
-        Returns:
-            id_array (array of ints): Set of IDs
+        Returns
+        -------
+        id_array : numpy.array
+            Numpy array containing all IDs.
         """
         return self.thisptr.getMeshIDs ()
 
@@ -325,13 +388,17 @@ cdef class Interface:
     def get_mesh_handle(self, mesh_name):
         """
         Returns a handle to a created mesh.
-        WARNING: This function is not yet implemented in preCICE
+        WARNING: This function is not yet available for the Python bindings
 
-        Parameters:
-            mesh_name (string): name of the mesh
+        Parameters
+        ----------
+        mesh_name : string
+            Name of the mesh.
 
-        Returns:
-            tag (pointer): Handle to the mesh
+        Returns
+        -------
+        tag : object
+            Handle to the mesh.
         """
         raise Exception("The API method get_mesh_handle is not yet available for the Python bindings.")
 
@@ -340,15 +407,22 @@ cdef class Interface:
         """
         Creates a mesh vertex
 
-        Parameters:
-            mesh_id (int): ID of the mesh to add the vertex to.
-            position (pointer): a pointer to the coordinates of the vertex.
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to add the vertex to.
+        position : array_like
+            The coordinates of the vertex.
 
+        Returns
+        -------
+        vertex_id : int
+            ID of the vertex which is set.
+
+        Notes
+        -----
         Previous calls:
             Count of available elements at position matches the configured dimension
-
-        Returns:
-            vertex_id (int): ID of the vertex which is set
         """
         if not isinstance(position, np.ndarray):
             position = np.asarray(position)
@@ -362,11 +436,15 @@ cdef class Interface:
         """
         Returns the number of vertices of a mesh
 
-        Parameters:
-            mesh_id (int): ID of the mesh
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh.
 
-        Returns:
-            sum (int): number of vertices of the mesh
+        Returns
+        -------
+        sum : int
+            Number of vertices of the mesh.
         """
         return self.thisptr.getMeshVertexSize(mesh_id)
 
@@ -374,35 +452,43 @@ cdef class Interface:
         """
         Creates multiple mesh vertices
 
-        Parameters:
-            mesh_id (int): ID of the mesh to add the vertices to.
-            positions (pointer): a pointer to the coordinates of the vertices.
-                Coordinates of vertices are stored in a numpy array [N x D] where
-                N = number of vertices and D = dimensions of geometry
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to add the vertices to.
+        positions : array_like
+            The coordinates of the vertices in a numpy array [N x D] where
+            N = number of vertices and D = dimensions of geometry.
 
-                Examples:
-                For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
-                >>> np.zeros([5, 2])
-                array([[x0, y0],
-                       [x1, y1],
-                       [x2, y2],
-                       [x3, y3],
-                       [x4, y4]])
-                For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
-                >>> np.zeros([5, 3])
-                array([[x0, y0, z0],
-                       [x1, y1, z1],
-                       [x2, y2, z2],
-                       [x3, y3, z3],
-                       [x4, y4, z4]])
+        Returns
+        -------
+        ids : numpy.array
+            IDs of the created vertices.
 
+        Notes
+        -----
         Previous calls:
             initialize() has not yet been called
             count of available elements at positions matches the configured dimension * size
             count of available elements at ids matches size
 
-        Returns:
-            ids (numpy array): IDs of the created vertices
+        Examples
+        --------
+        Set mesh vertices for a 2D problem with 5 mesh vertices.
+
+        >>> mesh_id = "my_mesh"
+        >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
+        >>> positions.shape
+        (5, 2)
+        >>> precice.set_mesh_vertices(mesh_id, positions)
+
+        Set mesh vertices for a 3D problem with 5 mesh vertices.
+
+        >>> mesh_id = "my_mesh"
+        >>> positions = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]])
+        >>> positions.shape
+        (5, 3)
+        >>> precice.set_mesh_vertices(mesh_id, positions)
         """
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
@@ -417,34 +503,40 @@ cdef class Interface:
         """
         Get vertex positions for multiple vertex ids from a given mesh
 
-        Parameters:
-            mesh_id (int): ID of the mesh to read the vertices from.
-            ids (numpy array): Numpy array of shape N (number of vertices) of IDs of the vertices to lookup
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to read the vertices from.
+        ids : array_like
+            IDs of the vertices to lookup.
 
+        Returns
+        -------
+        positions : numpy.ndarray
+            The coordinates of the vertices in a numpy array [N x D] where
+            N = number of vertices and D = dimensions of geometry
+
+        Notes
+        -----
         Previous calls:
             count of available elements at positions matches the configured dimension * size
             count of available elements at ids matches size
 
-        Returns:
-            positions (pointer): a pointer to the coordinates of the vertices.
-                Coordinates of vertices are stored in a numpy array [N x D] where
-                N = number of vertices and D = dimensions of geometry
+        Examples
+        --------
+        Return data structure for a 2D problem with 5 vertices:
+        >>> mesh_id = "my_mesh"
+        >>> ids = [1, 2, 3, 4, 5]
+        >>> positions = precice.get_mesh_vertices(mesh_id, ids)
+        >>> positions.shape
+        (5, 2)
 
-                Examples:
-                For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
-                >>> np.zeros([5, 2])
-                array([[x0, y0],
-                       [x1, y1],
-                       [x2, y2],
-                       [x3, y3],
-                       [x4, y4]])
-                For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
-                >>> np.zeros([5, 3])
-                array([[x0, y0, z0],
-                       [x1, y1, z1],
-                       [x2, y2, z2],
-                       [x3, y3, z3],
-                       [x4, y4, z4]])
+        Return data structure for a 3D problem with 5 vertices:
+        >>> mesh_id = "my_mesh"
+        >>> ids = [1, 2, 3, 4, 5]
+        >>> positions = precice.get_mesh_vertices(mesh_d, ids)
+        >>> positions.shape
+        (5, 3)
         """
         cdef np.ndarray[int, ndim=1] _ids = np.ascontiguousarray(ids, dtype=np.int32)
         size = _ids.size
@@ -457,31 +549,46 @@ cdef class Interface:
         Gets mesh vertex IDs from positions.
         prefer to reuse the IDs returned from calls to set_mesh_vertex() and set_mesh_vertices().
 
-        Parameters:
-            mesh_id (int): ID of the mesh to retrieve positions from
-            positions (pointer): a pointer to the coordinates of the vertices.
-                Coordinates of vertices are stored in a numpy array [N x D] where
-                N = number of vertices and D = dimensions of geometry
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to retrieve positions from.
+        positions : numpy.ndarray
+            The coordinates of the vertices. Coordinates of vertices are stored in a
+            numpy array [N x D] where N = number of vertices and D = dimensions of geometry
 
-                Examples:
-                For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
-                >>> np.zeros([5, 2])
-                array([[x0, y0],
-                       [x1, y1],
-                       [x2, y2],
-                       [x3, y3],
-                       [x4, y4]])
-                For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
-                >>> np.zeros([5, 3])
-                array([[x0, y0, z0],
-                       [x1, y1, z1],
-                       [x2, y2, z2],
-                       [x3, y3, z3],
-                       [x4, y4, z4]])
+        Returns
+        -------
+        ids : numpy.array
+            IDs of mesh vertices.
 
+        Notes
+        -----
         Previous calls:
             count of available elements at positions matches the configured dimension * size
             count of available elements at ids matches size
+
+        Examples
+        --------
+        Get mesh vertex ids from positions for a 2D (D=2) problem with 5 (N=5) mesh vertices.
+
+        >>> mesh_id = "my_mesh"
+        >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
+        >>> positions.shape
+        (5, 2)
+        >>> ids = precice.get_mesh_vertex_ids_from_positions(mesh_id, positions)
+        >>> ids
+        array([1, 2, 3, 4, 5])
+
+        Get mesh vertex ids from positions for a 3D problem with 5 vertices.
+
+        >>> mesh_id = "my_mesh"
+        >>> positions = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]])
+        >>> positions.shape
+        (5, 3)
+        >>> ids = precice.get_mesh_vertex_ids_from_positions(mesh_id, positions)
+        >>> ids
+        array([1, 2, 3, 4, 5])
         """
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
@@ -496,16 +603,24 @@ cdef class Interface:
         """
         Sets mesh edge from vertex IDs, returns edge ID.
 
-        Parameters:
-            mesh_id (int): ID of the mesh to add the edge to
-            firstVertexID (int): ID of the first vertex of the edge
-            secondVertexID (int): ID of the second vertex of the edge
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to add the edge to.
+        firstVertexID : int
+            ID of the first vertex of the edge.
+        secondVertexID : int
+            ID of the second vertex of the edge.
 
+        Returns
+        -------
+        id : int
+            ID of the edge.
+
+        Notes
+        -----
         Previous calls:
             vertices with firstVertexID and secondVertexID were added to the mesh with the ID meshID
-
-        Returns:
-            id (int): ID of the edge
         """
         return self.thisptr.setMeshEdge (mesh_id, first_vertex_id, second_vertex_id)
 
@@ -513,12 +628,19 @@ cdef class Interface:
         """
         Sets mesh triangle from edge IDs
 
-        Parameters:
-            mesh_id (int): ID of the mesh to add the triangle to
-            first_edge_id (int): ID of the first edge of the triangle
-            second_edge_id (int): ID of the second edge of the triangle
-            third_edge_id (int): ID of the third edge of the triangle
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to add the triangle to.
+        first_edge_id : int
+            ID of the first edge of the triangle.
+        second_edge_id : int
+            ID of the second edge of the triangle.
+        third_edge_id : int
+            ID of the third edge of the triangle.
 
+        Notes
+        -----
         Previous calls:
             edges with first_edge_id, second_edge_id, and third_edge_id were added to the mesh with the ID meshID
         """
@@ -531,12 +653,19 @@ cdef class Interface:
         Edges are created on the fly within preCICE. This routine is significantly slower than the one
         using edge IDs, since it needs to check, whether an edge is created already or not.
 
-        Parameters:
-            mesh_id (int): ID of the mesh to add the triangle to
-            first_vertex_id (int): ID of the first vertex of the triangle
-            second_vertex_id (int): ID of the second vertex of the triangle
-            third_vertex_id ID (int): of the third vertex of the triangle
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to add the triangle to.
+        first_vertex_id : int
+            ID of the first vertex of the triangle.
+        second_vertex_id : int
+            ID of the second vertex of the triangle.
+        third_vertex_id ID : int
+            ID of the third vertex of the triangle.
 
+        Notes
+        -----
         Previous calls:
             edges with first_vertex_id, second_vertex_id, and third_vertex_id were added to the mesh with the ID meshID
         """
@@ -547,13 +676,21 @@ cdef class Interface:
         Sets mesh Quad from edge IDs.
         WARNING: Quads are not fully implemented yet.
 
-        Parameters:
-            mesh_id (int): ID of the mesh to add the Quad to
-            first_edge_id (int): ID of the first edge of the Quad
-            second_edge_id (int): ID of the second edge of the Quad
-            third_edge_id (int): ID of the third edge of the Quad
-            fourth_edge_id (int): ID of the forth edge of the Quad
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to add the Quad to.
+        first_edge_id : int
+            ID of the first edge of the Quad.
+        second_edge_id : int
+            ID of the second edge of the Quad.
+        third_edge_id : int
+            ID of the third edge of the Quad.
+        fourth_edge_id : int
+            ID of the forth edge of the Quad.
 
+        Notes
+        -----
         Previous calls:
             edges with first_edge_id, second_edge_id, third_edge_id, and fourth_edge_id were added
             to the mesh with the ID mesh_id
@@ -567,13 +704,21 @@ cdef class Interface:
                  created on the fly within preCICE. This routine is significantly slower than the one using
                  edge IDs, since it needs to check, whether an edge is created already or not.
 
-        Parameters:
-            mesh_id (int): ID of the mesh to add the Quad to
-            first_vertex_id (int): ID of the first vertex of the Quad
-            second_vertex_id (int): ID of the second vertex of the Quad
-            third_vertex_id (int): ID of the third vertex of the Quad
-            fourth_vertex_id (int): ID of the fourth vertex of the Quad
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to add the Quad to.
+        first_vertex_id : int
+            ID of the first vertex of the Quad.
+        second_vertex_id : int
+            ID of the second vertex of the Quad.
+        third_vertex_id : int
+            ID of the third vertex of the Quad.
+        fourth_vertex_id : int
+            ID of the fourth vertex of the Quad.
 
+        Notes
+        -----
         Previous calls:
             edges with first_vertex_id, second_vertex_id, third_vertex_id, and fourth_vertex_id were added
             to the mesh with the ID mesh_id
@@ -585,12 +730,17 @@ cdef class Interface:
         """
         Checks if the data with given name is used by a solver and mesh.
 
-        Parameters:
-            data_name (string): the name of the data
-            mesh_id (int): ID of the associated mesh
+        Parameters
+        ----------
+        data_name : string
+            Name of the data.
+        mesh_id : int
+            ID of the associated mesh.
 
-        Returns:
-            tag (bool): True if the mesh is used.
+        Returns
+        -------
+        tag : bool
+            True if the mesh is already used.
         """
         return self.thisptr.hasData(convert(data_name), mesh_id)
 
@@ -598,12 +748,17 @@ cdef class Interface:
         """
         Returns the ID of the data associated with the given name and mesh.
 
-        Parameters:
-            data_name (string): the name of the data
-            mesh_id (int): ID of the associated mesh
+        Parameters
+        ----------
+        data_name : string
+            Name of the data
+        mesh_id : int
+            ID of the associated mesh.
 
-        Returns:
-            id (int): ID of the corresponding data
+        Returns
+        -------
+        id : int
+            ID of the corresponding data.
         """
         return self.thisptr.getDataID (convert(data_name), mesh_id)
 
@@ -613,9 +768,13 @@ cdef class Interface:
         This is an explicit request to map read data to the Mesh associated with toMeshID.
         It also computes the mapping if necessary.
 
-        Parameters:
-            to_mesh_id (int): Id of mesh to map the read data to.
+        Parameters
+        ----------
+        to_mesh_id : int
+            ID of mesh to map the read data to.
 
+        Notes
+        -----
         Previous calls:
             A mapping to to_mesh_id was configured.
         """
@@ -626,9 +785,13 @@ cdef class Interface:
         Computes and maps all write data mapped from the mesh with given ID. This is an explicit request
         to map write data from the Mesh associated with fromMeshID. It also computes the mapping if necessary.
 
-        Parameters:
-            from_mesh_id (int): ID from which to map write data
+        Parameters
+        ----------
+        from_mesh_id : int
+            ID from which to map write data.
 
+        Notes
+        -----
         Previous calls:
             A mapping from from_mesh_id was configured.
         """
@@ -640,31 +803,35 @@ cdef class Interface:
         Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices
         Values are stored in a numpy array [N x D] where N = number of vertices and D = dimensions of geometry
 
-        Examples:
-        For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
-        >>> np.zeros([5, 2])
-        array([[x0, y0],
-               [x1, y1],
-               [x2, y2],
-               [x3, y3],
-               [x4, y4]])
-        For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
-        >>> np.zeros([5, 3])
-        array([[x0, y0, z0],
-               [x1, y1, z1],
-               [x2, y2, z2],
-               [x3, y3, z3],
-               [x4, y4, z4]])
+        Parameters
+        ----------
+        data_id : int
+            Data ID to write to.
+        value_indices : array_like
+            Indices of the vertices.
+        values : numpy.ndarray
+            Vector values of data
 
-        Parameters:
-            data_id (int): ID to write to.
-            value_indices (numpy array): Indices of the vertices in numpy array of shape N
-            values (numpy array): vector values in the above format
-
+        Notes
+        -----
         Previous calls:
             count of available elements at values matches the configured dimension * size
             count of available elements at valueIndices matches the given size
             initialize() has been called
+
+        Examples
+        --------
+        Write block vector data for a 2D problem with 5 vertices:
+        >>> data_id = 1
+        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> values = np.array([[v1_x, v1_y], [v2_x, v2_y], [v3_x, v3_y], [v4_x, v4_y], [v5_x, v5_y]])
+        >>> precice.write_block_vector_data(data_id, value_indices, values)
+
+        Write block vector data for a 3D (D=3) problem with 5 (N=5) vertices:
+        >>> data_id = 1
+        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
+        >>> precice.write_block_vector_data(data_id, value_indices, values)
         """
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
@@ -683,14 +850,34 @@ cdef class Interface:
         The 2D-format of value is a numpy array of shape 2
         The 3D-format of value is a numpy array of shape 3
 
-        Parameters:
-            data_id (int): ID to write to.
-            value_index (int): Index of the vertex.
-            value (numpy array): numpy array of vector value
+        Parameters
+        ----------
+        data_id : int
+            ID to write to.
+        value_index : int
+            Index of the vertex.
+        value : numpy.array
+            Single vector value
 
+        Notes
+        -----
         Previous calls:
             count of available elements at value matches the configured dimension
             initialize() has been called
+
+        Examples
+        --------
+        Write vector data for a 2D problem with 5 vertices:
+        >>> data_id = 1
+        >>> value_index = 5
+        >>> value = np.array([v5_x, v5_y])
+        >>> precice.write_vector_data(data_id, value_index, value)
+
+        Write vector data for a 3D (D=3) problem with 5 (N=5) vertices:
+        >>> data_id = 1
+        >>> value_index = 5
+        >>> value = np.array([v5_x, v5_y, v5_z])
+        >>> precice.write_vector_data(data_id, value_index, value)
         """
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
@@ -703,15 +890,29 @@ cdef class Interface:
         """
         Writes scalar data given as a block. This function writes values of specified vertices to a dataID.
 
-        Parameters:
-            data_id (int): ID to write to.
-            value_indices (array): Indices of the vertices.
-            values (numpy array): A numpy array of shape N carrying values to be written
+        Parameters
+        ----------
+        data_id : int
+            ID to write to.
+        value_indices : array_like
+            Indices of the vertices.
+        values : numpy.array
+            Values to be written
 
+        Notes
+        -----
         Previous calls:
             count of available elements at values matches the given size
             count of available elements at valueIndices matches the given size
             initialize() has been called
+
+        Examples
+        --------
+        Write block scalar data for a 2D and 3D problem with 5 (N=5) vertices:
+        >>> data_id = 1
+        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> values = np.array([v1 v2, v3, v4, v5])
+        >>> precice.write_block_scalar_data(data_id, value_indices, values)
         """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
@@ -724,13 +925,27 @@ cdef class Interface:
         Writes scalar data to a vertex
         This function writes a value of a specified vertex to a dataID.
 
-        Parameters:
-            data_id (int): ID to write to.
-            value_index (int): Index of the vertex.
-            value (double): the value to write.
+        Parameters
+        ----------
+        data_id : int
+            ID to write to.
+        value_index : int
+            Index of the vertex.
+        value : double
+            The value to write.
 
+        Notes
+        -----
         Previous calls:
             initialize() has been called
+
+        Examples
+        --------
+        Write scalar data for a 2D or 3D problem with 5 vertices:
+        >>> data_id = 1
+        >>> value_index = 5
+        >>> value = v5
+        >>> precice.write_scalar_data(data_id, value_index, value)
         """
         self.thisptr.writeScalarData (data_id, value_index, value)
 
@@ -739,36 +954,41 @@ cdef class Interface:
         Reads vector data into a provided block. This function reads values of specified vertices
         from a dataID. Values are read into a block of continuous memory. valueIndices contains
         the indices of the vertices.
-        Return values are stored in a numpy array [N x D] where N = number of vertices
-        and D = dimensions of geometry
 
-        Examples:
-        For a 2D (D=2) system with 5 (N=5) vertices the data structure would look like:
-        >>> np.zeros([5, 2])
-        array([[x0, y0],
-               [x1, y1],
-               [x2, y2],
-               [x3, y3],
-               [x4, y4]])
-        For a 3D (D=3) system with 5 (N=5) vertices the data structure would look like:
-        >>> np.zeros([5, 3])
-        array([[x0, y0, z0],
-               [x1, y1, z1],
-               [x2, y2, z2],
-               [x3, y3, z3],
-               [x4, y4, z4]])
+        Parameters
+        ----------
+        data_id : int
+            ID to read from.
+        value_indices : array_like
+            Indices of the vertices.
 
-        Parameters:
-            data_id (int): ID to read from.
-            value_indices (array): Indices of the vertices.
+        Returns
+        -------
+        values : numpy.ndarray
+            Contains the read data.
 
+        Notes
+        -----
         Previous calls:
             count of available elements at values matches the configured dimension * size
             count of available elements at valueIndices matches the given size
             initialize() has been called
 
-        Returns:
-            values: numpy arrays in above format containing the read data.
+        Examples
+        --------
+        Read block vector data for a 2D problem with 5 vertices:
+        >>> data_id = 1
+        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> values = read_block_vector_data(data_id, value_indices)
+        >>> values.shape
+        >>> (5, 2)
+
+        Read block vector data for a 3D system with 5 vertices:
+        >>> data_id = 1
+        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> values = read_block_vector_data(data_id, value_indices)
+        >>> values.shape
+        >>> (5, 3)
         """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         size = _value_indices.size
@@ -780,20 +1000,41 @@ cdef class Interface:
     def read_vector_data (self, data_id, value_index):
         """
         Reads vector data form a vertex. This function reads a value of a specified vertex
-        from a dataID. Values are provided as a block of continuous memory.
-        The 2D-format of return value is a numpy array of shape 2
-        The 3D-format of return value is a numpy array of shape 3
+        from a dataID.
 
-        Parameters:
-            data_id (int): ID to read from.
-            value_index (int): Index of the vertex.
+        Parameters
+        ----------
+        data_id : int
+            ID to read from.
+        value_index : int
+            Index of the vertex.
 
+        Returns
+        -------
+        value : numpy.array
+            Contains the read data.
+
+        Notes
+        -----
         Previous calls:
             count of available elements at value matches the configured dimension
             initialize() has been called
 
-        Returns:
-            value: value contains the read data as specified in the above format.
+        Examples
+        --------
+        Read vector data for 2D problem:
+        >>> data_id = 1
+        >>> value_index = 5
+        >>> value = precice.read_vector_data(data_id, value_index)
+        >>> value.shape
+        (1, 2)
+
+        Read vector data for 2D problem:
+        >>> data_id = 1
+        >>> value_index = 5
+        >>> value = precice.read_vector_data(data_id, value_index)
+        >>> value.shape
+        (1, 3)
         """
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
@@ -805,17 +1046,34 @@ cdef class Interface:
         Reads scalar data as a block. This function reads values of specified vertices from a dataID.
         Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices.
 
-        Parameters:
-            data_id (int): ID to read from.
-            value_indices (array): Indices of the vertices.
+        Parameters
+        ----------
+        data_id : int
+            ID to read from.
+        value_indices : array_like
+            Indices of the vertices.
 
+        Returns
+        -------
+            values : numpy.array
+                Contains the read data.
+
+        Notes
+        -----
         Previous calls:
             count of available elements at values matches the given size
             count of available elements at valueIndices matches the given size
             initialize() has been called
 
-        Returns:
-            values (array): Contains the read data in the form of a numpy array of shape N
+        Examples
+        --------
+        Read block scalar data for 2D and 3D problems with 5 vertices:
+        >>> data_id = 1
+        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> values = precice.read_block_scalar_data(data_id, value_indices)
+        >>> values.size
+        >>> 5
+
         """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         size = _value_indices.size
@@ -827,15 +1085,29 @@ cdef class Interface:
         """
         Reads scalar data of a vertex. This function needs a value of a specified vertex from a dataID.
 
-        Parameters:
-            data_id (int): ID to read from.
-            value_index (int): Index of the vertex.
+        Parameters
+        ----------
+        data_id : int
+            ID to read from.
+        value_index : int
+            Index of the vertex.
 
+        Returns
+        -------
+        value : double
+            Contains the read value
+
+        Notes
+        -----
         Previous calls:
             initialize() has been called.
 
-        Returns:
-            value (double): contains the read value
+        Examples
+        --------
+        Read scalar data for 2D and 3D problems:
+        >>> data_id = 1
+        >>> value_index = 5
+        >>> value = precice.read_scalar_data(data_id, value_index)
         """
         cdef double _value
         self.thisptr.readScalarData (data_id, value_index, _value)
@@ -843,24 +1115,32 @@ cdef class Interface:
 
 def get_version_information ():
     """
-    Returns: Current preCICE version information
+    Returns
+    -------
+    Current preCICE version information
     """
     return SolverInterface.getVersionInformation()
 
 def action_write_initial_data ():
     """
-    Returns: Name of action for writing initial data
+    Returns
+    -------
+    Name of action for writing initial data
     """
     return SolverInterface.actionWriteInitialData()
 
 def action_write_iteration_checkpoint ():
     """
-    Returns: Name of action for writing iteration checkpoint
+    Returns
+    -------
+    Name of action for writing iteration checkpoint
     """
     return SolverInterface.actionWriteIterationCheckpoint()
 
 def action_read_iteration_checkpoint ():
     """
-    Returns: Name of action for reading iteration checkpoint
+    Returns
+    -------
+    Name of action for reading iteration checkpoint
     """
     return SolverInterface.actionReadIterationCheckpoint()
