@@ -1,2 +1,3 @@
 # The following files are ignored by Git
 .idea # Pycharm related file
+env
