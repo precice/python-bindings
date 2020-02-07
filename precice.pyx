@@ -79,7 +79,6 @@ cdef class Interface:
         """
         return self.thisptr.initialize ()
 
-
     def initialize_data (self):
         """
         Initializes coupling data. The starting values for coupling data are zero by default.
@@ -101,10 +100,6 @@ cdef class Interface:
 
         Tasks completed:
             Initial coupling data was exchanged.
-
-        Refer:
-            Interface()::is_action_required()
-            precice()::constants()::actionWriteInitialData()
         """
         self.thisptr.initializeData ()
 
@@ -146,9 +141,6 @@ cdef class Interface:
         Tasks completed:
             Communication channels are closed.
             Meshes and data are deallocated
-
-        Refer:
-            is_coupling_ongoing()
         """
         self.thisptr.finalize ()
 
@@ -175,9 +167,6 @@ cdef class Interface:
 
         Previous calls:
            initialize() has been called successfully.
-
-        Refer:
-            advance()
 
         Returns:
             tag (bool): whether the coupling is ongoing.
@@ -247,9 +236,6 @@ cdef class Interface:
         The solver may still have to evaluate the fine model representation.
         DEPRECATED: Only necessary for deprecated manifold mapping.
 
-        Refer:
-            has_to_evaluate_fine_model()
-
         Returns:
             tag (bool): whether the surrogate model has to be evaluated.
         """
@@ -261,9 +247,6 @@ cdef class Interface:
         Checks if the solver has to evaluate the fine model representation.
         The solver may still have to evaluate the surrogate model representation.
         DEPRECATED: Only necessary for deprecated manifold mapping.
-
-        Refer:
-            has_to_evaluate_surrogate_model()
 
         Returns:
             tag (bool): whether the fine model has to be evaluated.
@@ -283,10 +266,6 @@ cdef class Interface:
         Parameters:
            action (precice action): name of the action
 
-        Refer:
-            fulfilled_action()
-            cplscheme::constants
-
         Returns:
             tag (bool): returns True if action is required
         """
@@ -302,10 +281,6 @@ cdef class Interface:
 
         Previous calls:
             The solver fulfilled the specified action.
-
-        Refer:
-            require_action()
-            cplscheme::constants
         """
         self.thisptr.markActionFulfilled (action)
 
@@ -357,9 +332,6 @@ cdef class Interface:
 
         Returns:
             tag (pointer): Handle to the mesh
-
-        Refer:
-            precice::MeshHandle
         """
         raise Exception("The API method get_mesh_handle is not yet available for the Python bindings.")
 
@@ -377,9 +349,6 @@ cdef class Interface:
 
         Returns:
             vertex_id (int): ID of the vertex which is set
-
-        Refer:
-            get_dimensions()
         """
         if not isinstance(position, np.ndarray):
             position = np.asarray(position)
@@ -434,9 +403,6 @@ cdef class Interface:
 
         Returns:
             ids (numpy array): IDs of the created vertices
-
-        Refer:
-            get_dimensions()
         """
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
@@ -479,9 +445,6 @@ cdef class Interface:
                        [x2, y2, z2],
                        [x3, y3, z3],
                        [x4, y4, z4]])
-
-        Refer:
-            get_dimensions()
         """
         cdef np.ndarray[int, ndim=1] _ids = np.ascontiguousarray(ids, dtype=np.int32)
         size = _ids.size
@@ -702,9 +665,6 @@ cdef class Interface:
             count of available elements at values matches the configured dimension * size
             count of available elements at valueIndices matches the given size
             initialize() has been called
-
-        Refer:
-            Interface::set_mesh_vertex()
         """
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
@@ -718,7 +678,7 @@ cdef class Interface:
 
     def write_vector_data (self, data_id, value_index, value):
         """
-        Wrties vector data to a vertex. This function writes a value of a specified vertex to a dataID.
+        Writes vector data to a vertex. This function writes a value of a specified vertex to a dataID.
         Values are provided as a block of continuous memory.
         The 2D-format of value is a numpy array of shape 2
         The 3D-format of value is a numpy array of shape 3
@@ -731,9 +691,6 @@ cdef class Interface:
         Previous calls:
             count of available elements at value matches the configured dimension
             initialize() has been called
-
-        Refer:
-            Interface::set_mesh_vertex()
         """
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
@@ -755,9 +712,6 @@ cdef class Interface:
             count of available elements at values matches the given size
             count of available elements at valueIndices matches the given size
             initialize() has been called
-
-        Refer:
-            Interface::set_mesh_vertex()
         """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
@@ -777,9 +731,6 @@ cdef class Interface:
 
         Previous calls:
             initialize() has been called
-
-        Refer:
-            Interface::set_mesh_vertex()
         """
         self.thisptr.writeScalarData (data_id, value_index, value)
 
@@ -818,9 +769,6 @@ cdef class Interface:
 
         Returns:
             values: numpy arrays in above format containing the read data.
-
-        Refer:
-            Interface::set_mesh_vertex()
         """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         size = _value_indices.size
@@ -846,9 +794,6 @@ cdef class Interface:
 
         Returns:
             value: value contains the read data as specified in the above format.
-
-        Refer:
-            Interface::set_mesh_vertex()
         """
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
@@ -871,9 +816,6 @@ cdef class Interface:
 
         Returns:
             values (array): Contains the read data in the form of a numpy array of shape N
-
-        Refer:
-            Interface::set_mesh_vertex()
         """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         size = _value_indices.size
@@ -894,9 +836,6 @@ cdef class Interface:
 
         Returns:
             value (double): contains the read value
-
-        Refer:
-            Interface::set_mesh_vertex()
         """
         cdef double _value
         self.thisptr.readScalarData (data_id, value_index, _value)
