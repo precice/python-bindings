@@ -17,7 +17,7 @@ assert(version.parse(pip.__version__) >= version.parse("10.0.1"))  # minimum ver
 
 # name of Interfacing API
 APPNAME = "pyprecice"
-APPVERSION = "0.1.0"  # todo: should be replaced with precice.get_version() as soon as it exists , see https://github.com/precice/precice/issues/261
+APPVERSION = "2.0.0a1"  # todo: should be replaced with precice.get_version() as soon as it exists , see https://github.com/precice/precice/issues/261
 
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -98,7 +98,8 @@ def get_extensions(mpi_compiler_wrapper, is_test):
 # some global definitions for an additional user input command
 mpicompiler_default = "mpic++"
 add_option = [('mpicompiler=', None, 'specify the mpi compiler wrapper')]
-dependencies = ['cython']
+dependencies = []
+dependencies.append('numpy')
 dependencies.append('mpi4py')  # only needed, if preCICE was compiled with MPI, see https://github.com/precice/precice/issues/311
 
 class my_build_ext(build_ext, object):
