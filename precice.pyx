@@ -534,7 +534,7 @@ cdef class Interface:
         Return data structure for a 3D problem with 5 vertices:
         >>> mesh_id = "my_mesh"
         >>> ids = [1, 2, 3, 4, 5]
-        >>> positions = precice.get_mesh_vertices(mesh_d, ids)
+        >>> positions = precice.get_mesh_vertices(mesh_id, ids)
         >>> positions.shape
         (5, 3)
         """
