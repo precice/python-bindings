@@ -55,11 +55,6 @@ def get_extensions(is_test):
             )
     ]
 
-# some global definitions for an additional user input command
-dependencies = []
-dependencies.append('numpy')
-dependencies.append('mpi4py')  # only needed, if preCICE was compiled with MPI, see https://github.com/precice/precice/issues/311
-
 class my_build_ext(build_ext, object):
     def initialize_options(self):
         try:
@@ -70,14 +65,8 @@ class my_build_ext(build_ext, object):
         super().initialize_options()
         
     def finalize_options(self):
-        print("#####")
-        print("calling my_build_ext")
-
         if not self.distribution.ext_modules:
-            print("adding extension")
             self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test))
-
-        print("#####")
 
         super().finalize_options()
 
@@ -102,14 +91,8 @@ class my_build(build, object):
         super().initialize_options()
 
     def finalize_options(self):
-        print("#####")
-        print("calling my_build")
-
         if not self.distribution.ext_modules:
-            print("adding extension")
             self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test))
-
-        print("#####")
 
         super().finalize_options()
 
@@ -128,7 +111,7 @@ setup(
     author_email='info@precice.org',
     license='LGPL-3.0',
     python_requires='>=3',
-    install_requires=dependencies,
+    install_requires=['numpy', 'mpi4py'],  # mpi4py is only needed, if preCICE was compiled with MPI, see https://github.com/precice/python-bindings/issues/8
     cmdclass={'test': my_test,
               'build_ext': my_build_ext,
               'build': my_build,
