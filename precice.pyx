@@ -25,6 +25,7 @@ cdef bytes convert(s):
         raise TypeError("Could not convert.")
 
 
+@cython.embedsignature(True)
 cdef class Interface:
     """
     Main Application Programming Interface of preCICE.
@@ -38,7 +39,8 @@ cdef class Interface:
         - The preferred name in the documentation is participant.
     """
 
-    def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
+    # fake __init__ needed to display docstring for __cinit__ (see https://stackoverflow.com/a/42733794/5158031)
+    def __init__(self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
         """
         Constructor of Interface class.
 
@@ -57,7 +59,18 @@ cdef class Interface:
         -------
         SolverInterface : object
             Object pointing to the defined coupling interface
+
+        Example
+        -------
+        >>> interface = precice.Interface("SolverOne", "precice-config.xml", 0, 1)
+        preCICE: This is preCICE version X.X.X
+        preCICE: Revision info: vX.X.X-X-XXXXXXXXX
+        preCICE: Configuring preCICE with configuration: "precice-config.xml"
+
         """
+        pass
+
+    def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
         cdef void* communicator_ptr
         if communicator:
             communicator_ptr = <void*> communicator
@@ -369,6 +382,13 @@ cdef class Interface:
         -------
         id : int
             ID of the corresponding mesh.
+
+        Example
+        -------
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
+        >>> mesh_id
+        0
+
         """
         return self.thisptr.getMeshID (convert(mesh_name))
 
@@ -476,19 +496,23 @@ cdef class Interface:
         --------
         Set mesh vertices for a 2D problem with 5 mesh vertices.
 
-        >>> mesh_id = "my_mesh"
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
         >>> positions.shape
         (5, 2)
-        >>> precice.set_mesh_vertices(mesh_id, positions)
+        >>> vertex_ids = interface.set_mesh_vertices(mesh_id, positions)
+        >>> vertex_ids.shape
+        (5,)
 
         Set mesh vertices for a 3D problem with 5 mesh vertices.
 
-        >>> mesh_id = "my_mesh"
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> positions = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]])
         >>> positions.shape
         (5, 3)
-        >>> precice.set_mesh_vertices(mesh_id, positions)
+        >>> vertex_ids = interface.set_mesh_vertices(mesh_id, positions)
+        >>> vertex_ids.shape
+        (5,)
         """
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
@@ -525,16 +549,16 @@ cdef class Interface:
         Examples
         --------
         Return data structure for a 2D problem with 5 vertices:
-        >>> mesh_id = "my_mesh"
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> ids = [1, 2, 3, 4, 5]
-        >>> positions = precice.get_mesh_vertices(mesh_id, ids)
+        >>> positions = interface.get_mesh_vertices(mesh_id, ids)
         >>> positions.shape
         (5, 2)
 
         Return data structure for a 3D problem with 5 vertices:
-        >>> mesh_id = "my_mesh"
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> ids = [1, 2, 3, 4, 5]
-        >>> positions = precice.get_mesh_vertices(mesh_id, ids)
+        >>> positions = interface.get_mesh_vertices(mesh_id, ids)
         >>> positions.shape
         (5, 3)
         """
@@ -572,21 +596,21 @@ cdef class Interface:
         --------
         Get mesh vertex ids from positions for a 2D (D=2) problem with 5 (N=5) mesh vertices.
 
-        >>> mesh_id = "my_mesh"
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
         >>> positions.shape
         (5, 2)
-        >>> ids = precice.get_mesh_vertex_ids_from_positions(mesh_id, positions)
+        >>> ids = interface.get_mesh_vertex_ids_from_positions(mesh_id, positions)
         >>> ids
         array([1, 2, 3, 4, 5])
 
         Get mesh vertex ids from positions for a 3D problem with 5 vertices.
 
-        >>> mesh_id = "my_mesh"
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> positions = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]])
         >>> positions.shape
         (5, 3)
-        >>> ids = precice.get_mesh_vertex_ids_from_positions(mesh_id, positions)
+        >>> ids = interface.get_mesh_vertex_ids_from_positions(mesh_id, positions)
         >>> ids
         array([1, 2, 3, 4, 5])
         """
@@ -825,13 +849,13 @@ cdef class Interface:
         >>> data_id = 1
         >>> value_indices = [1, 2, 3, 4, 5]
         >>> values = np.array([[v1_x, v1_y], [v2_x, v2_y], [v3_x, v3_y], [v4_x, v4_y], [v5_x, v5_y]])
-        >>> precice.write_block_vector_data(data_id, value_indices, values)
+        >>> interface.write_block_vector_data(data_id, value_indices, values)
 
         Write block vector data for a 3D (D=3) problem with 5 (N=5) vertices:
         >>> data_id = 1
         >>> value_indices = [1, 2, 3, 4, 5]
         >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
-        >>> precice.write_block_vector_data(data_id, value_indices, values)
+        >>> interface.write_block_vector_data(data_id, value_indices, values)
         """
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
@@ -871,13 +895,13 @@ cdef class Interface:
         >>> data_id = 1
         >>> value_index = 5
         >>> value = np.array([v5_x, v5_y])
-        >>> precice.write_vector_data(data_id, value_index, value)
+        >>> interface.write_vector_data(data_id, value_index, value)
 
         Write vector data for a 3D (D=3) problem with 5 (N=5) vertices:
         >>> data_id = 1
         >>> value_index = 5
         >>> value = np.array([v5_x, v5_y, v5_z])
-        >>> precice.write_vector_data(data_id, value_index, value)
+        >>> interface.write_vector_data(data_id, value_index, value)
         """
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
@@ -912,7 +936,7 @@ cdef class Interface:
         >>> data_id = 1
         >>> value_indices = [1, 2, 3, 4, 5]
         >>> values = np.array([v1 v2, v3, v4, v5])
-        >>> precice.write_block_scalar_data(data_id, value_indices, values)
+        >>> interface.write_block_scalar_data(data_id, value_indices, values)
         """
         cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
@@ -945,7 +969,7 @@ cdef class Interface:
         >>> data_id = 1
         >>> value_index = 5
         >>> value = v5
-        >>> precice.write_scalar_data(data_id, value_index, value)
+        >>> interface.write_scalar_data(data_id, value_index, value)
         """
         self.thisptr.writeScalarData (data_id, value_index, value)
 
@@ -1025,14 +1049,14 @@ cdef class Interface:
         Read vector data for 2D problem:
         >>> data_id = 1
         >>> value_index = 5
-        >>> value = precice.read_vector_data(data_id, value_index)
+        >>> value = interface.read_vector_data(data_id, value_index)
         >>> value.shape
         (1, 2)
 
         Read vector data for 2D problem:
         >>> data_id = 1
         >>> value_index = 5
-        >>> value = precice.read_vector_data(data_id, value_index)
+        >>> value = interface.read_vector_data(data_id, value_index)
         >>> value.shape
         (1, 3)
         """
@@ -1070,7 +1094,7 @@ cdef class Interface:
         Read block scalar data for 2D and 3D problems with 5 vertices:
         >>> data_id = 1
         >>> value_indices = [1, 2, 3, 4, 5]
-        >>> values = precice.read_block_scalar_data(data_id, value_indices)
+        >>> values = interface.read_block_scalar_data(data_id, value_indices)
         >>> values.size
         >>> 5
 
@@ -1107,7 +1131,7 @@ cdef class Interface:
         Read scalar data for 2D and 3D problems:
         >>> data_id = 1
         >>> value_index = 5
-        >>> value = precice.read_scalar_data(data_id, value_index)
+        >>> value = interface.read_scalar_data(data_id, value_index)
         """
         cdef double _value
         self.thisptr.readScalarData (data_id, value_index, _value)
