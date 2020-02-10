@@ -21,7 +21,7 @@ APPNAME = "pyprecice"
 precice_version = version.Version("2.0.0")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that makes sure that the version of preCICE is actually supported
 # this version number may be increased, if changes for the bindings are required
 bindings_version = version.Version("1")
-APPVERSION = version.Version(str(precice_version) + "." + str(bindings_subversion))
+APPVERSION = version.Version(str(precice_version) + "." + str(bindings_version))
 
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 
