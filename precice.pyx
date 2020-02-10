@@ -482,7 +482,7 @@ cdef class Interface:
 
         Returns
         -------
-        ids : numpy.array
+        vertex_ids : numpy.array
             IDs of the created vertices.
 
         Notes
@@ -519,11 +519,11 @@ cdef class Interface:
         size, dimensions = positions.shape
         assert(dimensions == self.get_dimensions())
         cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
-        cdef np.ndarray[int, ndim=1] _ids = np.empty(size, dtype=np.int32)
-        self.thisptr.setMeshVertices (mesh_id, size, <const double*>_positions.data, <int*>_ids.data)
-        return _ids
+        cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(size, dtype=np.int32)
+        self.thisptr.setMeshVertices (mesh_id, size, <const double*>_positions.data, <int*>vertex_ids.data)
+        return vertex_ids
 
-    def get_mesh_vertices(self, mesh_id, ids):
+    def get_mesh_vertices(self, mesh_id, vertex_ids):
         """
         Get vertex positions for multiple vertex ids from a given mesh
 
@@ -531,7 +531,7 @@ cdef class Interface:
         ----------
         mesh_id : int
             ID of the mesh to read the vertices from.
-        ids : array_like
+        vertex_ids : array_like
             IDs of the vertices to lookup.
 
         Returns
@@ -550,22 +550,22 @@ cdef class Interface:
         --------
         Return data structure for a 2D problem with 5 vertices:
         >>> mesh_id = interface.get_mesh_id("MeshOne")
-        >>> ids = [1, 2, 3, 4, 5]
-        >>> positions = interface.get_mesh_vertices(mesh_id, ids)
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> positions = interface.get_mesh_vertices(mesh_id, vertex_ids)
         >>> positions.shape
         (5, 2)
 
         Return data structure for a 3D problem with 5 vertices:
         >>> mesh_id = interface.get_mesh_id("MeshOne")
-        >>> ids = [1, 2, 3, 4, 5]
-        >>> positions = interface.get_mesh_vertices(mesh_id, ids)
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> positions = interface.get_mesh_vertices(mesh_id, vertex_ids)
         >>> positions.shape
         (5, 3)
         """
-        cdef np.ndarray[int, ndim=1] _ids = np.ascontiguousarray(ids, dtype=np.int32)
-        size = _ids.size
+        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _positions = np.empty(size * self.get_dimensions(), dtype=np.double)
-        self.thisptr.getMeshVertices (mesh_id, size, <const int*>_ids.data, <double*>_positions.data)
+        self.thisptr.getMeshVertices (mesh_id, size, <const int*>_vertex_ids.data, <double*>_positions.data)
         return _positions.reshape((size, self.get_dimensions()))
 
     def get_mesh_vertex_ids_from_positions (self, mesh_id, positions):
@@ -583,7 +583,7 @@ cdef class Interface:
 
         Returns
         -------
-        ids : numpy.array
+        vertex_ids : numpy.array
             IDs of mesh vertices.
 
         Notes
@@ -600,8 +600,8 @@ cdef class Interface:
         >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
         >>> positions.shape
         (5, 2)
-        >>> ids = interface.get_mesh_vertex_ids_from_positions(mesh_id, positions)
-        >>> ids
+        >>> vertex_ids = interface.get_mesh_vertex_ids_from_positions(mesh_id, positions)
+        >>> vertex_ids
         array([1, 2, 3, 4, 5])
 
         Get mesh vertex ids from positions for a 3D problem with 5 vertices.
@@ -610,8 +610,8 @@ cdef class Interface:
         >>> positions = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]])
         >>> positions.shape
         (5, 3)
-        >>> ids = interface.get_mesh_vertex_ids_from_positions(mesh_id, positions)
-        >>> ids
+        >>> vertex_ids = interface.get_mesh_vertex_ids_from_positions(mesh_id, positions)
+        >>> vertex_ids
         array([1, 2, 3, 4, 5])
         """
         if not isinstance(positions, np.ndarray):
@@ -619,9 +619,9 @@ cdef class Interface:
         size, dimensions = positions.shape
         assert(dimensions == self.get_dimensions())
         cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
-        cdef np.ndarray[int, ndim=1] _ids = np.empty(int(size), dtype=np.int32)
-        self.thisptr.getMeshVertexIDsFromPositions (mesh_id, size, <const double*>_positions.data, <int*>_ids.data)
-        return _ids
+        cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(int(size), dtype=np.int32)
+        self.thisptr.getMeshVertexIDsFromPositions (mesh_id, size, <const double*>_positions.data, <int*>vertex_ids.data)
+        return vertex_ids
 
     def set_mesh_edge (self, mesh_id, first_vertex_id, second_vertex_id):
         """
@@ -638,7 +638,7 @@ cdef class Interface:
 
         Returns
         -------
-        id : int
+        edge_id : int
             ID of the edge.
 
         Notes
@@ -781,7 +781,7 @@ cdef class Interface:
 
         Returns
         -------
-        id : int
+        data_id : int
             ID of the corresponding data.
         """
         return self.thisptr.getDataID (convert(data_name), mesh_id)
@@ -821,17 +821,17 @@ cdef class Interface:
         """
         self.thisptr.mapWriteDataFrom (from_mesh_id)
 
-    def write_block_vector_data (self, data_id, value_indices, values):
+    def write_block_vector_data (self, data_id, vertex_ids, values):
         """
         Writes vector data given as block. This function writes values of specified vertices to a dataID.
-        Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices
-        Values are stored in a numpy array [N x D] where N = number of vertices and D = dimensions of geometry
+        Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
+        of vertices and D = dimensions of geometry
 
         Parameters
         ----------
         data_id : int
             Data ID to write to.
-        value_indices : array_like
+        vertex_ids : array_like
             Indices of the vertices.
         values : numpy.ndarray
             Vector values of data
@@ -840,34 +840,33 @@ cdef class Interface:
         -----
         Previous calls:
             count of available elements at values matches the configured dimension * size
-            count of available elements at valueIndices matches the given size
+            count of available elements at vertex_ids matches the given size
             initialize() has been called
 
         Examples
         --------
         Write block vector data for a 2D problem with 5 vertices:
         >>> data_id = 1
-        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> vertex_ids = [1, 2, 3, 4, 5]
         >>> values = np.array([[v1_x, v1_y], [v2_x, v2_y], [v3_x, v3_y], [v4_x, v4_y], [v5_x, v5_y]])
-        >>> interface.write_block_vector_data(data_id, value_indices, values)
+        >>> interface.write_block_vector_data(data_id, vertex_ids, values)
 
         Write block vector data for a 3D (D=3) problem with 5 (N=5) vertices:
         >>> data_id = 1
-        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> vertex_ids = [1, 2, 3, 4, 5]
         >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
-        >>> interface.write_block_vector_data(data_id, value_indices, values)
+        >>> interface.write_block_vector_data(data_id, vertex_ids, values)
         """
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
         size, dimensions = values.shape
         assert(dimensions == self.get_dimensions())
-        cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
+        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values.flatten(), dtype=np.double)
-        assert(size == _value_indices.size)
-        size = value_indices.size
-        self.thisptr.writeBlockVectorData (data_id, size, <const int*>_value_indices.data, <const double*>_values.data)
+        assert(size == _vertex_ids.size)
+        self.thisptr.writeBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
-    def write_vector_data (self, data_id, value_index, value):
+    def write_vector_data (self, data_id, vertex_id, value):
         """
         Writes vector data to a vertex. This function writes a value of a specified vertex to a dataID.
         Values are provided as a block of continuous memory.
@@ -878,7 +877,7 @@ cdef class Interface:
         ----------
         data_id : int
             ID to write to.
-        value_index : int
+        vertex_id : int
             Index of the vertex.
         value : numpy.array
             Single vector value
@@ -893,24 +892,24 @@ cdef class Interface:
         --------
         Write vector data for a 2D problem with 5 vertices:
         >>> data_id = 1
-        >>> value_index = 5
+        >>> vertex_id = 5
         >>> value = np.array([v5_x, v5_y])
-        >>> interface.write_vector_data(data_id, value_index, value)
+        >>> interface.write_vector_data(data_id, vertex_id, value)
 
         Write vector data for a 3D (D=3) problem with 5 (N=5) vertices:
         >>> data_id = 1
-        >>> value_index = 5
+        >>> vertex_id = 5
         >>> value = np.array([v5_x, v5_y, v5_z])
-        >>> interface.write_vector_data(data_id, value_index, value)
+        >>> interface.write_vector_data(data_id, vertex_id, value)
         """
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
         dimensions = value.size
         assert(dimensions == self.get_dimensions())
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
-        self.thisptr.writeVectorData (data_id, value_index, <const double*>_value.data)
+        self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
 
-    def write_block_scalar_data (self, data_id, value_indices, values):
+    def write_block_scalar_data (self, data_id, vertex_ids, values):
         """
         Writes scalar data given as a block. This function writes values of specified vertices to a dataID.
 
@@ -918,7 +917,7 @@ cdef class Interface:
         ----------
         data_id : int
             ID to write to.
-        value_indices : array_like
+        vertex_ids : array_like
             Indices of the vertices.
         values : numpy.array
             Values to be written
@@ -927,24 +926,24 @@ cdef class Interface:
         -----
         Previous calls:
             count of available elements at values matches the given size
-            count of available elements at valueIndices matches the given size
+            count of available elements at vertex_ids matches the given size
             initialize() has been called
 
         Examples
         --------
         Write block scalar data for a 2D and 3D problem with 5 (N=5) vertices:
         >>> data_id = 1
-        >>> value_indices = [1, 2, 3, 4, 5]
+        >>> vertex_ids = [1, 2, 3, 4, 5]
         >>> values = np.array([v1 v2, v3, v4, v5])
-        >>> interface.write_block_scalar_data(data_id, value_indices, values)
+        >>> interface.write_block_scalar_data(data_id, vertex_ids, values)
         """
-        cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
+        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
-        assert(_values.size == _value_indices.size)
-        size = value_indices.size
-        self.thisptr.writeBlockScalarData (data_id, size, <const int*>_value_indices.data, <const double*>_values.data)
+        assert(_values.size == _vertex_ids.size)
+        size = vertex_ids.size
+        self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
-    def write_scalar_data (self, data_id, value_index, double value):
+    def write_scalar_data (self, data_id, vertex_id, double value):
         """
         Writes scalar data to a vertex
         This function writes a value of a specified vertex to a dataID.
@@ -953,7 +952,7 @@ cdef class Interface:
         ----------
         data_id : int
             ID to write to.
-        value_index : int
+        vertex_id : int
             Index of the vertex.
         value : double
             The value to write.
@@ -967,23 +966,22 @@ cdef class Interface:
         --------
         Write scalar data for a 2D or 3D problem with 5 vertices:
         >>> data_id = 1
-        >>> value_index = 5
+        >>> vertex_id = 5
         >>> value = v5
-        >>> interface.write_scalar_data(data_id, value_index, value)
+        >>> interface.write_scalar_data(data_id, vertex_id, value)
         """
-        self.thisptr.writeScalarData (data_id, value_index, value)
+        self.thisptr.writeScalarData (data_id, vertex_id, value)
 
-    def read_block_vector_data (self, data_id, value_indices):
+    def read_block_vector_data (self, data_id, vertex_ids):
         """
         Reads vector data into a provided block. This function reads values of specified vertices
-        from a dataID. Values are read into a block of continuous memory. valueIndices contains
-        the indices of the vertices.
+        from a dataID. Values are read into a block of continuous memory.
 
         Parameters
         ----------
         data_id : int
             ID to read from.
-        value_indices : array_like
+        vertex_ids : array_like
             Indices of the vertices.
 
         Returns
@@ -995,33 +993,33 @@ cdef class Interface:
         -----
         Previous calls:
             count of available elements at values matches the configured dimension * size
-            count of available elements at valueIndices matches the given size
+            count of available elements at vertex_ids matches the given size
             initialize() has been called
 
         Examples
         --------
         Read block vector data for a 2D problem with 5 vertices:
         >>> data_id = 1
-        >>> value_indices = [1, 2, 3, 4, 5]
-        >>> values = read_block_vector_data(data_id, value_indices)
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> values = read_block_vector_data(data_id, vertex_ids)
         >>> values.shape
         >>> (5, 2)
 
         Read block vector data for a 3D system with 5 vertices:
         >>> data_id = 1
-        >>> value_indices = [1, 2, 3, 4, 5]
-        >>> values = read_block_vector_data(data_id, value_indices)
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> values = read_block_vector_data(data_id, vertex_ids)
         >>> values.shape
         >>> (5, 3)
         """
-        cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
-        size = _value_indices.size
+        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        size = _vertex_ids.size
         dimensions = self.get_dimensions()
         cdef np.ndarray[np.double_t, ndim=1] _values = np.empty(size * dimensions, dtype=np.double)
-        self.thisptr.readBlockVectorData (data_id, size, <const int*>_value_indices.data, <double*>_values.data)
+        self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
         return _values.reshape((size, dimensions))
 
-    def read_vector_data (self, data_id, value_index):
+    def read_vector_data (self, data_id, vertex_id):
         """
         Reads vector data form a vertex. This function reads a value of a specified vertex
         from a dataID.
@@ -1030,7 +1028,7 @@ cdef class Interface:
         ----------
         data_id : int
             ID to read from.
-        value_index : int
+        vertex_id : int
             Index of the vertex.
 
         Returns
@@ -1048,33 +1046,33 @@ cdef class Interface:
         --------
         Read vector data for 2D problem:
         >>> data_id = 1
-        >>> value_index = 5
-        >>> value = interface.read_vector_data(data_id, value_index)
+        >>> vertex_id = 5
+        >>> value = interface.read_vector_data(data_id, vertex_id)
         >>> value.shape
         (1, 2)
 
         Read vector data for 2D problem:
         >>> data_id = 1
-        >>> value_index = 5
-        >>> value = interface.read_vector_data(data_id, value_index)
+        >>> vertex_id = 5
+        >>> value = interface.read_vector_data(data_id, vertex_id)
         >>> value.shape
         (1, 3)
         """
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
-        self.thisptr.readVectorData (data_id, value_index, <double*>_value.data)
+        self.thisptr.readVectorData (data_id, vertex_id, <double*>_value.data)
         return _value
 
-    def read_block_scalar_data (self, data_id, value_indices):
+    def read_block_scalar_data (self, data_id, vertex_ids):
         """
         Reads scalar data as a block. This function reads values of specified vertices from a dataID.
-        Values are provided as a block of continuous memory. valueIndices contains the indices of the vertices.
+        Values are provided as a block of continuous memory.
 
         Parameters
         ----------
         data_id : int
             ID to read from.
-        value_indices : array_like
+        vertex_ids : array_like
             Indices of the vertices.
 
         Returns
@@ -1086,26 +1084,26 @@ cdef class Interface:
         -----
         Previous calls:
             count of available elements at values matches the given size
-            count of available elements at valueIndices matches the given size
+            count of available elements at vertex_ids matches the given size
             initialize() has been called
 
         Examples
         --------
         Read block scalar data for 2D and 3D problems with 5 vertices:
         >>> data_id = 1
-        >>> value_indices = [1, 2, 3, 4, 5]
-        >>> values = interface.read_block_scalar_data(data_id, value_indices)
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> values = interface.read_block_scalar_data(data_id, vertex_ids)
         >>> values.size
         >>> 5
 
         """
-        cdef np.ndarray[int, ndim=1] _value_indices = np.ascontiguousarray(value_indices, dtype=np.int32)
-        size = _value_indices.size
+        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
-        self.thisptr.readBlockScalarData (data_id, size, <const int*>_value_indices.data, <double*>_values.data)
+        self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
         return _values
 
-    def read_scalar_data (self, data_id, value_index):
+    def read_scalar_data (self, data_id, vertex_id):
         """
         Reads scalar data of a vertex. This function needs a value of a specified vertex from a dataID.
 
@@ -1113,7 +1111,7 @@ cdef class Interface:
         ----------
         data_id : int
             ID to read from.
-        value_index : int
+        vertex_id : int
             Index of the vertex.
 
         Returns
@@ -1130,11 +1128,11 @@ cdef class Interface:
         --------
         Read scalar data for 2D and 3D problems:
         >>> data_id = 1
-        >>> value_index = 5
-        >>> value = interface.read_scalar_data(data_id, value_index)
+        >>> vertex_id = 5
+        >>> value = interface.read_scalar_data(data_id, vertex_id)
         """
         cdef double _value
-        self.thisptr.readScalarData (data_id, value_index, _value)
+        self.thisptr.readScalarData (data_id, vertex_id, _value)
         return _value
 
 def get_version_information ():
