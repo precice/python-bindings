@@ -12,7 +12,7 @@ You can test the dummy solver by coupling two instances with each other. Open tw
 
 ## parallel version
 
-For the parallel verison of the solverdummy, you have to run add the command `mpirun -n <N>` to the  commands from above.
+For the parallel version of the solverdummy, you have to add the command `mpirun -n <N>` to the commands from above.
 
 # Next Steps
 

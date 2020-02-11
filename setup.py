@@ -17,7 +17,11 @@ assert(version.parse(pip.__version__) >= version.parse("10.0.1"))  # minimum ver
 
 # name of Interfacing API
 APPNAME = "pyprecice"
-APPVERSION = "2.0.0a4"  # todo: should be replaced with precice.get_version() as soon as it exists , see https://github.com/precice/precice/issues/261
+# this version should be in sync with the latest supported preCICE version
+precice_version = version.Version("2.0.0")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that makes sure that the version of preCICE is actually supported
+# this version number may be increased, if changes for the bindings are required
+bindings_version = version.Version("1")
+APPVERSION = version.Version(str(precice_version) + "." + str(bindings_version))
 
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -104,7 +108,7 @@ class my_test(test, object):
 # build precice.so python extension to be added to "PYTHONPATH" later
 setup(
     name=APPNAME,
-    version=APPVERSION,
+    version=str(APPVERSION),
     description='Python language bindings for preCICE coupling library',
     url='https://github.com/precice/python-bindings',
     author='the preCICE developers',
