@@ -20,6 +20,7 @@ class SolverInterfaceImpl{};
 SolverInterface:: SolverInterface
 (
   const std::string& participantName,
+  const std::string& configurationFileName,
   int                solverProcessIndex,
   int                solverProcessSize )
 {
@@ -33,12 +34,24 @@ SolverInterface:: SolverInterface
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
 }
 
-SolverInterface::~SolverInterface() = default;
+SolverInterface::SolverInterface(
+    const std::string& participantName,
+    const std::string& configurationFileName,
+    int                solverProcessIndex,
+    int                solverProcessSize,
+    void *             communicator)
+{
+  fake_read_write_buffer = std::vector<double>();
+  fake_dimensions = 3;
+  fake_mesh_id = 0;
+  fake_data_id = 15;
+  fake_data_name = "FakeData";
+  n_fake_vertices = 3;
+  fake_ids.resize(n_fake_vertices);
+  std::iota(fake_ids.begin(), fake_ids.end(), 0);
+}
 
-void SolverInterface:: configure
-(
-  const std::string& configurationFileName )
-{}
+SolverInterface::~SolverInterface() = default;
 
 double SolverInterface:: initialize(){return -1;}
 
@@ -73,7 +86,7 @@ bool SolverInterface:: isWriteDataRequired
   return 0;
 }
 
-bool SolverInterface:: isTimestepComplete() const
+bool SolverInterface:: isTimeWindowComplete() const
 {
   return 0;
 }
@@ -85,7 +98,7 @@ bool SolverInterface:: isActionRequired
   return 0;
 }
 
-void SolverInterface:: fulfilledAction
+void SolverInterface:: markActionFulfilled
 (
   const std::string& action )
 {}
@@ -337,23 +350,29 @@ void SolverInterface:: readScalarData
     value = fake_read_write_buffer[0]; 
 }
 
+std::string getVersionInformation()
+{
+    std::string dummy ("dummy");
+    return dummy;
+}
+
 namespace constants {
 
 const std::string& actionWriteInitialData()
 {
-    static std::string dummy ("dummy");
+    static std::string dummy ("dummy_write_initial_data");
     return dummy;
 }
 
 const std::string& actionWriteIterationCheckpoint()
 {
-    static std::string dummy ("dummy");
+    static std::string dummy ("dummy_write_iteration");
     return dummy;
 }
 
 const std::string& actionReadIterationCheckpoint()
 {
-    static std::string dummy ("dummy");
+    static std::string dummy ("dummy_read_iteration");
     return dummy;
 }
 
