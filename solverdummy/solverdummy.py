@@ -32,7 +32,7 @@ mesh_id = interface.get_mesh_id(mesh_name)
 dimensions = interface.get_dimensions()
 vertices = np.zeros((n, dimensions))
 
-data_indices = interface.set_mesh_vertices(mesh_id, vertices)
+vertex_ids = interface.set_mesh_vertices(mesh_id, vertices)
 
 dt = interface.initialize()
     
