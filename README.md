@@ -13,6 +13,10 @@ We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/pr
 
 ## Using pip3
 
+### Install from Test.PyPI (experimental)
+
+Run `pip3 install --user --extra-index-url https://test.pypi.org/simple/ pyprecice`
+
 ### preCICE system installs
 
 For system installs of preCICE, this works out of the box.
