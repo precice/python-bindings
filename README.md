@@ -55,15 +55,13 @@ $ pip3 install --user cython
 3. Build the bindings
 
 ```
-$ python3 setup.py build_ext --mpicompiler=mpicc --include-dirs=$PRECICE_ROOT/src --library-dirs=$PRECICE_ROOT/build/last
+$ python3 setup.py build_ext --include-dirs=$PRECICE_ROOT/src --library-dirs=$PRECICE_ROOT/build/last
 ```
 
 **Options:**
 - `--include-dirs=`, default: `''` 
   Path to the headers of preCICE, point to the sources `$PRECICE_ROOT/src`, or the your custom install prefix `$prefix/include`.
-- `--mpicompiler=`, default: `mpic++` 
-  MPI compiler wrapper of choice.
-
+  
 **NOTES:**
 
 - If you build preCICE using CMake, you can pass the path to the CMake binary directory using `--library-dirs`.
@@ -108,27 +106,16 @@ $ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$PRECICE_ROOT/src
 python3 setup.py test
 ```
 
-# Using with MPI
-
-If preCICE was compiled with MPI, you have to initialize MPI prior to initializing the Interface object.
-To do so, install the package `mpi4py` and import `MPI`.
-
-```
-$ pip3 install --user mpi4py
-```
-
-```python
-from mpi4py import MPI # Initialize MPI 
-```
-
 **NOTE:**
 - For an example of how `pyprecice` can be used, refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API).
-- In case the compilation fails with `shared_ptr.pxd not found` messages, check if you use the latest version of Cython.
-- If you want to use the old python bindings (released with preCICE version < 2.0.0), please refer to the documentation of the corresponding preCICE version
 
 # Troubleshooting & miscellaneous
 
-### python bindings: version of pip3 is too old
+### Version of Cython is too old
+
+In case the compilation fails with `shared_ptr.pxd not found` messages, check if you use the latest version of Cython.
+
+### Version of pip3 is too old
 
 If you see the following error
 ```
@@ -141,6 +128,10 @@ wget -q https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python3 get-pip.py
 *Be aware that `python3 get-pip.py` might require root privileges.*
 
 Check your version of pip via `pip3 --version`. For version 8.1.1 and 9.0.1 we know that this problem occurs. *Remark:* you get versions 8.1.1 of pip if you use `sudo apt install python3-pip` on Ubuntu 16.04 (pip version 9.0.1 on Ubuntu 18.04)
+
+### I'm using preCICE < 2.0.0, but there is no matching version of the bindings. What can I do?
+
+If you want to use the old python bindings (released with preCICE version < 2.0.0), please refer to the documentation of the corresponding preCICE version. 
 
 ### Installing the python bindings for Python 2.7.17
 
