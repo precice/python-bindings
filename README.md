@@ -143,8 +143,8 @@ ERROR: Could not build wheels for pyprecice which use PEP 517 and cannot be inst
 
 There are two possible reasons, why preCICE is not found:
 
-1. preCICE is not installed. Please download and install the C++ library preCICE. See above.
-2. preCICE is installed, but cannot be found. Please make sure that preCICE can be found during the installation process. See our wiki page on [linking to preCICE](https://github.com/precice/precice/wiki/Linking-to-preCICE) and the instructions above in this README file.
+1. preCICE is not installed. Please download and install the C++ library preCICE. See [above](https://github.com/precice/python-bindings/blob/develop/README.md#required-dependencies).
+2. preCICE is installed, but cannot be found. Please make sure that preCICE can be found during the installation process. See our wiki page on [linking to preCICE](https://github.com/precice/precice/wiki/Linking-to-preCICE) and [the instructions above](https://github.com/precice/python-bindings/blob/develop/README.md#precice-at-custom-location-setting-paths).
 
 ### Version of Cython is too old
 
