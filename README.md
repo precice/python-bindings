@@ -13,15 +13,18 @@ We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/pr
 
 ## Using pip3
 
-### Install from Test.PyPI (experimental)
-
-Run `pip3 install --user --extra-index-url https://test.pypi.org/simple/ pyprecice`
-
 ### preCICE system installs
 
 For system installs of preCICE, this works out of the box.
 
-In this directory, execute:
+You can either install from PyPI:
+
+```
+$ pip3 install --user --extra-index-url https://test.pypi.org/simple/ pyprecice
+```
+
+Or, if you cloned this repository, execute the following command from this directory:
+
 ```
 $ pip3 install --user .
 ```
@@ -32,6 +35,7 @@ This will fetch cython, compile the bindings and finally install the package pyp
 ### preCICE at custom location (setting PATHS)
 
 If preCICE (the C++ library) was installed in a custom prefix, or not installed at all, you have to extend the following environment variables:
+
 - `LIBRARY_PATH`, `LD_LIBRARY_PATH` to the library location, or `$prefix/lib`
 - `CPATH` either to the `src` directory or the `$prefix/include`
 
@@ -51,7 +55,7 @@ see above. Then run
 $ python3 setup.py install --user
 ```
 
-### preCICE at custom location (explicit include path, library path, or mpicompiler)
+### preCICE at custom location (explicit include path, library path)
 
 1. Install cython via pip3
 ```
@@ -109,7 +113,7 @@ $ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$PRECICE_ROOT/src
 
 3. Run tests with
 ```
-python3 setup.py test
+$ python3 setup.py test
 ```
 
 **NOTE:**
