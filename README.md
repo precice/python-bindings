@@ -21,13 +21,19 @@ We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/pr
 
 For system installs of preCICE, this works out of the box.
 
-You can either install from PyPI:
+You can either install from PyPI
 
 ```
 $ pip3 install --user --extra-index-url https://test.pypi.org/simple/ pyprecice
 ```
 
-Or, if you cloned this repository, execute the following command from this directory:
+provide the link to this repository to pip (replace `<branch>` with the branch you want to use, preferably `master` or `develop`)
+
+```
+$ pip3 install --user https://github.com/precice/python-bindings/archive/<branch>.zip
+```
+
+or, if you cloned this repository, execute the following command from this directory:
 
 ```
 $ pip3 install --user .
