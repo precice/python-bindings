@@ -166,7 +166,7 @@ Check your version of pip via `pip3 --version`. For version 8.1.1 and 9.0.1 we k
 
 ### I'm using preCICE < 2.0.0, but there is no matching version of the bindings. What can I do?
 
-If you want to use the old python bindings (released with preCICE version < 2.0.0), please refer to the documentation of the corresponding preCICE version. 
+If you want to use the old experimental python bindings (released with preCICE version < 2.0.0), please refer to the documentation of the corresponding preCICE version. 
 
 ### Installing the python bindings for Python 2.7.17
 
