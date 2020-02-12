@@ -864,7 +864,7 @@ cdef class Interface:
         check2D("write_block_vector_data", dimensions, self.get_dimensions())
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values.flatten(), dtype=np.double)
-        assert(size == _value_indices.size, "Function write_block_vector_data expects that number of columns in numpy array values is equal to number of value_indices provided")
+        assert(size == _vertex_ids.size, "Function write_block_vector_data expects that number of columns in numpy array values is equal to number of value_indices provided")
         self.thisptr.writeBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
     def write_vector_data (self, data_id, vertex_id, value):
