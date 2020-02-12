@@ -109,7 +109,7 @@ class my_test(test, object):
 setup(
     name=APPNAME,
     version=str(APPVERSION),
-    description='Python language bindings for preCICE coupling library',
+    description='Python language bindings for the preCICE coupling library',
     url='https://github.com/precice/python-bindings',
     author='the preCICE developers',
     author_email='info@precice.org',
