@@ -172,6 +172,8 @@ If you want to use the old experimental python bindings (released with preCICE v
 
 *Note that the instructions in this section are outdated and refer to the deprecated python bindings. Until we have updated information on the installation procedure for the python bindings under this use-case, we will keep these instructions, since they might still be very useful* (Originally contributed by [huangq1234553](https://github.com/huangq1234553) to the precice wiki in [`precice/precice/wiki:8bb74b7`](https://github.com/precice/precice/wiki/Dependencies/8bb74b78a7ebc54983f4822af82fb3d638021faa).)
 
+<details><summary>show details</summary>
+
 This guide provides steps to install python bindings for precice-1.6.1 for a conda environment Python 2.7.17 on the CoolMUC. Note that preCICE no longer supports Python 2 after v1.4.0. Hence, some modifications to the python setup code was necessary. Most steps are similar if not identical to the basic guide without petsc or python above. This guide assumes that the Eigen dependencies have already been installed.
 
 Load the prerequisite libraries:
@@ -225,7 +227,6 @@ Run the setup file using the default Python 2.7.17.
 ```
 python setup.py install --user
 ```
-</p>
 </details>
 
 # Contributors
