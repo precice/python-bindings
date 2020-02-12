@@ -172,6 +172,25 @@ wget -q https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python3 get-pip.py
 
 Check your version of pip via `pip3 --version`. For version 8.1.1 and 9.0.1 we know that this problem occurs. *Remark:* you get versions 8.1.1 of pip if you use `sudo apt install python3-pip` on Ubuntu 16.04 (pip version 9.0.1 on Ubuntu 18.04)
 
+### Build-time dependencies (Cython, numpy...) defined in `pyproject.toml` are not installed automatically
+
+If you see the following error
+```
+Collecting pyprecice
+  Using cached https://files.pythonhosted.org/packages/a6/fb/66f78168394afa2adca62ecd9079a98e741fbf3c6a96845719641ea27912/pyprecice-2.0.0.1.tar.gz
+    Complete output from command python setup.py egg_info:
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+      File "/tmp/pip-build-ebyoc0sq/pyprecice/setup.py", line 7, in <module>
+        from Cython.Distutils.extension import Extension
+    ModuleNotFoundError: No module named 'Cython'
+```
+your pip might be too old and therefore it does not use the information from `pyproject.toml`. You can update your pip via
+```
+pip3 install --upgrade pip
+```
+then try to install `pyprecice`, again.
+
 ### I'm using preCICE < 2.0.0, but there is no matching version of the bindings. What can I do?
 
 If you want to use the old experimental python bindings (released with preCICE version < 2.0.0), please refer to the documentation of the corresponding preCICE version. 
