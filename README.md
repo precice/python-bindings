@@ -7,6 +7,10 @@ Python language bindings for the C++ library preCICE
 
 This package provides python language bindings for the C++ library [preCICE](https://github.com/precice/precice). Note that the first three digits of the version number of the bindings indicate the preCICE version that the bindings support. The last digit represents the version of the bindings. Example: `v2.0.0.1` of the bindings represents version `1` of the bindings which is compatible with preCICE `v2.0.0`.
 
+# Required dependencies
+
+* **preCICE**: Refer to (the preCICE wiki)[https://github.com/precice/precice/wiki#1-get-precice] for information on installation.
+
 # Installing the package
 
 We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/precice/bindings/python/README.md#using-pip3) for the sake of simplicity.
@@ -120,6 +124,27 @@ $ python3 setup.py test
 - For an example of how `pyprecice` can be used, refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API).
 
 # Troubleshooting & miscellaneous
+
+### preCICE is not found
+
+The following error shows up during installation, if preCICE is not found:
+
+```
+  /tmp/pip-install-d_fjyo1h/pyprecice/precice.cpp:643:10: fatal error: precice/SolverInterface.hpp: No such file or directory
+    643 | #include "precice/SolverInterface.hpp"
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  compilation terminated.
+  error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+  ----------------------------------------
+  ERROR: Failed building wheel for pyprecice
+Failed to build pyprecice
+ERROR: Could not build wheels for pyprecice which use PEP 517 and cannot be installed directly
+```
+
+There are two possible reasons, why preCICE is not found:
+
+1. preCICE is not installed. Please download and install the C++ library preCICE. See above.
+2. preCICE is installed, but cannot be found. Please make sure that preCICE can be found during the installation process. See our wiki page on [linking to preCICE](https://github.com/precice/precice/wiki/Linking-to-preCICE) and the instructions above in this README file.
 
 ### Version of Cython is too old
 
