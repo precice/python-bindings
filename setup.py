@@ -20,7 +20,7 @@ APPNAME = "pyprecice"
 # this version should be in sync with the latest supported preCICE version
 precice_version = version.Version("2.0.0")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that makes sure that the version of preCICE is actually supported
 # this version number may be increased, if changes for the bindings are required
-bindings_version = version.Version("1")
+bindings_version = version.Version("2rc1")
 APPVERSION = version.Version(str(precice_version) + "." + str(bindings_version))
 
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -104,11 +104,19 @@ class my_test(test, object):
         self.distribution.is_test = True       
         super().initialize_options()
 
+        
+this_directory = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+    
+    
 # build precice.so python extension to be added to "PYTHONPATH" later
 setup(
     name=APPNAME,
     version=str(APPVERSION),
     description='Python language bindings for the preCICE coupling library',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/precice/python-bindings',
     author='the preCICE developers',
     author_email='info@precice.org',
