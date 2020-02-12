@@ -1,0 +1,5 @@
+*events.json
+venv
+.idea
+*.log
+__pycache__
