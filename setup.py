@@ -104,11 +104,19 @@ class my_test(test, object):
         self.distribution.is_test = True       
         super().initialize_options()
 
+        
+this_directory = os.path.abspath(path.dirname(__file__))
+with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+    
+    
 # build precice.so python extension to be added to "PYTHONPATH" later
 setup(
     name=APPNAME,
     version=str(APPVERSION),
     description='Python language bindings for the preCICE coupling library',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/precice/python-bindings',
     author='the preCICE developers',
     author_email='info@precice.org',
