@@ -120,7 +120,6 @@ setup(
               'build_ext': my_build_ext,
               'build': my_build,
               'install': my_install},
-    #ensure pxd-files:
     package_data={ 'precice': ['*.pxd']},
     include_package_data=True,
     zip_safe=False  #needed because setuptools are used
