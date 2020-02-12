@@ -24,7 +24,7 @@ For system installs of preCICE, this works out of the box.
 You can either install from PyPI
 
 ```
-$ pip3 install --user --extra-index-url https://test.pypi.org/simple/ pyprecice
+$ pip3 install --user pyprecice
 ```
 
 provide the link to this repository to pip (replace `<branch>` with the branch you want to use, preferably `master` or `develop`)
