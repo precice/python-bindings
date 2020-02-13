@@ -13,6 +13,8 @@ This package provides python language bindings for the C++ library [preCICE](htt
 
 **preCICE**: Refer to [the preCICE wiki](https://github.com/precice/precice/wiki#1-get-precice) for information on building and installation.
 
+**MPI**: `mpi4py` requires MPI to be installed on your system.
+
 # Installing the package
 
 We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/precice/bindings/python/README.md#using-pip3) (version 19.0 or newer) for the sake of simplicity.
