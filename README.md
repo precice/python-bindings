@@ -11,7 +11,7 @@ This package provides python language bindings for the C++ library [preCICE](htt
 
 # Required dependencies
 
-**preCICE**: Refer to (the preCICE wiki)[https://github.com/precice/precice/wiki#1-get-precice] for information on building and installation.
+**preCICE**: Refer to [the preCICE wiki](https://github.com/precice/precice/wiki#1-get-precice) for information on building and installation.
 
 # Installing the package
 
