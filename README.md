@@ -17,7 +17,7 @@ This package provides python language bindings for the C++ library [preCICE](htt
 
 # Installing the package
 
-We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/precice/bindings/python/README.md#using-pip3) (version 19.0 or newer) for the sake of simplicity.
+We recommend using pip3 (version 19.0 or newer) for the sake of simplicity.
 
 ## Using pip3
 
@@ -25,7 +25,7 @@ We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/pr
 
 For system installs of preCICE, installation works out of the box. There are different ways how pip can be used to install pyprecice. pip will fetch cython and other build-time dependencies, compile the bindings and finally install the package pyprecice.
 
-* (recommended) install pyprecice from PyPI
+* (recommended) install [pyprecice from PyPI](https://pypi.org/project/pyprecice/)
 
   ```
   $ pip3 install --user pyprecice
