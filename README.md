@@ -195,6 +195,33 @@ pip3 install --upgrade pip
 ```
 then try to install `pyprecice`, again.
 
+### `Python.h` missing
+
+```
+$ python3 -m pip install pyprecice
+Collecting pyprecice
+...
+  /tmp/pip-build-7rj4_h93/pyprecice/precice.cpp:25:20: fatal error: Python.h: No such file or directory
+  compilation terminated.
+  error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+
+  ----------------------------------------
+  Failed building wheel for pyprecice 
+```
+
+Please try to install `python3-dev`. E.g. via `apt install python3-dev`. Please make sure that you use the correct version (e.g. `python3.5-dev` or `python3.6-dev`). You can check your version via `python3 --version`.
+
+### `libprecice.so` is not found at runtime
+
+```
+$ python3 -c "import precice"
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ImportError: libprecice.so.2: cannot open shared object file: No such file or directory
+```
+
+Make sure that your `LD_LIBRARY_PATH` includes the directory that contains `libprecice.so`. The actual path depends on how you installed preCICE. Example: If preCICE was installed using `sudo make install` and you did not define a `CMAKE_INSTALL_PREFIX` the library path is `/usr/local/lib`. This means you have to `export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH`.
+
 ### I'm using preCICE < 2.0.0, but there is no matching version of the bindings. What can I do?
 
 If you want to use the old experimental python bindings (released with preCICE version < 2.0.0), please refer to the corresponding preCICE version. Example: for preCICE v1.6.1 there are three different versions of the python bindings: [`precice_future`](https://github.com/precice/precice/tree/v1.6.1/src/precice/bindings/python_future), [`precice`](https://github.com/precice/precice/tree/v1.6.1/src/precice/bindings/python) and [`PySolverInterface`](https://github.com/precice/precice/tree/v1.6.1/src/precice/bindings/PySolverInterface). Installation instructions can be found in the corresponding `README` files.
