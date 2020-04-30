@@ -134,9 +134,11 @@ $ python3 -c "import precice"
    $ python3 setup.py test
    ```
 
-**NOTE:**
+# Usage
 
-- For an example of how `pyprecice` can be used, refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API).
+You can find the documentation of the implemented interface in the file `precice.pyx`. For an example of how `pyprecice` can be used please refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API). 
+
+**Note** The python package that is installed is called `pyprecice`. It provides the python module `precice` that can be use in your code via `import precice`, for example.
 
 # Troubleshooting & miscellaneous
 
