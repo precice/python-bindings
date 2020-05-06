@@ -348,7 +348,7 @@ cdef class Interface:
         Previous calls:
             The solver fulfilled the specified action.
         """
-        return self.thisptr.markActionFulfilled (action)
+        self.thisptr.markActionFulfilled (action)
 
     # mesh access
 
