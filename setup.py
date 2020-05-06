@@ -1,7 +1,17 @@
 import os
 import subprocess
-from enum import Enum
+import warnings
+from packaging import version
+import pip
 
+if version.parse(pip.__version__) < version.parse("19.0"):
+    # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See https://pip.pypa.io/en/stable/news/#id209
+    warnings.warn("You are using pip version {}. However, pip version > 19.0 is recommended. You can continue with the installation, but installation problems can occour. Please refer to https://github.com/precice/python-bindings#build-time-dependencies-cython-numpy-defined-in-pyprojecttoml-are-not-installed-automatically for help.".format(pip.__version__))
+
+if version.parse(pip.__version__) < version.parse("10.0.1"):        
+    warnings.warn("You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(pip.__version__))
+
+from enum import Enum
 from setuptools import setup
 from setuptools.command.test import test
 from Cython.Distutils.extension import Extension
@@ -9,66 +19,26 @@ from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
 from distutils.command.install import install
 from distutils.command.build import build
-from packaging import version
-import pip
 import numpy
 
-assert(version.parse(pip.__version__) >= version.parse("10.0.1"))  # minimum version 10.0.1 is required. See https://github.com/precice/precice/wiki/Non%E2%80%93standard-APIs#python-bindings-version-of-pip3-is-too-old
 
 # name of Interfacing API
-APPNAME = "precice"
-APPVERSION = "2.0.0"  # todo: should be replaced with precice.get_version() as soon as it exists , see https://github.com/precice/precice/issues/261
+APPNAME = "pyprecice"
+# this version should be in sync with the latest supported preCICE version
+precice_version = version.Version("2.0.2")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that makes sure that the version of preCICE is actually supported
+# this version number may be increased, if changes for the bindings are required
+bindings_version = version.Version("1")
+APPVERSION = version.Version(str(precice_version) + "." + str(bindings_version))
 
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 
-class MpiImplementations(Enum):
-    OPENMPI = 1
-    MPICH = 2
-
-
-def check_mpi_implementation(mpi_compiler_wrapper):
-    FNULL = open(os.devnull, 'w')  # used to supress output of subprocess.call
-
-    if subprocess.call([mpi_compiler_wrapper, "-showme:compile"], stdout=FNULL, stderr=FNULL) == 0:
-        PRECICE_MPI_IMPLEMENTATION = MpiImplementations.OPENMPI
-    elif subprocess.call([mpi_compiler_wrapper, "-compile-info"], stdout=FNULL, stderr=FNULL) == 0:
-        PRECICE_MPI_IMPLEMENTATION = MpiImplementations.MPICH
-    else:
-        raise Exception("unknown/no mpi++")
-
-    return PRECICE_MPI_IMPLEMENTATION
-
-
-def determine_mpi_args(mpi_compiler_wrapper):
-    PRECICE_MPI_IMPLEMENTATION = check_mpi_implementation(mpi_compiler_wrapper)
-    # determine which flags to use with mpi compiler wrapper
-    if PRECICE_MPI_IMPLEMENTATION is MpiImplementations.OPENMPI:
-        mpi_compile_args = subprocess.check_output([mpi_compiler_wrapper, "-showme:compile"]).decode().strip().split(
-            ' ')
-        mpi_link_args = subprocess.check_output([mpi_compiler_wrapper, "-showme:link"]).decode().strip().split(' ')
-    elif PRECICE_MPI_IMPLEMENTATION is MpiImplementations.MPICH:
-        mpi_compile_args = subprocess.check_output([mpi_compiler_wrapper, "-compile-info"]).decode().strip().split(' ')[
-                           1::]
-        mpi_link_args = subprocess.check_output([mpi_compiler_wrapper, "-link-info"]).decode().strip().split(' ')[1::]
-    else:  # if PRECICE_MPI_IMPLEMENTATION is not mpich or openmpi quit.
-        raise Exception("unknown/no mpi found using compiler %s. Could not build PySolverInterface." % mpi_compiler_wrapper)
-
-    return mpi_compile_args, mpi_link_args
-
-
-def get_extensions(mpi_compiler_wrapper, is_test):
+def get_extensions(is_test):
     compile_args = []
-    link_args = []
-
-    mpi_compile_args, mpi_link_args = determine_mpi_args(mpi_compiler_wrapper)
-    
-    compile_args += mpi_compile_args
-    compile_args.append("-Wall")
+    link_args = []    
     compile_args.append("-std=c++11")
     compile_args.append("-I{}".format(numpy.get_include()))
 
-    link_args += mpi_link_args
-    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, APPNAME) + ".pyx"]
+    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "precice") + ".pyx"]
     test_sources = [os.path.join(PYTHON_BINDINGS_PATH, "test", "test_bindings_module" + ".pyx")]
     if not is_test:
         link_args.append("-lprecice")
@@ -78,7 +48,7 @@ def get_extensions(mpi_compiler_wrapper, is_test):
 
     return [
         Extension(
-                APPNAME,
+                "precice",
                 sources=bindings_sources,
                 libraries=[],
                 language="c++",
@@ -95,19 +65,8 @@ def get_extensions(mpi_compiler_wrapper, is_test):
             )
     ]
 
-# some global definitions for an additional user input command
-mpicompiler_default = "mpic++"
-add_option = [('mpicompiler=', None, 'specify the mpi compiler wrapper')]
-dependencies = ['cython']
-dependencies.append('mpi4py')  # only needed, if preCICE was compiled with MPI, see https://github.com/precice/precice/issues/311
-
 class my_build_ext(build_ext, object):
-    description = "building with optional specification of an alternative mpi compiler wrapper"
-    user_options = build_ext.user_options + add_option
-
     def initialize_options(self):
-        self.mpicompiler = mpicompiler_default
-
         try:
             self.distribution.is_test
         except AttributeError:
@@ -116,25 +75,14 @@ class my_build_ext(build_ext, object):
         super().initialize_options()
         
     def finalize_options(self):
-        print("#####")
-        print("calling my_build_ext")
-        print("using --%s%s" % ("mpicompiler=", self.mpicompiler))
-
         if not self.distribution.ext_modules:
-            print("adding extension")
-            self.distribution.ext_modules = cythonize(get_extensions(self.mpicompiler, self.distribution.is_test))
-
-        print("#####")
+            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test))
 
         super().finalize_options()
 
 
 class my_install(install, object):
-    user_options = install.user_options + add_option
-
     def initialize_options(self):
-        self.mpicompiler = mpicompiler_default
-
         try:
             self.distribution.is_test
         except AttributeError:
@@ -144,11 +92,7 @@ class my_install(install, object):
 
 
 class my_build(build, object):
-    user_options = build.user_options + add_option
-
     def initialize_options(self):
-        self.mpicompiler = mpicompiler_default
-
         try:
             self.distribution.is_test
         except AttributeError:
@@ -157,15 +101,8 @@ class my_build(build, object):
         super().initialize_options()
 
     def finalize_options(self):
-        print("#####")
-        print("calling my_build")
-        print("using --%s%s" % ("mpicompiler=", self.mpicompiler))
-
         if not self.distribution.ext_modules:
-            print("adding extension")
-            self.distribution.ext_modules = cythonize(get_extensions(self.mpicompiler, self.distribution.is_test))
-
-        print("#####")
+            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test))
 
         super().finalize_options()
 
@@ -174,22 +111,29 @@ class my_test(test, object):
         self.distribution.is_test = True       
         super().initialize_options()
 
+        
+this_directory = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
+    
+    
 # build precice.so python extension to be added to "PYTHONPATH" later
 setup(
     name=APPNAME,
-    version=APPVERSION,
-    description='Python language bindings for preCICE coupling library',
-    url='https://github.com/precice/precice',
+    version=str(APPVERSION),
+    description='Python language bindings for the preCICE coupling library',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='https://github.com/precice/python-bindings',
     author='the preCICE developers',
     author_email='info@precice.org',
     license='LGPL-3.0',
     python_requires='>=3',
-    install_requires=dependencies,
+    install_requires=['numpy', 'mpi4py'],  # mpi4py is only needed, if preCICE was compiled with MPI, see https://github.com/precice/python-bindings/issues/8
     cmdclass={'test': my_test,
               'build_ext': my_build_ext,
               'build': my_build,
               'install': my_install},
-    #ensure pxd-files:
     package_data={ 'precice': ['*.pxd']},
     include_package_data=True,
     zip_safe=False  #needed because setuptools are used

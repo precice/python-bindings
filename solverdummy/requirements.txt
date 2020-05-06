@@ -1,3 +1,3 @@
-precice>=1.3
+pyprecice==2.0
 argparse>=1.4
 numpy>=1.16
