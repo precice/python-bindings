@@ -42,14 +42,14 @@ mesh_id = interface.get_mesh_id(mesh_name)
 
 dimensions = interface.get_dimensions()
 vertices = np.zeros((n, dimensions))
-readData = np.zeros((n, dimensions))
-writeData = np.zeros((n, dimensions))
+read_data = np.zeros((n, dimensions))
+write_data = np.zeros((n, dimensions))
 
 for x in range(0, n):
     for y in range(0, dimensions):
         vertices[x, y] = x
-        readData[x, y] = x
-        writeData[x, y] = x
+        read_data[x, y] = x
+        write_data[x, y] = x
 
 vertex_ids = interface.set_mesh_vertices(mesh_id, vertices)
 
@@ -61,21 +61,21 @@ dt = interface.initialize()
 while interface.is_coupling_ongoing():
    
     if interface.is_action_required(precice.action_write_iteration_checkpoint()):
-        interface.write_block_vector_data(write_data_id, vertex_ids, writeData)
+        interface.write_block_vector_data(write_data_id, vertex_ids, write_data)
         print("DUMMY: Writing iteration checkpoint")
         interface.mark_action_fulfilled(precice.action_write_iteration_checkpoint())
     
     dt = interface.advance(dt)
     
     if interface.is_action_required(precice.action_read_iteration_checkpoint()):
-        readData = interface.read_block_vector_data(read_data_id, vertex_ids)
+        read_data = interface.read_block_vector_data(read_data_id, vertex_ids)
         print("DUMMY: Reading iteration checkpoint")
         interface.mark_action_fulfilled(precice.action_read_iteration_checkpoint())
     else:
         print("DUMMY: Advancing in time")
 
-    writeData = readData + 1
-    print("DUMMY: writeData = ", writeData)
+    write_data = read_data + 1
+    print("DUMMY: writeData = ", write_data)
 
 interface.finalize()
 print("DUMMY: Closing python solver dummy...")
