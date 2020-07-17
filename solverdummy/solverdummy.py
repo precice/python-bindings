@@ -13,67 +13,67 @@ try:
     args = parser.parse_args()
 except SystemExit:
     print("")
-    print("Usage: python ./solverdummy precice-config participant-name mesh-name")    
+    print("Usage: python ./solverdummy precice-config participant-name mesh-name")
     quit()
 
 configuration_file_name = args.configurationFileName
 participant_name = args.participantName
 mesh_name = args.meshName
-if (participant_name == 'SolverOne'):
-  DataWrite_Name='dataOne'
-  DataRead_Name='dataTwo'
+if participant_name == 'SolverOne':
+    write_data_name = 'dataOne'
+    read_data_name = 'dataTwo'
 
-if (participant_name == 'SolverTwo'):
-  DataRead_Name='dataOne'
-  DataWrite_Name='dataTwo'
+if participant_name == 'SolverTwo':
+    read_data_name = 'dataOne'
+    write_data_name = 'dataTwo'
 
-n = 3               #Number of vertices
+num_vertices = 3  # Number of vertices
 
 solver_process_index = 0
 solver_process_size = 1
 
 interface = precice.Interface(participant_name, configuration_file_name, solver_process_index, solver_process_size)
-    
+
 mesh_id = interface.get_mesh_id(mesh_name)
-
 dimensions = interface.get_dimensions()
-vertices = np.zeros((n, dimensions))
-readData = np.zeros((n, dimensions))
-writeData = np.zeros((n, dimensions))
 
-for x in range(0,n):
-    for y in range(0,dimensions):
-        vertices[x,y] = x
-        readData[x,y] = x 
-        writeData[x,y] = x
+vertices = np.zeros((num_vertices, dimensions))
+read_data = np.zeros((num_vertices, dimensions))
+write_data = np.zeros((num_vertices, dimensions))
+
+for x in range(num_vertices):
+    for y in range(0, dimensions):
+        vertices[x, y] = x
+        read_data[x, y] = x
+        write_data[x, y] = x
 
 data_indices = interface.set_mesh_vertices(mesh_id, vertices)
 
-DataRead_ID = interface.get_data_id(DataRead_Name,mesh_id)
-DataWrite_ID = interface.get_data_id(DataWrite_Name,mesh_id)
+read_data_id = interface.get_data_id(read_data_name, mesh_id)
+write_data_id = interface.get_data_id(write_data_name, mesh_id)
 
 dt = interface.initialize()
-    
+
 while interface.is_coupling_ongoing():
-
-    if interface.is_action_required(precice.action_read_iteration_checkpoint()):
-        readData = interface.read_block_vector_data(DataRead_ID, data_indices)      
-        print("DUMMY: Reading iteration checkpoint")
-        interface.mark_action_fulfilled(precice.action_read_iteration_checkpoint())
-
-    writeData = readData + 1
-   
     if interface.is_action_required(precice.action_write_iteration_checkpoint()):
-        interface.write_block_vector_data(DataWrite_ID, data_indices,writeData)  
         print("DUMMY: Writing iteration checkpoint")
         interface.mark_action_fulfilled(precice.action_write_iteration_checkpoint())
-    
+
+    if interface.is_read_data_available():
+        read_data = interface.read_block_vector_data(read_data_id, data_indices)
+
+    write_data = read_data + 1
+
+    if interface.is_write_data_required(dt):
+        interface.write_block_vector_data(write_data_id, data_indices, write_data)
+
     print("DUMMY: Advancing in time")
     dt = interface.advance(dt)
 
-interface.finalize()
-print("DUMMY: Closing python solver dummy...")
-    
-interface.finalize()
-print("DUMMY: Closing python solver dummy...")
+    if interface.is_action_required(precice.action_read_iteration_checkpoint()):
+        print("DUMMY: Reading iteration checkpoint")
+        interface.mark_action_fulfilled(precice.action_read_iteration_checkpoint())
 
+
+interface.finalize()
+print("DUMMY: Closing python solver dummy...")
