@@ -19,6 +19,7 @@ except SystemExit:
 configuration_file_name = args.configurationFileName
 participant_name = args.participantName
 mesh_name = args.meshName
+
 if participant_name == 'SolverOne':
     write_data_name = 'dataOne'
     read_data_name = 'dataTwo'
@@ -47,8 +48,7 @@ for x in range(num_vertices):
         read_data[x, y] = x
         write_data[x, y] = x
 
-data_indices = interface.set_mesh_vertices(mesh_id, vertices)
-
+vertex_ids = interface.set_mesh_vertices(mesh_id, vertices)
 read_data_id = interface.get_data_id(read_data_name, mesh_id)
 write_data_id = interface.get_data_id(write_data_name, mesh_id)
 
@@ -60,12 +60,12 @@ while interface.is_coupling_ongoing():
         interface.mark_action_fulfilled(precice.action_write_iteration_checkpoint())
 
     if interface.is_read_data_available():
-        read_data = interface.read_block_vector_data(read_data_id, data_indices)
+        read_data = interface.read_block_vector_data(read_data_id, vertex_ids)
 
     write_data = read_data + 1
 
     if interface.is_write_data_required(dt):
-        interface.write_block_vector_data(write_data_id, data_indices, write_data)
+        interface.write_block_vector_data(write_data_id, vertex_ids, write_data)
 
     print("DUMMY: Advancing in time")
     dt = interface.advance(dt)
@@ -73,7 +73,6 @@ while interface.is_coupling_ongoing():
     if interface.is_action_required(precice.action_read_iteration_checkpoint()):
         print("DUMMY: Reading iteration checkpoint")
         interface.mark_action_fulfilled(precice.action_read_iteration_checkpoint())
-
 
 interface.finalize()
 print("DUMMY: Closing python solver dummy...")
