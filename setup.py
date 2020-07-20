@@ -76,7 +76,7 @@ class my_build_ext(build_ext, object):
         
     def finalize_options(self):
         if not self.distribution.ext_modules:
-            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test))
+            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test), compiler_directives={'language_level': "3"})
 
         super().finalize_options()
 
@@ -102,7 +102,7 @@ class my_build(build, object):
 
     def finalize_options(self):
         if not self.distribution.ext_modules:
-            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test))
+            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test), compiler_directives={'language_level': "3"})
 
         super().finalize_options()
 
