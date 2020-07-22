@@ -25,7 +25,7 @@ import numpy
 # name of Interfacing API
 APPNAME = "pyprecice"
 # this version should be in sync with the latest supported preCICE version
-precice_version = version.Version("2.0.2")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that makes sure that the version of preCICE is actually supported
+precice_version = version.Version("2.1.0")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that makes sure that the version of preCICE is actually supported
 # this version number may be increased, if changes for the bindings are required
 bindings_version = version.Version("1")
 APPVERSION = version.Version(str(precice_version) + "." + str(bindings_version))
@@ -76,7 +76,7 @@ class my_build_ext(build_ext, object):
         
     def finalize_options(self):
         if not self.distribution.ext_modules:
-            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test))
+            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test), compiler_directives={'language_level': "3"})
 
         super().finalize_options()
 
@@ -102,7 +102,7 @@ class my_build(build, object):
 
     def finalize_options(self):
         if not self.distribution.ext_modules:
-            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test))
+            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test), compiler_directives={'language_level': "3"})
 
         super().finalize_options()
 
