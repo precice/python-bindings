@@ -59,6 +59,13 @@ class TestBindings(TestCase):
         positions = list(list(positions[i,j] for j in range(positions.shape[1])) for i in range(positions.shape[0]))
         self.assertTrue(np.array_equal(np.array(range(n_fake_vertices)), solver_interface.set_mesh_vertices(fake_mesh_id, positions)))
 
+    def test_set_mesh_vertices_empty_list (self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
+        positions = []
+        n_fake_vertices = 0
+        self.assertTrue(np.array_equal(np.array(range(n_fake_vertices)), solver_interface.set_mesh_vertices(fake_mesh_id, positions)))
+
     def test_set_mesh_vertices_tuple (self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
@@ -66,6 +73,13 @@ class TestBindings(TestCase):
         n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
         positions = np.random.rand(n_fake_vertices, fake_dimension)
         positions = tuple(tuple(positions[i,j] for j in range(positions.shape[1])) for i in range(positions.shape[0]))
+        self.assertTrue(np.array_equal(np.array(range(n_fake_vertices)), solver_interface.set_mesh_vertices(fake_mesh_id, positions)))
+
+    def test_set_mesh_vertices_empty_tuple (self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
+        positions = ()
+        n_fake_vertices = 0
         self.assertTrue(np.array_equal(np.array(range(n_fake_vertices)), solver_interface.set_mesh_vertices(fake_mesh_id, positions)))
 
     def test_set_mesh_vertices_mixed (self):
@@ -84,6 +98,13 @@ class TestBindings(TestCase):
         position = np.random.rand(fake_dimension)
         self.assertTrue(0 == solver_interface.set_mesh_vertex(fake_mesh_id, position))
 
+    def test_set_mesh_vertex_empty(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
+        fake_dimension = 0  # compare to test/SolverInterface.cpp, fake_dimensions
+        position = np.random.rand(fake_dimension)
+        self.assertTrue(0 == solver_interface.set_mesh_vertex(fake_mesh_id, position))
+
     def test_set_mesh_vertex_list(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
@@ -91,11 +112,23 @@ class TestBindings(TestCase):
         position = list(np.random.rand(fake_dimension))
         self.assertTrue(0 == solver_interface.set_mesh_vertex(fake_mesh_id, position))
 
+    def test_set_mesh_vertex_empty_list(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
+        position = []
+        self.assertTrue(0 == solver_interface.set_mesh_vertex(fake_mesh_id, position))
+
     def test_set_mesh_vertex_tuple(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
         fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
         position = tuple(np.random.rand(fake_dimension))
+        self.assertTrue(0 == solver_interface.set_mesh_vertex(fake_mesh_id, position))
+
+    def test_set_mesh_vertex_empty_tuple(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
+        position = ()
         self.assertTrue(0 == solver_interface.set_mesh_vertex(fake_mesh_id, position))
 
     def test_get_mesh_vertex_ids_from_positions(self):
