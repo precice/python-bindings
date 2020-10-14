@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2.1.1.1
 
-* Bindings can now handle mesh initialization with no vertices. This ensures consistency consistent with the C++ preCICE API.
+* Bindings can now handle mesh initialization with no vertices. This behavior is consistent with the C++ preCICE API.
 * Adds a CHANGELOG to the project.
 
 ## 2.1.0.1
@@ -25,4 +25,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0.1
 
-* Introduces new versioning system.
+* Introduces new versioning system. See https://github.com/precice/python-bindings/issues/31.
+* First independent release of the python bindings.
+* Name the package `pyprecice`.
+* Publish package on [PyPI](https://pypi.org/project/pyprecice/).

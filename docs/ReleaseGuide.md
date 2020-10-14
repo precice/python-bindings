@@ -1,26 +1,19 @@
 ## Guide to release new version of python-bindings
 The developer who is releasing a new version of the python-bindings is expected to follow this work flow
 
-1. Because the `python-bindings` repository is not big the release is made directly from the latest commit
-of the `develop` branch.
+1. The release of the `python-bindings` repository is made directly from the latest commit of the `develop` branch (no independent release branch).
 
-2. Bump the version to the appropriate level in the `setup.py` file. If a pre-release version is being made
-then the `rc` key in the version number should be attached appropriately. For example if the first 
-pre-release version is being made then the key is `rc1`. If the second pre-release version is being made
-then the key is `rc2`.
+2. Bump the version to the appropriately in [`setup.py`](https://github.com/precice/python-bindings/blob/develop/setup.py) (i.e. `precice_version = version.Version("2.1.1")` and `bindings_version = version.Version("1")`). *Note:* If a pre-release version is being made then the `rc` key in the `bindings_version` attached (i.e. `bindings_version = version.Version("1rc1")`).
 
-3. Open a Pull Requent from `develop` --> `master` and briefly describe the new features of the release
-in the PR description.
+3. [Open a Pull Request from `develop` --> `master`](https://github.com/precice/python-bindings/compare/master...develop) named after the version (i.e. `Release v2.1.1.1`) and briefly describe the new features of the release in the PR description.
 
-4. Select the `Draft a New Release` option in the `Releases` section on the right side of the repository
-page in a web browser. The release tag needs to be the exact version number. Release title is also the version
-number. If it is a pre-release then the respective option needs to be selected at the bottom of the page.
+4. [Draft a New Release](https://github.com/precice/python-bindings/releases/new) in the `Releases` section of the repository page in a web browser. The release tag needs to be the exact version number (i.e.`v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing tags](https://github.com/precice/python-bindings/tags)). Use `@target:master`. Release title is also the version number (i.e. `v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing releases](https://github.com/precice/python-bindings/tags)).
+*Note:* If it is a pre-release then the option *This is a pre-release* needs to be selected at the bottom of the page. Use `@target:develop` for a pre-release, since we will never merge a pre-release into master.
 
-5. If a pre-release is made then a check of the artifacts of the release is a good double check. 
+    a) If a pre-release is made: Directly hit the "Publish release" button in your Release Draft. Now you can check the artifacts (e.g. release on [PyPI](https://pypi.org/project/pyprecice/#history)) of the release. *Note:* As soon as a new tag is created github actions will take care of deploying the new version on PyPI using [this workflow](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
 
-6. If everything is in order upto this point then the new version can be released.
+    b) If this is a "real" release: As soon as one approving review is made, merge the release PR (`develop`) into `master`.
 
-7. Merge the PR (`develop`) to `master`.
+6. Merge `master` into `develop` for synchronization of `develop`.
 
-8. Merge `master` into `develop` to have the same commit on which the release was made as the latest commit in 
-`develop`.
+7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft.
