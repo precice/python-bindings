@@ -446,8 +446,12 @@ cdef class Interface:
         """
         if not isinstance(position, np.ndarray):
             position = np.asarray(position)
-        dimensions = position.size
-        assert(dimensions == self.get_dimensions())
+        if len(position) > 0:
+            dimensions = position.size
+            assert(dimensions == self.get_dimensions())
+        elif len(position) == 0:
+            dimensions = self.get_dimensions()
+
         cdef np.ndarray[double, ndim=1] _position = np.ascontiguousarray(position, dtype=np.double)
         vertex_id = self.thisptr.setMeshVertex(mesh_id, <const double*>_position.data)
         return vertex_id
@@ -516,8 +520,13 @@ cdef class Interface:
         """
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
-        size, dimensions = positions.shape
-        assert(dimensions == self.get_dimensions())
+        if len(positions) > 0:
+            size, dimensions = positions.shape
+            assert(dimensions == self.get_dimensions())
+        elif len(positions) == 0:
+            size = positions.shape[0]
+            dimensions = self.get_dimensions()
+
         cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
         cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(size, dtype=np.int32)
         self.thisptr.setMeshVertices (mesh_id, size, <const double*>_positions.data, <int*>vertex_ids.data)
