@@ -1,15 +1,20 @@
 import os
 import subprocess
 import warnings
-from packaging import version
-import pip
+from setuptools._vendor.packaging import version
 
-if version.parse(pip.__version__) < version.parse("19.0"):
-    # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See https://pip.pypa.io/en/stable/news/#id209
-    warnings.warn("You are using pip version {}. However, pip version > 19.0 is recommended. You can continue with the installation, but installation problems can occour. Please refer to https://github.com/precice/python-bindings#build-time-dependencies-cython-numpy-defined-in-pyprojecttoml-are-not-installed-automatically for help.".format(pip.__version__))
+# If installed with pip we need to check its version
+try:
+    import pip
+    if version.parse(pip.__version__) < version.parse("19.0"):
+        # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See https://pip.pypa.io/en/stable/news/#id209
+        warnings.warn("You are using pip version {}. However, pip version > 19.0 is recommended. You can continue with the installation, but installation problems can occour. Please refer to https://github.com/precice/python-bindings#build-time-dependencies-cython-numpy-defined-in-pyprojecttoml-are-not-installed-automatically for help.".format(pip.__version__))
 
-if version.parse(pip.__version__) < version.parse("10.0.1"):        
-    warnings.warn("You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(pip.__version__))
+    if version.parse(pip.__version__) < version.parse("10.0.1"):
+        warnings.warn("You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(pip.__version__))
+except:
+    warnings.warn("Assuming that you are not using pip!")
+
 
 from enum import Enum
 from setuptools import setup
