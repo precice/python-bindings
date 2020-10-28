@@ -13,7 +13,7 @@ try:
     if version.parse(pip.__version__) < version.parse("10.0.1"):
         warnings.warn("You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(pip.__version__))
 except:
-    warnings.warn("Assuming that you are not using pip!")
+    warnings.warn("Assuming that you are not using pip! If the bindings work correctly, you do not have to do anything. If you face problems during installation or running pyprecice, this means that you have to make sure that all dependencies are installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list of dependencies.")
 
 
 from enum import Enum
