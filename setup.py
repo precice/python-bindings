@@ -1,7 +1,7 @@
 import os
 import subprocess
 import warnings
-from setuptools._vendor.packaging import version
+from packaging import version
 
 # If installed with pip we need to check its version
 try:
