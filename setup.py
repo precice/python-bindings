@@ -1,6 +1,9 @@
+import warnings
+if not "pip" in __file__:  # check whether pip is used for installation. If pip is not used, dependencies defined in pyproject.toml might be missing.
+    warnings.warn("It looks like you are not using pip. Installing the package via 'pip3 install --user .' is recommended. You can still use 'python3 setup.py install', if you want and if the bindings work correctly, you do not have to worry. However, if you face problems during installation or running pyprecice, this means that you have to make sure that all dependencies are installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list of dependencies.")
+
 import os
 import subprocess
-import warnings
 from packaging import version
 
 # If installed with pip we need to check its version
@@ -13,7 +16,8 @@ try:
     if version.parse(pip.__version__) < version.parse("10.0.1"):
         warnings.warn("You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(pip.__version__))
 except:
-    warnings.warn("Assuming that you are not using pip! If the bindings work correctly, you do not have to do anything. If you face problems during installation or running pyprecice, this means that you have to make sure that all dependencies are installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list of dependencies.")
+    if "pip" in __file__:
+        warnings.warn("You are trying to use pip for installation of the package, but pip is not installed on your system (or cannot be found). This can lead to problems with missing dependencies. Please make sure that pip is discoverable, if you want to be on the safe side or you are facing problems during installation or execution of pyprecice.")
 
 
 from enum import Enum
