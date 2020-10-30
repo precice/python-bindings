@@ -56,6 +56,10 @@ If preCICE (the C++ library) was installed in a custom prefix, or only built but
 
 The precice wiki provides more informaiton on [linking preCICE](https://github.com/precice/precice/wiki/Linking-to-preCICE).
 
+## Using spack
+
+Use `spack install py-pyprecice` to install the spack package.
+
 ## Using setup.py
 
 ### preCICE system installs
