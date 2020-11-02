@@ -17,7 +17,6 @@ from setuptools.command.test import test
 from Cython.Distutils.extension import Extension
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
-from distutils.command.build import build
 import numpy
 
 
@@ -78,18 +77,6 @@ class my_build_ext(build_ext, object):
         super().finalize_options()
 
 
-class my_build(build, object):
-    def finalize_options(self):
-        try:
-            self.distribution.is_test
-        except AttributeError:
-            self.distribution.is_test = False
-
-        if not self.distribution.ext_modules:
-            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test), compiler_directives={'language_level': "3"})
-
-        super().finalize_options()
-
 class my_test(test, object):
     def initialize_options(self):
         self.distribution.is_test = True       
@@ -115,8 +102,7 @@ setup(
     python_requires='>=3',
     install_requires=['numpy', 'mpi4py'],  # mpi4py is only needed, if preCICE was compiled with MPI, see https://github.com/precice/python-bindings/issues/8
     cmdclass={'test': my_test,
-              'build_ext': my_build_ext,
-              'build': my_build},
+              'build_ext': my_build_ext},
     package_data={ 'precice': ['*.pxd']},
     include_package_data=True,
     zip_safe=False  #needed because setuptools are used
