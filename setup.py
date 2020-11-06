@@ -1,8 +1,16 @@
 import warnings
 warnings.warn("deprecated", RuntimeWarning)
 uses_pip = "pip" in __file__
-if not uses_pip:  # check whether pip is used for installation. If pip is not used, dependencies defined in pyproject.toml might be missing.
-    warnings.warn("It looks like you are not using pip for installation. Installing the package via 'pip3 install --user .' is recommended. You can still use 'python3 setup.py install --user', if you want and if the bindings work correctly, you do not have to worry. However, if you face problems during installation or running pyprecice, this means that you have to make sure that all dependencies are installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list of dependencies.")
+
+# check whether pip is used for installation. If pip is not used, dependencies defined in pyproject.toml might be
+# missing.
+if not uses_pip:
+    warnings.warn("It looks like you are not using pip for installation. Installing the package via 'pip3 install "
+                  "--user .' is recommended. You can still use 'python3 setup.py install --user', if you want and if "
+                  "the bindings work correctly, you do not have to worry. However, if you face problems during "
+                  "installation or running pyprecice, this means that you have to make sure that all dependencies are "
+                  "installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list "
+                  "of dependencies.")
 
 import os
 import subprocess
@@ -13,10 +21,16 @@ if uses_pip:
     try:
         import pip
         if version.parse(pip.__version__) < version.parse("19.0"):
-            # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See https://pip.pypa.io/en/stable/news/#id209
-            raise Exception("You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user flag.".format(pip.__version__))
+            # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies.
+            # See https://pip.pypa.io/en/stable/news/#id209
+            raise Exception("You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade "
+                            "your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user"
+                            " flag.".format(pip.__version__))
     except:
-        raise Exception("It looks like you are trying to use pip for installation of the package, but pip is not installed on your system (or cannot be found). This can lead to problems with missing dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. Alternatively, you can also run python3 setup.py install --user.")
+        raise Exception("It looks like you are trying to use pip for installation of the package, but pip is not "
+                        "installed on your system (or cannot be found). This can lead to problems with missing "
+                        "dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. "
+                        "Alternatively, you can also run python3 setup.py install --user.")
 
 
 from enum import Enum
