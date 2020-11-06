@@ -13,7 +13,6 @@ if not uses_pip:
                   "of dependencies.")
 
 import os
-import subprocess
 from packaging import version
 
 if uses_pip:
@@ -33,7 +32,6 @@ if uses_pip:
                         "Alternatively, you can also run python3 setup.py install --user.")
 
 
-from enum import Enum
 from setuptools import setup
 from setuptools.command.test import test
 from Cython.Distutils.extension import Extension
