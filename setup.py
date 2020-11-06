@@ -14,7 +14,7 @@ if uses_pip:
         import pip
         if version.parse(pip.__version__) < version.parse("19.0"):
             # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See https://pip.pypa.io/en/stable/news/#id209
-            raise Exception("You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade your pip installation via 'python3 -m pip install --upgrade pip'. You might have to add the --user flag.".format(pip.__version__))
+            raise Exception("You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user flag.".format(pip.__version__))
     except:
         raise Exception("It looks like you are trying to use pip for installation of the package, but pip is not installed on your system (or cannot be found). This can lead to problems with missing dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. Alternatively, you can also run python3 setup.py install --user.")
 
