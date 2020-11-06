@@ -1,24 +1,22 @@
 import warnings
+warnings.warn("deprecated", RuntimeWarning)
 uses_pip = "pip" in __file__
 if not uses_pip:  # check whether pip is used for installation. If pip is not used, dependencies defined in pyproject.toml might be missing.
-    warnings.warn("It looks like you are not using pip. Installing the package via 'pip3 install --user .' is recommended. You can still use 'python3 setup.py install', if you want and if the bindings work correctly, you do not have to worry. However, if you face problems during installation or running pyprecice, this means that you have to make sure that all dependencies are installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list of dependencies.")
+    warnings.warn("It looks like you are not using pip for installation. Installing the package via 'pip3 install --user .' is recommended. You can still use 'python3 setup.py install --user', if you want and if the bindings work correctly, you do not have to worry. However, if you face problems during installation or running pyprecice, this means that you have to make sure that all dependencies are installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list of dependencies.")
 
 import os
 import subprocess
 from packaging import version
 
-# If installed with pip we need to check its version
-try:
-    import pip
-    if uses_pip and version.parse(pip.__version__) < version.parse("19.0"):
-        # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See https://pip.pypa.io/en/stable/news/#id209
-        warnings.warn("You are using pip version {}. However, pip version > 19.0 is recommended. You can continue with the installation, but installation problems can occour. Please refer to https://github.com/precice/python-bindings#build-time-dependencies-cython-numpy-defined-in-pyprojecttoml-are-not-installed-automatically for help.".format(pip.__version__))
-
-    if uses_pip and version.parse(pip.__version__) < version.parse("10.0.1"):
-        warnings.warn("You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(pip.__version__))
-except:
-    if uses_pip:
-        warnings.warn("You are trying to use pip for installation of the package, but pip is not installed on your system (or cannot be found). This can lead to problems with missing dependencies. Please make sure that pip is discoverable, if you want to be on the safe side or you are facing problems during installation or execution of pyprecice.")
+if uses_pip:
+    # If installed with pip we need to check its version
+    try:
+        import pip
+        if version.parse(pip.__version__) < version.parse("19.0"):
+            # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See https://pip.pypa.io/en/stable/news/#id209
+            raise Exception("You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade your pip installation via 'python3 -m pip install --upgrade pip'. You might have to add the --user flag.".format(pip.__version__))
+    except:
+        raise Exception("It looks like you are trying to use pip for installation of the package, but pip is not installed on your system (or cannot be found). This can lead to problems with missing dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. Alternatively, you can also run python3 setup.py install --user.")
 
 
 from enum import Enum
