@@ -1,6 +1,7 @@
 import os
 import warnings
 from packaging import version
+
 uses_pip = "pip" in __file__
 
 # check whether pip is used for installation. If pip is not used, dependencies defined in pyproject.toml might be
@@ -17,6 +18,7 @@ if uses_pip:
     # If installed with pip we need to check its version
     try:
         import pip
+
         if version.parse(pip.__version__) < version.parse("19.0"):
             # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies.
             # See https://pip.pypa.io/en/stable/news/#id209
@@ -28,7 +30,6 @@ if uses_pip:
                         "installed on your system (or cannot be found). This can lead to problems with missing "
                         "dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. "
                         "Alternatively, you can also run python3 setup.py install --user.")
-
 
 from setuptools import setup
 from setuptools.command.test import test
