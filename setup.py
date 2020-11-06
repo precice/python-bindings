@@ -1,5 +1,5 @@
-import warnings
 import os
+import warnings
 from packaging import version
 uses_pip = "pip" in __file__
 
