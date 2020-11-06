@@ -1,5 +1,4 @@
 import os
-import subprocess
 import warnings
 from packaging import version
 import pip
@@ -11,7 +10,6 @@ if version.parse(pip.__version__) < version.parse("19.0"):
 if version.parse(pip.__version__) < version.parse("10.0.1"):        
     warnings.warn("You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(pip.__version__))
 
-from enum import Enum
 from setuptools import setup
 from setuptools.command.test import test
 from Cython.Distutils.extension import Extension
