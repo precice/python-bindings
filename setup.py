@@ -25,7 +25,7 @@ if uses_pip:
             raise Exception("You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade "
                             "your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user"
                             " flag.".format(pip.__version__))
-    except:
+    except ModuleNotFoundError:
         raise Exception("It looks like you are trying to use pip for installation of the package, but pip is not "
                         "installed on your system (or cannot be found). This can lead to problems with missing "
                         "dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. "
