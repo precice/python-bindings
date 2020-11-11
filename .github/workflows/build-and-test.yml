@@ -14,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     container: precice/ci-ubuntu-2004
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
       - name: Install pip3
         run: |
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
@@ -24,6 +22,8 @@ jobs:
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Run setup_py build_ext
         run:  python3 setup.py build_ext
 
@@ -32,6 +32,14 @@ jobs:
     runs-on: ubuntu-latest
     container: precice/ci-ubuntu-2004
     steps:
+      - name: Install pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Checkout Repository
         uses: actions/checkout@v2      
       - name: Run setup_py install
@@ -44,8 +52,16 @@ jobs:
     runs-on: ubuntu-latest
     container: precice/ci-ubuntu-2004
     steps:
+      - name: Install pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Checkout Repository
-        uses: actions/checkout@v2      
+        uses: actions/checkout@v2
       - name: Run setup_py install 
         run:  python3 setup.py install --single-version-externally-managed --root
         
@@ -54,8 +70,16 @@ jobs:
     runs-on: ubuntu-latest
     container: precice/ci-ubuntu-2004
     steps:
+      - name: Install pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Checkout Repository
-        uses: actions/checkout@v2      
+        uses: actions/checkout@v2
       - name: Run setup_py test
         run:  python3 setup.py test
         
@@ -64,8 +88,16 @@ jobs:
     runs-on: ubuntu-latest
     container: precice/ci-ubuntu-2004
     steps:
+      - name: Install pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Checkout Repository
-        uses: actions/checkout@v2      
+        uses: actions/checkout@v2
       - name: Run pip install
         run:  pip3 install --user .
       - name: Test install
@@ -76,8 +108,16 @@ jobs:
     runs-on: ubuntu-latest
     container: precice/ci-ubuntu-2004
     steps:
+      - name: Install pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Checkout Repository
-        uses: actions/checkout@v2      
+        uses: actions/checkout@v2
       - name: Run pip install
         run:  pip3 install --user .
       - name: Test solverdummy
