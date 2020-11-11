@@ -31,6 +31,16 @@ jobs:
       - name: Test install
         run:  python3 -c "import precice"
         
+  setup_install_single_version_externally_managed:
+    name: setup_install_single_version_externally_managed
+    runs-on: ubuntu-latest
+    container: precice/ci-ubuntu-2004
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
+      - name: Run setup_py install 
+        run:  python3 setup.py install --single-version-externally-managed --root
+        
   setup_test:
     name: setup_test
     runs-on: ubuntu-latest
