@@ -1,0 +1,55 @@
+name: Build and Test
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    paths:
+      - '**'
+      
+jobs:  
+  setup_build_ext:
+    name: build_ext
+    runs-on: ubuntu-latest
+    container: precice/ci-ubuntu-2004
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
+      - name: Run setup_py build_ext
+        run:  python3 setup.py build_ext
+
+  setup_install:
+    name: setup_install
+    runs-on: ubuntu-latest
+    container: precice/ci-ubuntu-2004
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
+      - name: Run setup_py install
+        run:  python3 setup.py install --user
+      - name: Test install
+        run:  python3 -c "import precice"
+        
+  setup_test:
+    name: setup_install
+    runs-on: ubuntu-latest
+    container: precice/ci-ubuntu-2004
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
+      - name: Run setup_py test
+        run:  python3 setup.py test
+        
+  pip_install:
+    name: pip_install
+    runs-on: ubuntu-latest
+    container: precice/ci-ubuntu-2004
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
+      - name: Run pip install
+        run:  pip3 install --user
+      - name: Test install
+        run:  python3 -c "import precice"
+        
