@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install pip3
-        run: apt install -y python3-pip
+        run: apt-get install -y python3-pip
       - name: Install dependencies
         run: pip3 install --user toml && python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip install -r /dev/stdin
       - name: Run setup_py build_ext
