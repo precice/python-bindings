@@ -12,14 +12,14 @@ jobs:
   setup_build_ext:
     name: build_ext
     runs-on: ubuntu-latest
-    container: precice/precice-ubuntu2004.package-develop
+    container: precice/ci-ubuntu-2004
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install pip3
         run: |
-          wget https://bootstrap.pypa.io/get-pip.py
-          python3 /home/precice/get-pip.py
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -30,14 +30,14 @@ jobs:
   setup_install:
     name: setup_install
     runs-on: ubuntu-latest
-    container: precice/precice-ubuntu2004.package-develop
+    container: precice/ci-ubuntu-2004
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Install pip3
         run: |
-          wget https://bootstrap.pypa.io/get-pip.py
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
-      - name: Checkout Repository
-        uses: actions/checkout@v2      
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -50,14 +50,14 @@ jobs:
   setup_install_single_version_externally_managed:
     name: setup_install_single_version_externally_managed
     runs-on: ubuntu-latest
-    container: precice/precice-ubuntu2004.package-develop
+    container: precice/ci-ubuntu-2004
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Install pip3
         run: |
-          wget https://bootstrap.pypa.io/get-pip.py
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
-      - name: Checkout Repository
-        uses: actions/checkout@v2      
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -68,14 +68,14 @@ jobs:
   setup_test:
     name: setup_test
     runs-on: ubuntu-latest
-    container: precice/precice-ubuntu2004.package-develop
+    container: precice/ci-ubuntu-2004
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Install pip3
         run: |
-          wget https://bootstrap.pypa.io/get-pip.py
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
-      - name: Checkout Repository
-        uses: actions/checkout@v2      
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -86,14 +86,14 @@ jobs:
   pip_install:
     name: pip_install
     runs-on: ubuntu-latest
-    container: precice/precice-ubuntu2004.package-develop
+    container: precice/ci-ubuntu-2004
     steps:
-      - name: Install pip3
-        run: |
-          wget https://bootstrap.pypa.io/get-pip.py
-          python3 get-pip.py
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Install pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
       - name: Run pip install
         run:  pip3 install --user .
       - name: Test install
@@ -102,14 +102,14 @@ jobs:
   solverdummy_test:
     name: solverdummy_test
     runs-on: ubuntu-latest
-    container: precice/precice-ubuntu2004.package-develop
+    container: precice/ci-ubuntu-2004
     steps:
-      - name: Install pip3
-        run: |
-          wget https://bootstrap.pypa.io/get-pip.py
-          python3 get-pip.py
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Install pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
       - name: Run pip install
         run:  pip3 install --user .
       - name: Test solverdummy
