@@ -14,13 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     container: precice/precice-ubuntu2004.package-develop
     steps:
-      - name: Install pip3
-        run: |
-          pwd
-          wget https://bootstrap.pypa.io/get-pip.py -o /home/precice/get-pip.py
-          python3 /home/precice/get-pip.py
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Install pip3
+        run: |
+          wget https://bootstrap.pypa.io/get-pip.py
+          python3 /home/precice/get-pip.py
       - name: Install dependencies
         run: |
           pip3 install --user toml
