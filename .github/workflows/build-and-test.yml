@@ -12,7 +12,7 @@ jobs:
   setup_build_ext:
     name: build_ext
     runs-on: ubuntu-latest
-    container: precice/ci-ubuntu-2004
+    container: benjaminrueth/ci-precice-2004
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -30,7 +30,7 @@ jobs:
   setup_install:
     name: setup_install
     runs-on: ubuntu-latest
-    container: precice/ci-ubuntu-2004
+    container: benjaminrueth/ci-precice-2004
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -50,7 +50,7 @@ jobs:
   setup_install_single_version_externally_managed:
     name: setup_install_single_version_externally_managed
     runs-on: ubuntu-latest
-    container: precice/ci-ubuntu-2004
+    container: benjaminrueth/ci-precice-2004
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -92,7 +92,7 @@ jobs:
   pip_install:
     name: pip_install
     runs-on: ubuntu-latest
-    container: precice/ci-ubuntu-2004
+    container: benjaminrueth/ci-precice-2004
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -108,7 +108,7 @@ jobs:
   solverdummy_test:
     name: solverdummy_test
     runs-on: ubuntu-latest
-    container: precice/ci-ubuntu-2004
+    container: benjaminrueth/ci-precice-2004
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
