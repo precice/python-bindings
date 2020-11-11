@@ -16,14 +16,15 @@ jobs:
     steps:
       - name: Install pip3
         run: |
-          wget https://bootstrap.pypa.io/get-pip.py
-          python3 get-pip.py
+          pwd
+          wget https://bootstrap.pypa.io/get-pip.py -o /home/precice/get-pip.py
+          python3 /home/precice/get-pip.py
+      - name: Checkout Repository
+        uses: actions/checkout@v2
       - name: Install dependencies
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Checkout Repository
-        uses: actions/checkout@v2
       - name: Run setup_py build_ext
         run:  python3 setup.py build_ext
 
@@ -36,12 +37,12 @@ jobs:
         run: |
           wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
       - name: Install dependencies
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Checkout Repository
-        uses: actions/checkout@v2      
       - name: Run setup_py install
         run:  python3 setup.py install --user
       - name: Test install
@@ -56,12 +57,12 @@ jobs:
         run: |
           wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
       - name: Install dependencies
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Checkout Repository
-        uses: actions/checkout@v2
       - name: Run setup_py install 
         run:  python3 setup.py install --single-version-externally-managed --root
         
@@ -74,12 +75,12 @@ jobs:
         run: |
           wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
       - name: Install dependencies
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Checkout Repository
-        uses: actions/checkout@v2
       - name: Run setup_py test
         run:  python3 setup.py test
         
@@ -92,10 +93,6 @@ jobs:
         run: |
           wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
-      - name: Install dependencies
-        run: |
-          pip3 install --user toml
-          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Run pip install
@@ -112,10 +109,6 @@ jobs:
         run: |
           wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
-      - name: Install dependencies
-        run: |
-          pip3 install --user toml
-          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Run pip install
