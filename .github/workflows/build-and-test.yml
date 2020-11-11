@@ -72,6 +72,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Checkout precice
+        run: | 
+          git clone https://github.com/precice/precice.git precice-core
+          export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$TRAVIS_BUILD_DIR/precice-core/src
       - name: Install pip3
         run: |
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
