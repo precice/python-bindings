@@ -59,7 +59,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2      
       - name: Run pip install
-        run:  pip3 install --user
+        run:  pip3 install --user .
       - name: Test install
         run:  python3 -c "import precice"
+
+  solverdummy_test:
+    name: solverdummy_test
+    runs-on: ubuntu-latest
+    container: precice/ci-ubuntu-2004
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2      
+      - name: Run pip install
+        run:  pip3 install --user .
+      - name: Test solverdummy
+        run:  python3 solverdummy/solverdummy.py solverdummy/precice-config.xml SolverOne MeshOne & python3 solverdummy/solverdummy.py solverdummy/precice-config.xml SolverTwo MeshTwo
+
+        
         
