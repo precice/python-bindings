@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Install pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
       - name: Install dependencies
         run: |
@@ -34,7 +34,7 @@ jobs:
     steps:
       - name: Install pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
       - name: Install dependencies
         run: |
@@ -54,7 +54,7 @@ jobs:
     steps:
       - name: Install pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
       - name: Install dependencies
         run: |
@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Install pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
       - name: Install dependencies
         run: |
@@ -90,7 +90,7 @@ jobs:
     steps:
       - name: Install pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
       - name: Install dependencies
         run: |
@@ -110,7 +110,7 @@ jobs:
     steps:
       - name: Install pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          wget https://bootstrap.pypa.io/get-pip.py
           python3 get-pip.py
       - name: Install dependencies
         run: |
