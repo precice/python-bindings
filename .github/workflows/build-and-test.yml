@@ -17,9 +17,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install pip3
-        run: apt-get install -y python3-pip
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
       - name: Install dependencies
-        run: pip3 install --user toml && python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip install -r /dev/stdin
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup_py build_ext
         run:  python3 setup.py build_ext
 
