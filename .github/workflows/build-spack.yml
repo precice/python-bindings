@@ -1,0 +1,40 @@
+name: Build Spack
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    paths:
+      - '**'
+      
+jobs:  
+  build_spack:
+    name: build_spack
+    runs-on: ubuntu-latest
+    #container: benjaminrueth/ci-precice-spack-1804  # we want to provide all dependencies in an already existing image
+    container: spack/ubuntu-bionic:latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      - name: Install jinja2
+        run: pip3 install --user jinja2        
+      - name: Extract branch name  # from https://stackoverflow.com/a/58035262/5158031
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Specify Package Script
+        run: |
+          python3 spack/jinja-instantiate.py --branch ${{ steps.extract_branch.outputs.branch }} > /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/package.py
+          cp spack/var/spack/repos/builtin/packages/py-pyprecice/deactivate-version-check-via-pip.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/deactivate-version-check-via-pip.patch
+      - name: Try to build py-pyprecice with spack  #spack env activate precice  # we want to already provide this env within benjaminrueth/ci-precice-spack-1804
+        run: |
+          source /opt/spack/share/spack/setup-env.sh
+          spack env create precice  
+          spack env activate precice
+          spack install py-pyprecice@develop ^precice@develop
+

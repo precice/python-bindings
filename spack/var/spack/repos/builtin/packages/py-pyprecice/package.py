@@ -34,6 +34,7 @@ class PyPyprecice(PythonPackage):
     variant("mpi", default=True, description="Enables MPI support")
 
     depends_on("mpi", when="+mpi")
+    depends_on("precice", when="@develop")
     depends_on("precice@2.1.1", when="@2.1.1.1:2.1.1.99")
     depends_on("precice@2.1.0", when="@2.1.0.1:2.1.0.99")
     depends_on("precice@2.0.2", when="@2.0.2.1:2.0.2.99")
