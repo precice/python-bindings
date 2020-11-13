@@ -74,7 +74,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Checkout precice and make required files discoverable
         run: | 
-          git clone https://github.com/precice/precice.git $path/precice-core
+          git clone https://github.com/precice/precice.git precice-core
           mkdir precice
           cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
       - name: Install pip3
