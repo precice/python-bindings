@@ -69,15 +69,14 @@ jobs:
     name: setup_test
     runs-on: ubuntu-latest
     container: precice/ci-ubuntu-2004
-    env:
-      path: '.'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Checkout precice
+      - name: Checkout precice and make required files discoverable
         run: | 
           git clone https://github.com/precice/precice.git $path/precice-core
-          export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$path/precice-core/src
+          mkdir precice
+          cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
       - name: Install pip3
         run: |
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
