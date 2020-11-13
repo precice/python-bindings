@@ -33,7 +33,7 @@ jobs:
           cp spack/var/spack/repos/builtin/packages/py-pyprecice/deactivate-version-check-via-pip.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/deactivate-version-check-via-pip.patch
       - name: Try to build py-pyprecice with spack  #spack env activate precice  # we want to already provide this env within benjaminrueth/ci-precice-spack-1804
         run: |
-          source /opt/spack/share/spack/setup-env.sh
+          . /opt/spack/share/spack/setup-env.sh
           spack env create precice  
           spack env activate precice
           spack install py-pyprecice@develop ^precice@develop
