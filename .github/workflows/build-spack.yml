@@ -32,6 +32,7 @@ jobs:
           cp spack/var/spack/repos/builtin/packages/py-pyprecice/deactivate-version-check-via-pip.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/deactivate-version-check-via-pip.patch
       - name: Try to build py-pyprecice with spack
         run: |
-          . /opt/spack/share/spack/setup-env.sh          
+          . /opt/spack/share/spack/setup-env.sh 
+          spack find         
           spack install py-pyprecice@develop
 
