@@ -29,10 +29,10 @@ class PyPyprecice(PythonPackage):
     # Import module as a test
     import_modules = ["precice"]
 
-    if self.spec.satisfies("@:2.1.1.1"):
-        patch("deactivate-version-check-via-pip.patch")
-    elif self.spec.satisfies("@2.1.1.2:"):
-        patch("remove-packaging-and-pip.patch")
+    #if self.spec.satisfies("@:2.1.1.1"):  # syntax is wrong
+    #    patch("deactivate-version-check-via-pip.patch")
+    #elif self.spec.satisfies("@2.1.1.2:"):
+    patch("remove-packaging-and-pip.patch")
 
     variant("mpi", default=True, description="Enables MPI support")
 
@@ -59,6 +59,6 @@ class PyPyprecice(PythonPackage):
             "--library-dirs=" + spec["precice"].libs.directories[0]
         ]
 
-    if self.spec.satisfies("@:2.1.1.1"):
-        def install(self, spec, prefix):
-            self.setup_py("install", "--prefix={0}".format(prefix))
+    #if self.spec.satisfies("@:2.1.1.1"):  # syntax is wrong
+    #    def install(self, spec, prefix):
+    #        self.setup_py("install", "--prefix={0}".format(prefix))
