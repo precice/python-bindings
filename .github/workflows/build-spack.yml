@@ -30,7 +30,7 @@ jobs:
         run: |
           python3 spack/jinja-instantiate.py --branch ${{ steps.extract_branch.outputs.branch }} > /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/package.py
           ls spack/var/spack/repos/builtin/packages/py-pyprecice
-          cp spack/var/spack/repos/builtin/packages/py-pyprecice/*.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/*.patch
+          cp spack/var/spack/repos/builtin/packages/py-pyprecice/*.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/
           ls spack/var/spack/repos/builtin/packages/py-pyprecice
       - name: Try to build py-pyprecice with spack
         run: |
