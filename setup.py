@@ -11,12 +11,12 @@ if version.parse(pip.__version__) < version.parse("10.0.1"):
     warnings.warn("You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(pip.__version__))
 
 from setuptools import setup
+from setuptools import Command
 from setuptools.command.test import test
+from setuptools.command.install import install
 from Cython.Distutils.extension import Extension
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
-from distutils.command.install import install
-from distutils.command.build import build
 import numpy
 
 
@@ -38,6 +38,7 @@ def get_extensions(is_test):
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "precice") + ".pyx"]
     test_sources = [os.path.join(PYTHON_BINDINGS_PATH, "test", "test_bindings_module" + ".pyx")]
+
     if not is_test:
         link_args.append("-lprecice")
     if is_test:
@@ -64,15 +65,12 @@ def get_extensions(is_test):
     ]
 
 class my_build_ext(build_ext, object):
-    def initialize_options(self):
+    def finalize_options(self):
         try:
             self.distribution.is_test
         except AttributeError:
             self.distribution.is_test = False
-        
-        super().initialize_options()
-        
-    def finalize_options(self):
+
         if not self.distribution.ext_modules:
             self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test), compiler_directives={'language_level': "3"})
 
@@ -80,29 +78,17 @@ class my_build_ext(build_ext, object):
 
 
 class my_install(install, object):
-    def initialize_options(self):
-        try:
-            self.distribution.is_test
-        except AttributeError:
-            self.distribution.is_test = False
-
-        super().initialize_options()
-
-
-class my_build(build, object):
-    def initialize_options(self):
-        try:
-            self.distribution.is_test
-        except AttributeError:
-            self.distribution.is_test = False
-
-        super().initialize_options()
-
     def finalize_options(self):
+        try:
+            self.distribution.is_test
+        except AttributeError:
+            self.distribution.is_test = False
+
         if not self.distribution.ext_modules:
             self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test), compiler_directives={'language_level': "3"})
 
         super().finalize_options()
+
 
 class my_test(test, object):
     def initialize_options(self):
@@ -130,7 +116,6 @@ setup(
     install_requires=['numpy', 'mpi4py'],  # mpi4py is only needed, if preCICE was compiled with MPI, see https://github.com/precice/python-bindings/issues/8
     cmdclass={'test': my_test,
               'build_ext': my_build_ext,
-              'build': my_build,
               'install': my_install},
     package_data={ 'precice': ['*.pxd']},
     include_package_data=True,
