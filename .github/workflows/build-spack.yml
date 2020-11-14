@@ -12,8 +12,7 @@ jobs:
   build_spack:
     name: build_spack
     runs-on: ubuntu-latest
-    #container: benjaminrueth/ci-precice-spack-1804  # we want to provide all dependencies in an already existing image
-    container: spack/ubuntu-bionic:latest
+    container: benjaminrueth/ci-spack-precice-1804
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -31,10 +30,8 @@ jobs:
         run: |
           python3 spack/jinja-instantiate.py --branch ${{ steps.extract_branch.outputs.branch }} > /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/package.py
           cp spack/var/spack/repos/builtin/packages/py-pyprecice/deactivate-version-check-via-pip.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/deactivate-version-check-via-pip.patch
-      - name: Try to build py-pyprecice with spack  #spack env activate precice  # we want to already provide this env within benjaminrueth/ci-precice-spack-1804
+      - name: Try to build py-pyprecice with spack
         run: |
-          . /opt/spack/share/spack/setup-env.sh
-          spack env create precice  
           spack env activate precice
           spack install py-pyprecice@develop ^precice@develop
 
