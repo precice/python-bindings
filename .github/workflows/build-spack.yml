@@ -2,11 +2,7 @@ name: Build Spack
 on:
   push:
     branches:
-      - master
-      - develop
-  pull_request:
-    paths:
-      - '**'
+      - "*"
       
 jobs:  
   build_spack:
