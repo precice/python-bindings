@@ -12,7 +12,7 @@ jobs:
   build_spack:
     name: build_spack
     runs-on: ubuntu-latest
-    container: benjaminrueth/ci-spack-precice-1804
+    container: benjaminrueth/ci-spack-pyprecice-deps-1804
     defaults:
       run:
         shell: "bash --login -eo pipefail {0}"
