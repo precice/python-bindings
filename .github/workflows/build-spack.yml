@@ -38,6 +38,5 @@ jobs:
       - name: Try to build py-pyprecice with spack
         run: |
           . /opt/spack/share/spack/setup-env.sh 
-          spack find         
-          spack install py-pyprecice@develop
+          spack env activate precice && spack concretize -f && spack install py-pyprecice@develop
 
