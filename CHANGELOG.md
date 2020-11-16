@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Bindings are now available via Spack. https://github.com/spack/spack/pull/19558
+
 ## 2.1.1.1
 
 * Bindings can now handle mesh initialization with no vertices. This behavior is consistent with the C++ preCICE API.
