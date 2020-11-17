@@ -7,3 +7,6 @@ Note that the file `var/spack/repos/builtin/packages/py-pyprecice/package.py` is
 python3 jinja-instantiate --branch feature > my_package_script.py
 ```
 
+## When a new spack release is necessary
+
+Run `python3 jinja-instantiate > package.py` to generate the latest version of `package.py`. Use this script together with the patches provided in `python-bindings/spack/var/spack/repos/builtin/packages/py-pyprecice` to [create a pull request for spack](https://github.com/spack/spack/compare) and submit the new release.
