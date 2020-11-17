@@ -917,7 +917,7 @@ cdef class Interface:
         """
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
-        if len(values) > 0:
+        if len(value) > 0:
             dimensions = value.size
             assert(dimensions == self.get_dimensions())
 
