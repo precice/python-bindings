@@ -2,18 +2,6 @@ import os
 import warnings
 from packaging import version
 import pip
-
-if version.parse(pip.__version__) < version.parse("19.0"):
-    # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See https://pip.pypa.io/en/stable/news/#id209
-    warnings.warn(
-        "You are using pip version {}. However, pip version > 19.0 is recommended. You can continue with the installation, but installation problems can occour. Please refer to https://github.com/precice/python-bindings#build-time-dependencies-cython-numpy-defined-in-pyprojecttoml-are-not-installed-automatically for help.".format(
-            pip.__version__))
-
-if version.parse(pip.__version__) < version.parse("10.0.1"):
-    warnings.warn(
-        "You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation it is likely that you will face an error. See https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(
-            pip.__version__))
-
 from setuptools import setup
 from setuptools import Command
 from setuptools.command.test import test
@@ -23,11 +11,29 @@ from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
 import numpy
 
+if version.parse(pip.__version__) < version.parse("19.0"):
+    # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies. See
+    # https://pip.pypa.io/en/stable/news/#id209
+    warnings.warn(
+        "You are using pip version {}. However, pip version > 19.0 is recommended. You can continue with the "
+        "installation, but installation problems can occour. Please refer to "
+        "https://github.com/precice/python-bindings#build-time-dependencies-cython-numpy-defined-in-pyprojecttoml-are"
+        "-not-installed-automatically for help.".format(
+            pip.__version__))
+
+if version.parse(pip.__version__) < version.parse("10.0.1"):
+    warnings.warn(
+        "You are using pip version {}. However, pip version > 10.0.1 is required. If you continue with installation "
+        "it is likely that you will face an error. See "
+        "https://github.com/precice/python-bindings#version-of-pip3-is-too-old".format(
+            pip.__version__))
+
 # name of Interfacing API
 APPNAME = "pyprecice"
 # this version should be in sync with the latest supported preCICE version
 precice_version = version.Version(
-    "2.1.1")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that makes sure that the version of preCICE is actually supported
+    "2.1.1")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that
+# makes sure that the version of preCICE is actually supported
 # this version number may be increased, if changes for the bindings are required
 bindings_version = version.Version("1")
 APPVERSION = version.Version(str(precice_version) + "." + str(bindings_version))
