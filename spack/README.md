@@ -14,3 +14,6 @@ The test `build_spack` in `.github/workflows/build-spack.yml` uses the image `be
 docker build -f ci-spack-pyprecice-deps-1804.dockerfile -t USERNAME/ci-spack-pyprecice-deps-1804.dockerfile .
 docker push USERNAME/ci-spack-pyprecice-deps-1804.dockerfile
 ```
+## When a new spack release is necessary
+
+Run `python3 jinja-instantiate > package.py` to generate the latest version of `package.py`. Use this script together with the patches provided in `python-bindings/spack/var/spack/repos/builtin/packages/py-pyprecice` to [create a pull request for spack](https://github.com/spack/spack/compare) and submit the new release.
