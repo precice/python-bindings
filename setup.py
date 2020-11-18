@@ -47,7 +47,7 @@ def get_extensions(is_test):
     compile_args.append("-std=c++11")
     compile_args.append("-I{}".format(numpy.get_include()))
 
-    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "precice") + ".pyx"]
+    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "precice", "precice" + ".pyx")]
     test_sources = [os.path.join(PYTHON_BINDINGS_PATH, "test", "test_bindings_module" + ".pyx")]
 
     if not is_test:
@@ -131,7 +131,6 @@ setup(
     cmdclass={'test': my_test,
               'build_ext': my_build_ext,
               'install': my_install},
-    package_data={'precice': ['*.pxd']},
     include_package_data=True,
     zip_safe=False  # needed because setuptools are used
 )

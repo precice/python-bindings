@@ -7,7 +7,7 @@ include *.md
 include LICENSE.txt
 
 # Include cython files
-include *.pyx
-include *.pxd
+include precice/*.pyx
+include precice/*.pxd
 include test/*.pyx
 include test/*.pxd

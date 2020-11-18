@@ -5,6 +5,7 @@
 The python module precice offers python language bindings to the C++ coupling library precice. Please refer to precice.org for further information.
 """
 
+cimport precice.SolverInterface as SolverInterface
 import numpy as np
 cimport numpy as np
 cimport cython
@@ -38,6 +39,8 @@ cdef class Interface:
         - We use solver, simulation code, and participant as synonyms.
         - The preferred name in the documentation is participant.
     """
+    
+    cdef SolverInterface.SolverInterface *thisptr # hold a C++ instance being wrapped
 
     # fake __init__ needed to display docstring for __cinit__ (see https://stackoverflow.com/a/42733794/5158031)
     def __init__(self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
