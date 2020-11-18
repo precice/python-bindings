@@ -917,10 +917,9 @@ cdef class Interface:
         """
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
-        if len(value) > 0:
-            dimensions = value.size
-            assert(dimensions == self.get_dimensions())
-
+        assert(len(value) > 0)
+        dimensions = value.size
+        assert(dimensions == self.get_dimensions())
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
         self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
 
