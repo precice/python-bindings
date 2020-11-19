@@ -11,3 +11,5 @@ include precice/*.pyx
 include precice/*.pxd
 include test/*.pyx
 include test/*.pxd
+include versioneer.py
+include precice/_version.py

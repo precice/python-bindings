@@ -3,4 +3,5 @@
 *.so
 build
 *.egg-info
+__pycache__
 env
