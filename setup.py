@@ -47,7 +47,8 @@ def get_extensions(is_test):
     compile_args.append("-std=c++11")
     compile_args.append("-I{}".format(numpy.get_include()))
 
-    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "precice", "precice" + ".pyx")]
+    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice", "cyprecice" + ".pyx")]
+    pkg_sources = [os.path.join(PYTHON_BINDINGS_PATH, "precice", "__init__" + ".py")]
     test_sources = [os.path.join(PYTHON_BINDINGS_PATH, "test", "test_bindings_module" + ".pyx")]
 
     if not is_test:
@@ -59,6 +60,10 @@ def get_extensions(is_test):
     return [
         Extension(
             "precice",
+            sources=pkg_sources
+        ),
+        Extension(
+            "cyprecice",
             sources=bindings_sources,
             libraries=[],
             language="c++",

@@ -5,12 +5,8 @@
 The python module precice offers python language bindings to the C++ coupling library precice. Please refer to precice.org for further information.
 """
 
-cimport precice.SolverInterface as SolverInterface
+cimport cyprecice
 import numpy as np
-cimport numpy as np
-cimport cython
-from mpi4py import MPI
-
 
 from cpython.version cimport PY_MAJOR_VERSION  # important for determining python version in order to properly normalize string input. See http://docs.cython.org/en/latest/src/tutorial/strings.html#general-notes-about-c-strings and https://github.com/precice/precice/issues/68 .
 
@@ -25,8 +21,11 @@ cdef bytes convert(s):
     else:
         raise TypeError("Could not convert.")
 
+cdef char* data = "hfvcakdfagbcffvschvxcdfgccbcfhvgcsnfxjh"
 
-@cython.embedsignature(True)
+cdef class Dummy:
+    pass
+
 cdef class Interface:
     """
     Main Application Programming Interface of preCICE.
@@ -40,8 +39,6 @@ cdef class Interface:
         - The preferred name in the documentation is participant.
     """
     
-    cdef SolverInterface.SolverInterface *thisptr # hold a C++ instance being wrapped
-
     # fake __init__ needed to display docstring for __cinit__ (see https://stackoverflow.com/a/42733794/5158031)
     def __init__(self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
         """
