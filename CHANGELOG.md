@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* `packaging` and `pip` are now optional dependencies. https://github.com/precice/python-bindings/pull/63
 * Feature: Bindings are now available via Spack. https://github.com/spack/spack/pull/19558
 * Bugfix: Bindings also support empty read/write data for block read/write operations (like C++ preCICE API). https://github.com/precice/python-bindings/pull/69
 
