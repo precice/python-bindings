@@ -47,19 +47,11 @@ from Cython.Distutils.extension import Extension
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
 import numpy
+import versioneer
 
 
 # name of Interfacing API
 APPNAME = "pyprecice"
-
-from packaging import version  # todo: will not be needed anymore as soon as https://github.com/precice/python-bindings/pull/70 is merged
-# this version should be in sync with the latest supported preCICE version
-precice_version = version.Version(
-    "2.1.1")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that
-# makes sure that the version of preCICE is actually supported
-# this version number may be increased, if changes for the bindings are required
-bindings_version = version.Version("1")
-APPVERSION = version.Version(str(precice_version) + "." + str(bindings_version))
 
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 
@@ -70,7 +62,7 @@ def get_extensions(is_test):
     compile_args.append("-std=c++11")
     compile_args.append("-I{}".format(numpy.get_include()))
 
-    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "precice", "precice" + ".pyx")]
+    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice", "cyprecice" + ".pyx")]
     test_sources = [os.path.join(PYTHON_BINDINGS_PATH, "test", "test_bindings_module" + ".pyx")]
 
     if not is_test:
@@ -81,7 +73,7 @@ def get_extensions(is_test):
 
     return [
         Extension(
-            "precice",
+            "cyprecice",
             sources=bindings_sources,
             libraries=[],
             language="c++",
@@ -136,11 +128,14 @@ class my_test(test, object):
 this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
+    
+my_cmdclass = {'test': my_test, 'build_ext': my_build_ext, 'install': my_install}
 
 # build precice.so python extension to be added to "PYTHONPATH" later
 setup(
     name=APPNAME,
-    version=str(APPVERSION),
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(my_cmdclass),
     description='Python language bindings for the preCICE coupling library',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -151,10 +146,7 @@ setup(
     python_requires='>=3',
     install_requires=['numpy', 'mpi4py'],
     # mpi4py is only needed, if preCICE was compiled with MPI, see https://github.com/precice/python-bindings/issues/8
-    cmdclass={'test': my_test,
-              'build_ext': my_build_ext,
-              'install': my_install},
-    package_data={'precice': ['*.pxd']},
+    packages=['precice'],
     include_package_data=True,
     zip_safe=False  # needed because setuptools are used
 )

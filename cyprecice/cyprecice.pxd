@@ -13,4 +13,3 @@ from cpython.version cimport PY_MAJOR_VERSION  # important for determining pytho
 @cython.embedsignature(True)
 cdef class Interface:
     cdef SolverInterface.SolverInterface *thisptr # hold a C++ instance being wrapped
-
