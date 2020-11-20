@@ -147,6 +147,5 @@ setup(
     install_requires=['numpy', 'mpi4py'],
     # mpi4py is only needed, if preCICE was compiled with MPI, see https://github.com/precice/python-bindings/issues/8
     packages=['precice'],
-    include_package_data=True,
     zip_safe=False  # needed because setuptools are used
 )
