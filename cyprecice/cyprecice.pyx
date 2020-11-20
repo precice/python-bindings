@@ -21,11 +21,6 @@ cdef bytes convert(s):
     else:
         raise TypeError("Could not convert.")
 
-cdef char* data = "hfvcakdfagbcffvschvxcdfgccbcfhvgcsnfxjh"
-
-cdef class Dummy:
-    pass
-
 cdef class Interface:
     """
     Main Application Programming Interface of preCICE.
