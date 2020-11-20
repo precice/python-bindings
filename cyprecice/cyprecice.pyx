@@ -21,6 +21,7 @@ cdef bytes convert(s):
     else:
         raise TypeError("Could not convert.")
 
+
 cdef class Interface:
     """
     Main Application Programming Interface of preCICE.
