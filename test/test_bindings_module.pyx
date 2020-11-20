@@ -3,7 +3,6 @@
 # comments on test layout: https://docs.pytest.org/en/latest/goodpractices.html
 # run with python -m unittest tests.test_fenicsadapter
 
-cimport precice
 import precice
 from unittest import TestCase
 import numpy as np
