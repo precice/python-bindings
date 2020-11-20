@@ -1,6 +1,7 @@
 import os
 import sys
 import warnings
+import versioneer
 
 uses_pip = "pip" in __file__
 
@@ -47,7 +48,6 @@ from Cython.Distutils.extension import Extension
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
 import numpy
-import versioneer
 
 
 # name of Interfacing API
