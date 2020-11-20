@@ -3,15 +3,6 @@
 The python module precice offers python language bindings to the C++ coupling library precice. Please refer to precice.org for further information.
 """
 
-from libcpp.string cimport string
-cdef string __version__ = "unknown".encode()
-"""
-try:
-    cimport _version
-    __version__ = _version.__version__
-except ImportError:
-    pass
-"""
 cimport numpy as np
 cimport cython
 cimport SolverInterface
