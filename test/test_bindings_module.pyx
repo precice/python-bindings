@@ -20,6 +20,9 @@ class TestBindings(TestCase):
     def test_constructor_custom_mpi_comm(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1, MPI.COMM_WORLD)
         self.assertTrue(True)
+        
+    def test_version(self):
+        precice.__version__
 
     def test_get_dimensions(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
