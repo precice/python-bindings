@@ -1,6 +1,6 @@
 import os
+import sys
 import warnings
-from packaging import version
 
 uses_pip = "pip" in __file__
 
@@ -18,18 +18,26 @@ if uses_pip:
     # If installed with pip we need to check its version
     try:
         import pip
-
+    except ModuleNotFoundError:
+        raise Exception("It looks like you are trying to use pip for installation of the package, but pip is not "
+                        "installed on your system (or cannot be found). This can lead to problems with missing "
+                        "dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. "
+                        "Alternatively, you can also run python3 setup.py install --user.")
+    try:
+        from packaging import version
+    except ModuleNotFoundError:
+        warnings.warn("It looks like you are trying to use pip for installation of the package. Please install, "
+                      "the module packaging by running 'pip3 install --user packaging', since it is needed to perform "
+                      "additional security checks. You can continue installation. However, if you face problems when "
+                      "installing or running pyprecice, it might be a good idea to install packaging to enable "
+                      "additional checks.")        
+    if "pip" in sys.modules and "packaging" in sys.modules:
         if version.parse(pip.__version__) < version.parse("19.0"):
             # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies.
             # See https://pip.pypa.io/en/stable/news/#id209
             raise Exception("You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade "
                             "your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user"
                             " flag.".format(pip.__version__))
-    except ModuleNotFoundError:
-        raise Exception("It looks like you are trying to use pip for installation of the package, but pip is not "
-                        "installed on your system (or cannot be found). This can lead to problems with missing "
-                        "dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. "
-                        "Alternatively, you can also run python3 setup.py install --user.")
 
 from setuptools import setup
 from setuptools.command.test import test
@@ -43,6 +51,8 @@ import numpy
 
 # name of Interfacing API
 APPNAME = "pyprecice"
+
+from packaging import version  # todo: will not be needed anymore as soon as https://github.com/precice/python-bindings/pull/70 is merged
 # this version should be in sync with the latest supported preCICE version
 precice_version = version.Version("2.1.1")  # todo: should be replaced with precice.get_version(), if possible or we should add an assertion that makes sure that the version of preCICE is actually supported
 # this version number may be increased, if changes for the bindings are required
