@@ -3,7 +3,6 @@
 # comments on test layout: https://docs.pytest.org/en/latest/goodpractices.html
 # run with python -m unittest tests.test_fenicsadapter
 
-cimport precice
 import precice
 from unittest import TestCase
 import numpy as np
@@ -195,6 +194,13 @@ class TestBindings(TestCase):
         read_data = solver_interface.read_block_scalar_data(1, np.array([1, 2, 3]))
         self.assertTrue(np.array_equal(write_data, read_data))
 
+    def test_read_write_block_scalar_data_empty(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = np.array([])
+        solver_interface.write_block_scalar_data(1, [], write_data)
+        read_data = solver_interface.read_block_scalar_data(1, [])
+        self.assertTrue(len(read_data) == 0)
+
     def test_read_write_block_scalar_data_non_contiguous(self):
         """
         Tests behaviour of solver interface, if a non contiguous array is passed to the interface.
@@ -223,6 +229,13 @@ class TestBindings(TestCase):
         solver_interface.write_block_vector_data(1, np.array([1, 2]), write_data)
         read_data = solver_interface.read_block_vector_data(1, np.array([1, 2]))
         self.assertTrue(np.array_equal(write_data, read_data))
+
+    def test_read_write_block_vector_data_empty(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = np.array([])
+        solver_interface.write_block_vector_data(1, [], write_data)
+        read_data = solver_interface.read_block_vector_data(1, [])
+        self.assertTrue(len(read_data) == 0)
 
     def test_read_write_block_vector_data_list(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
