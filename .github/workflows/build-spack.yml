@@ -37,4 +37,4 @@ jobs:
           . /opt/spack/share/spack/setup-env.sh && spack env activate precice && spack add py-pyprecice@develop ^precice@develop && spack concretize -f && spack install -v
       - name: Import precice and print version
         run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate precice && python3 -c "import precice; print(precice.__version__)
+          . /opt/spack/share/spack/setup-env.sh && spack env activate precice && python3 -c "import precice; print(precice.__version__)"
