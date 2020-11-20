@@ -38,7 +38,7 @@ cdef class Interface:
         - We use solver, simulation code, and participant as synonyms.
         - The preferred name in the documentation is participant.
     """
-    
+
     # fake __init__ needed to display docstring for __cinit__ (see https://stackoverflow.com/a/42733794/5158031)
     def __init__(self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
         """
