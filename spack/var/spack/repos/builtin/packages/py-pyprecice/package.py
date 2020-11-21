@@ -30,7 +30,6 @@ class PyPyprecice(PythonPackage):
     import_modules = ["precice"]
 
     patch("deactivate-version-check-via-pip.patch", when="@:2.1.1.1")
-    patch("remove-packaging-and-pip.patch", when="@2.1.1.2:")
 
     variant("mpi", default=True, description="Enables MPI support")
 
