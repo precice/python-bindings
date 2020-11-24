@@ -18,4 +18,4 @@ The developer who is releasing a new version of the python-bindings is expected 
 
 7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft.
 
-8. Update Spack package (edit https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/py-pyprecice/package.py and submit PR.)
+8. Update Spack package (refer to `python-bindings/spack/README.md`).
