@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
-          sudo apt-get install python3-pip
+          apt-get install python3-pip
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
