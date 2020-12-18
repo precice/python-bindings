@@ -34,10 +34,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install pip3
+      - name: Install & upgrade pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-          python3 get-pip.py
+          apt-get install -y python3-pip
+          pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -54,10 +54,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install pip3
+      - name: Install & upgrade pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-          python3 get-pip.py
+          apt-get install -y python3-pip
+          pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -68,19 +68,22 @@ jobs:
   setup_test:
     name: setup_test
     runs-on: ubuntu-latest
-    container: precice/ubuntu
+    container: benjaminrueth/precice
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Install git
+        run: |
+          apt-get install -y git
+      - name: Install & upgrade pip3
+        run: |
+          apt-get install -y python3-pip
+          pip3 install --upgrade --user pip
       - name: Checkout precice and make required files discoverable
         run: | 
           git clone https://github.com/precice/precice.git precice-core
           mkdir precice
           cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
-      - name: Install pip3
-        run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-          python3 get-pip.py
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -95,10 +98,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install pip3
+      - name: Install & upgrade pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-          python3 get-pip.py
+          apt-get install -y python3-pip
+          pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
       - name: Test install
@@ -111,10 +114,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install pip3
+      - name: Install & upgrade pip3
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-          python3 get-pip.py
+          apt-get install -y python3-pip
+          pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
       - name: Test solverdummy
