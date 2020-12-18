@@ -3,7 +3,7 @@ on: push
       
 jobs:  
   setup_build_ext:
-    name: build_ext
+    name: Run setup build_ext
     runs-on: ubuntu-latest
     container: benjaminrueth/precice
     steps:
@@ -17,11 +17,11 @@ jobs:
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Run setup_py build_ext
+      - name: Run setup.py build_ext
         run:  python3 setup.py build_ext
 
   setup_install:
-    name: setup_install
+    name: Run setup install
     runs-on: ubuntu-latest
     container: benjaminrueth/precice
     steps:
@@ -35,13 +35,13 @@ jobs:
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Run setup_py install
+      - name: Run setup install
         run:  python3 setup.py install --user
       - name: Test install
         run:  python3 -c "import precice"
         
   setup_install_single_version_externally_managed:
-    name: setup_install_single_version_externally_managed
+    name: Run setup install --single-version-externally-managed (for spack)
     runs-on: ubuntu-latest
     container: benjaminrueth/precice
     steps:
@@ -55,11 +55,11 @@ jobs:
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Run setup_py install 
+      - name: Run setup install --single-version-externally-managed
         run:  python3 setup.py install --single-version-externally-managed --root=/
         
   setup_test:
-    name: setup_test
+    name: Run setup test
     runs-on: ubuntu-latest
     container: precice/ci-ubuntu-1804
     steps:
@@ -78,11 +78,11 @@ jobs:
         run: |
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Run setup_py test
+      - name: Run setup test
         run:  python3 setup.py test
         
   pip_install:
-    name: pip_install
+    name: Run pip install
     runs-on: ubuntu-latest
     container: benjaminrueth/precice
     steps:
@@ -94,11 +94,11 @@ jobs:
           pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
-      - name: Test install
+      - name: Run pip install
         run:  python3 -c "import precice"
 
   solverdummy_test:
-    name: solverdummy_test
+    name: Run solverdummy
     runs-on: ubuntu-latest
     container: benjaminrueth/precice
     steps:
@@ -110,6 +110,6 @@ jobs:
           pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
-      - name: Test solverdummy
+      - name: Run solverdummy
         run:  python3 solverdummy/solverdummy.py solverdummy/precice-config.xml SolverOne MeshOne & python3 solverdummy/solverdummy.py solverdummy/precice-config.xml SolverTwo MeshTwo
         
