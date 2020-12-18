@@ -61,15 +61,13 @@ jobs:
   setup_test:
     name: setup_test
     runs-on: ubuntu-latest
+    container: precice/ci-ubuntu-1804
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install git and mpi
-        run: |
-          apt-get update && apt-get install -y git libopenmpi-dev
       - name: Install & upgrade pip3
         run: |
-          apt-get install -y python3-pip
+          apt-get update && apt-get install -y python3-pip
           pip3 install --upgrade --user pip
       - name: Checkout precice and make required files discoverable
         run: | 
