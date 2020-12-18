@@ -68,7 +68,6 @@ jobs:
   setup_test:
     name: setup_test
     runs-on: ubuntu-latest
-    container: benjaminrueth/precice
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
