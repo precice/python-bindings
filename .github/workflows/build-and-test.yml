@@ -72,6 +72,7 @@ jobs:
       - name: Checkout precice and make required files discoverable
         run: | 
           git clone https://github.com/precice/precice.git precice-core
+          mkdir -p precice
           cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
       - name: Install dependencies
         run: |
