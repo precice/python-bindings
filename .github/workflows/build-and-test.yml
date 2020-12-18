@@ -56,7 +56,7 @@ jobs:
           pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup_py install 
-        run:  python3 setup.py install --single-version-externally-managed --root
+        run:  python3 setup.py install --single-version-externally-managed --root=/
         
   setup_test:
     name: setup_test
