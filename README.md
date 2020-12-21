@@ -1,8 +1,8 @@
 Python language bindings for the C++ library preCICE
 ----------------------------------------------------
 
-<a style="text-decoration: none" href="https://travis-ci.org/precice/python-bindings" target="_blank">
-    <img src="https://travis-ci.org/precice/python-bindings.svg?branch=develop" alt="Build status">
+<a style="text-decoration: none" href="https://travis-ci.com/precice/python-bindings" target="_blank">
+    <img src="https://travis-ci.com/precice/python-bindings.svg?branch=develop" alt="Build status">
 </a>
 
 [![Upload Python Package](https://github.com/precice/python-bindings/workflows/Upload%20Python%20Package/badge.svg?branch=master)](https://pypi.org/project/pyprecice/)
