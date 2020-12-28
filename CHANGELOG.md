@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.1.1.2
+
+* Bugfix: Bindings also support empty read/write data for block read/write operations (like C++ preCICE API). https://github.com/precice/python-bindings/pull/69
+
 ## 2.1.1.1
 
 * Bindings can now handle mesh initialization with no vertices. This behavior is consistent with the C++ preCICE API.
