@@ -5,11 +5,9 @@
 The python module precice offers python language bindings to the C++ coupling library precice. Please refer to precice.org for further information.
 """
 
+cimport cyprecice
 import numpy as np
-cimport numpy as np
-cimport cython
 from mpi4py import MPI
-
 
 from cpython.version cimport PY_MAJOR_VERSION  # important for determining python version in order to properly normalize string input. See http://docs.cython.org/en/latest/src/tutorial/strings.html#general-notes-about-c-strings and https://github.com/precice/precice/issues/68 .
 
@@ -25,7 +23,6 @@ cdef bytes convert(s):
         raise TypeError("Could not convert.")
 
 
-@cython.embedsignature(True)
 cdef class Interface:
     """
     Main Application Programming Interface of preCICE.
@@ -868,8 +865,12 @@ cdef class Interface:
         """
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
-        size, dimensions = values.shape
-        assert(dimensions == self.get_dimensions())
+        if len(values) > 0:
+            size, dimensions = values.shape
+            assert(dimensions == self.get_dimensions())
+        if len(values) == 0:
+            size = 0
+
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values.flatten(), dtype=np.double)
         assert(size == _vertex_ids.size)
@@ -913,6 +914,7 @@ cdef class Interface:
         """
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
+        assert(len(value) > 0)
         dimensions = value.size
         assert(dimensions == self.get_dimensions())
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
@@ -948,8 +950,13 @@ cdef class Interface:
         """
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
-        assert(_values.size == _vertex_ids.size)
-        size = vertex_ids.size
+
+        if len(values) > 0:
+            assert(_values.size == _vertex_ids.size)
+            size = vertex_ids.size
+        if len(values) == 0:
+            size = 0
+
         self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
     def write_scalar_data (self, data_id, vertex_id, double value):

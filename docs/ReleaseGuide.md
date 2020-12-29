@@ -3,7 +3,7 @@ The developer who is releasing a new version of the python-bindings is expected 
 
 1. The release of the `python-bindings` repository is made directly from the latest commit of the `develop` branch (no independent release branch).
 
-2. Bump the version to the appropriately in [`setup.py`](https://github.com/precice/python-bindings/blob/develop/setup.py) (i.e. `precice_version = version.Version("2.1.1")` and `bindings_version = version.Version("1")`). *Note:* If a pre-release version is being made then the `rc` key in the `bindings_version` attached (i.e. `bindings_version = version.Version("1rc1")`).
+2. Define the new version via `git tag v2.1.1.1`. We use the [python-versioneer](https://github.com/python-versioneer/python-versioneer/) for maintaining the version. *Note:* If a pre-release version is being made then the `rc` key should be attached (i.e. `git tag v2.1.1.1rc1`).
 
 3. [Open a Pull Request from `develop` --> `master`](https://github.com/precice/python-bindings/compare/master...develop) named after the version (i.e. `Release v2.1.1.1`) and briefly describe the new features of the release in the PR description.
 
@@ -18,4 +18,4 @@ The developer who is releasing a new version of the python-bindings is expected 
 
 7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft.
 
-8. Update Spack package (edit https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/py-pyprecice/package.py and submit PR.)
+8. Update Spack package (refer to `python-bindings/spack/README.md`).
