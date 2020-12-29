@@ -63,26 +63,16 @@ def get_extensions(is_test):
     compile_args.append("-I{}".format(numpy.get_include()))
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice", "cyprecice" + ".pyx")]
-    test_sources = [os.path.join(PYTHON_BINDINGS_PATH, "test", "test_bindings_module" + ".pyx")]
 
     if not is_test:
         link_args.append("-lprecice")
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test", "SolverInterface.cpp"))
-        test_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test", "SolverInterface.cpp"))
 
     return [
         Extension(
             "cyprecice",
             sources=bindings_sources,
-            libraries=[],
-            language="c++",
-            extra_compile_args=compile_args,
-            extra_link_args=link_args
-        ),
-        Extension(
-            "test_bindings_module",
-            sources=test_sources,
             libraries=[],
             language="c++",
             extra_compile_args=compile_args,
