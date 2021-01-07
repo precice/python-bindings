@@ -11,7 +11,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
+          apt-get -yy update
           apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -31,7 +33,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
+          apt-get -yy update
           apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -51,7 +55,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
+          apt-get -yy update
           apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -69,7 +75,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
-          apt-get update && apt-get install -y python3-pip
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Checkout precice and make required files discoverable
         run: | 
@@ -94,7 +102,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
+          apt-get -yy update
           apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
@@ -110,7 +120,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
+          apt-get -yy update
           apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
