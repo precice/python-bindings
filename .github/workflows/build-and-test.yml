@@ -4,6 +4,7 @@ on: push
 jobs:  
   setup_for_spack:
     name: Run setup.py phases needed by spack
+    needs: [setup_test]
     runs-on: ubuntu-latest
     container: precice/precice
     steps:
@@ -48,6 +49,7 @@ jobs:
         
   setup_install_single_version_externally_managed:
     name: Run setup install --single-version-externally-managed (for spack)
+    needs: [setup_install]
     runs-on: ubuntu-latest
     container: precice/precice
     steps:
@@ -95,6 +97,7 @@ jobs:
         
   pip_install:
     name: Run pip install
+    needs: [setup_test]
     runs-on: ubuntu-latest
     container: precice/precice
     steps:
@@ -113,6 +116,7 @@ jobs:
 
   solverdummy_test:
     name: Run solverdummy
+    needs: [setup_install, setup_test]
     runs-on: ubuntu-latest
     container: precice/precice
     steps:
