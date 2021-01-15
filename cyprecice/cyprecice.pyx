@@ -25,12 +25,11 @@ cdef bytes convert(s):
 
 def check_array_like(argument, argument_name, function_name):
     try:
-        assert(argument.__len__)
-        assert(argument.__getitem__)
+        argument.__len__
+        argument.__getitem__
     except AttributeError:
-        raise Exception("{} requires array_like input for {}, but was provided the following input type: {}".format(
-            function_name, argument_name, type(argument)))
-
+        raise TypeError("{} requires array_like input for {}, but was provided the following input type: {}".format(
+            function_name, argument_name, type(argument))) from None
 
 cdef class Interface:
     """
