@@ -405,7 +405,7 @@ cdef class Interface:
 
         Returns
         -------
-        id_array : numpy.array
+        id_array : numpy.ndarray
             Numpy array containing all IDs.
         """
         return self.thisptr.getMeshIDs ()
@@ -450,8 +450,11 @@ cdef class Interface:
         Previous calls:
             Count of available elements at position matches the configured dimension
         """
+        check_array_like(position, "position", "set_mesh_vertex")
+
         if not isinstance(position, np.ndarray):
             position = np.asarray(position)
+
         if len(position) > 0:
             dimensions = position.size
             assert(dimensions == self.get_dimensions())
@@ -492,7 +495,7 @@ cdef class Interface:
 
         Returns
         -------
-        vertex_ids : numpy.array
+        vertex_ids : numpy.ndarray
             IDs of the created vertices.
 
         Notes
@@ -524,8 +527,11 @@ cdef class Interface:
         >>> vertex_ids.shape
         (5,)
         """
+        check_array_like(positions, "positions", "set_mesh_vertices")
+
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
+
         if len(positions) > 0:
             size, dimensions = positions.shape
             assert(dimensions == self.get_dimensions())
@@ -577,6 +583,11 @@ cdef class Interface:
         >>> positions.shape
         (5, 3)
         """
+        check_array_like(vertex_ids, "vertex_ids", "get_mesh_vertices")
+
+        if not isinstance(vertex_ids, np.ndarray):
+            positions = np.asarray(vertex_ids)
+
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _positions = np.empty(size * self.get_dimensions(), dtype=np.double)
@@ -592,13 +603,13 @@ cdef class Interface:
         ----------
         mesh_id : int
             ID of the mesh to retrieve positions from.
-        positions : numpy.ndarray
+        positions : array_like
             The coordinates of the vertices. Coordinates of vertices are stored in a
             numpy array [N x D] where N = number of vertices and D = dimensions of geometry
 
         Returns
         -------
-        vertex_ids : numpy.array
+        vertex_ids : numpy.ndarray
             IDs of mesh vertices.
 
         Notes
@@ -629,8 +640,11 @@ cdef class Interface:
         >>> vertex_ids
         array([1, 2, 3, 4, 5])
         """
+        check_array_like(positions, "positions", "get_mesh_vertex_ids_from_positions")
+
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
+
         size, dimensions = positions.shape
         assert(dimensions == self.get_dimensions())
         cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
@@ -848,7 +862,7 @@ cdef class Interface:
             Data ID to write to.
         vertex_ids : array_like
             Indices of the vertices.
-        values : numpy.ndarray
+        values : array_like
             Vector values of data
 
         Notes
@@ -872,8 +886,14 @@ cdef class Interface:
         >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
         >>> interface.write_block_vector_data(data_id, vertex_ids, values)
         """
+        check_array_like(vertex_ids, "vertex_ids", "write_block_vector_data")
+        check_array_like(values, "values", "write_block_vector_data")
+
+        if not isinstance(vertex_ids, np.ndarray):
+            vertex_ids = np.asarray(vertex_ids)
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
+
         if len(values) > 0:
             size, dimensions = values.shape
             assert(dimensions == self.get_dimensions())
@@ -898,7 +918,7 @@ cdef class Interface:
             ID to write to.
         vertex_id : int
             Index of the vertex.
-        value : numpy.array
+        value : array_like
             Single vector value
 
         Notes
@@ -921,8 +941,11 @@ cdef class Interface:
         >>> value = np.array([v5_x, v5_y, v5_z])
         >>> interface.write_vector_data(data_id, vertex_id, value)
         """
+        check_array_like(value, "value", "write_vector_data")
+
         if not isinstance(value, np.ndarray):
             value = np.asarray(value)
+
         assert(len(value) > 0)
         dimensions = value.size
         assert(dimensions == self.get_dimensions())
@@ -959,6 +982,11 @@ cdef class Interface:
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_data")
         check_array_like(values, "values", "write_block_scalar_data")
+
+        if not isinstance(vertex_ids, np.ndarray):
+            vertex_ids = np.asarray(vertex_ids)
+        if not isinstance(values, np.ndarray):
+            values = np.asarray(values)
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
@@ -1040,6 +1068,11 @@ cdef class Interface:
         >>> values.shape
         >>> (5, 3)
         """
+        check_array_like(vertex_ids, "vertex_ids", "read_block_vector_data")
+
+        if not isinstance(vertex_ids, np.ndarray):
+            vertex_ids = np.asarray(vertex_ids)
+
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         size = _vertex_ids.size
         dimensions = self.get_dimensions()
@@ -1061,7 +1094,7 @@ cdef class Interface:
 
         Returns
         -------
-        value : numpy.array
+        value : numpy.ndarray
             Contains the read data.
 
         Notes
@@ -1105,7 +1138,7 @@ cdef class Interface:
 
         Returns
         -------
-            values : numpy.array
+            values : numpy.ndarray
                 Contains the read data.
 
         Notes
