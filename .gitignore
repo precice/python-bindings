@@ -1,3 +1,7 @@
 # The following files are ignored by Git
-.idea/ # Pycharm related folder
+.idea # Pycharm related file
+*.so
+build
+*.egg-info
+__pycache__
 env

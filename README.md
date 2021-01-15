@@ -1,35 +1,65 @@
 Python language bindings for the C++ library preCICE
 ----------------------------------------------------
 
-<a style="text-decoration: none" href="https://travis-ci.org/precice/python-bindings" target="_blank">
-    <img src="https://travis-ci.org/precice/python-bindings.svg?branch=develop" alt="Build status">
+<a style="text-decoration: none" href="https://travis-ci.com/precice/python-bindings" target="_blank">
+    <img src="https://travis-ci.com/precice/python-bindings.svg?branch=develop" alt="Build status">
 </a>
 
-This package provides python language bindings for the C++ library [preCICE](https://github.com/precice/precice). Note that the first three digits of the version number of the bindings indicate the preCICE version that the bindings support. The last digit represents the version of the bindings. Example: `v2.0.0.1` of the bindings represents version `1` of the bindings which is compatible with preCICE `v2.0.0`.
+[![Upload Python Package](https://github.com/precice/python-bindings/workflows/Upload%20Python%20Package/badge.svg?branch=master)](https://pypi.org/project/pyprecice/)
+
+This package provides python language bindings for the C++ library [preCICE](https://github.com/precice/precice). Note that the first three digits of the version number of the bindings indicate the preCICE version that the bindings support. The last digit represents the version of the bindings. Example: `v2.0.0.1` and `v2.0.0.2` of the bindings represent versions `1` and `2` of the bindings that are compatible with preCICE `v2.0.0`.
+
+# Required dependencies
+
+**preCICE**: Refer to [the preCICE wiki](https://github.com/precice/precice/wiki#1-get-precice) for information on building and installation.
+
+**MPI**: `mpi4py` requires MPI to be installed on your system.
 
 # Installing the package
 
-We recommend [using pip3](https://github.com/precice/precice/blob/develop/src/precice/bindings/python/README.md#using-pip3) for the sake of simplicity.
+We recommend using pip3 (version 19.0.0 or newer required) for the sake of simplicity. You can check your pip3 version via `pip3 --version`. To update pip3, use the following line:
+
+```
+$ pip3 install --upgrade pip
+```
 
 ## Using pip3
 
 ### preCICE system installs
 
-For system installs of preCICE, this works out of the box.
+For system installs of preCICE, installation works out of the box. There are different ways how pip can be used to install pyprecice. pip will fetch cython and other build-time dependencies, compile the bindings and finally install the package pyprecice.
 
-In this directory, execute:
-```
-$ pip3 install --user .
-```
-*note the dot at the end of the line*
+* (recommended) install [pyprecice from PyPI](https://pypi.org/project/pyprecice/)
 
-This will fetch cython, compile the bindings and finally install the package pyprecice.
+  ```
+  $ pip3 install --user pyprecice
+  ```
+
+* provide the link to this repository to pip (replace `<branch>` with the branch you want to use, preferably `master` or `develop`)
+
+  ```
+  $ pip3 install --user https://github.com/precice/python-bindings/archive/<branch>.zip
+  ```
+
+* if you already cloned this repository, execute the following command from this directory:
+
+  ```
+  $ pip3 install --user .
+  ```
+  *note the dot at the end of the line*
 
 ### preCICE at custom location (setting PATHS)
 
-If preCICE (the C++ library) was installed in a custom prefix, or not installed at all, you have to extend the following environment variables:
+If preCICE (the C++ library) was installed in a custom prefix, or only built but not installed at all, you have to extend the following environment variables:
+
 - `LIBRARY_PATH`, `LD_LIBRARY_PATH` to the library location, or `$prefix/lib`
 - `CPATH` either to the `src` directory or the `$prefix/include`
+
+The precice wiki provides more informaiton on [linking preCICE](https://github.com/precice/precice/wiki/Linking-to-preCICE).
+
+## Using Spack
+
+You can also install the python language bindings for preCICE via Spack by installing the Spack package `py-pyprecice`. Refer to [our installation guide for preCICE via Spack](https://github.com/precice/precice/wiki/preCICE-with-Spack) for getting started with Spack.
 
 ## Using setup.py
 
@@ -47,46 +77,47 @@ see above. Then run
 $ python3 setup.py install --user
 ```
 
-### preCICE at custom location (explicit include path, library path, or mpicompiler)
+### preCICE at custom location (explicit include path, library path)
 
-1. Install cython via pip3
-```
-$ pip3 install --user cython
-```
+1. Install cython and other dependencies via pip3
+   ```
+   $ pip3 install --user setuptools wheel cython packaging numpy
+   ```
 2. Open terminal in this folder.
 3. Build the bindings
+   ```
+   $ python3 setup.py build_ext --include-dirs=$PRECICE_ROOT/src --library-dirs=$PRECICE_ROOT/build/last
+   ```
 
-```
-$ python3 setup.py build_ext --include-dirs=$PRECICE_ROOT/src --library-dirs=$PRECICE_ROOT/build/last
-```
-
-**Options:**
-- `--include-dirs=`, default: `''` 
-  Path to the headers of preCICE, point to the sources `$PRECICE_ROOT/src`, or the your custom install prefix `$prefix/include`.
+  **Options:**
+  - `--include-dirs=`, default: `''` 
+    Path to the headers of preCICE, point to the sources `$PRECICE_ROOT/src`, or the your custom install prefix `$prefix/include`.
   
-**NOTES:**
-
-- If you build preCICE using CMake, you can pass the path to the CMake binary directory using `--library-dirs`.
-- It is recommended to use preCICE as a shared library here.
+  **NOTES:**
+  
+  - If you have built preCICE using CMake, you can pass the path to the CMake binary directory using `--library-dirs`.
+  - It is recommended to use preCICE as a shared library here.
 
 4. Install the bindings
-```
-$ python3 setup.py install --user
-```
+   ```
+   $ python3 setup.py install --user
+   ```
 
 5. Clean-up _optional_
-```
-$ python3 setup.py clean --all
-```
+   ```
+   $ python3 setup.py clean --all
+   ```
 
 # Test the installation
 
 Update `LD_LIBRARY_PATH` such that python can find `precice.so`
+
 ```
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PRECICE_ROOT/build/last
 ```
 
 Run the following to test the installation:
+
 ```
 $ python3 -c "import precice"
 ```
@@ -94,50 +125,89 @@ $ python3 -c "import precice"
 ## Unit tests
 
 1. Clean-up __mandatory__ (because we must not link against the real `precice.so`, but we use a mocked version)
-```
-$ python3 setup.py clean --all
-```
+   ```
+   $ python3 setup.py clean --all
+   ```
 
 2. Set `CPLUS_INCLUDE_PATH` (we cannot use `build_ext` and the `--include-dirs` option here)
-```
-$ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$PRECICE_ROOT/src
-```
+   ```
+   $ export CPLUS_INCLUDE_PATH=$CPLUS_INCLUDE_PATH:$PRECICE_ROOT/src
+   ```
 
 3. Run tests with
-```
-python3 setup.py test
-```
+   ```
+   $ python3 setup.py test
+   ```
 
-**NOTE:**
-- For an example of how `pyprecice` can be used, refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API).
+# Usage
+
+You can find the documentation of the implemented interface in the file `precice.pyx`. For an example of how `pyprecice` can be used please refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API). 
+
+**Note** The python package that is installed is called `pyprecice`. It provides the python module `precice` that can be use in your code via `import precice`, for example.
 
 # Troubleshooting & miscellaneous
+
+### preCICE is not found
+
+The following error shows up during installation, if preCICE is not found:
+
+```
+  /tmp/pip-install-d_fjyo1h/pyprecice/precice.cpp:643:10: fatal error: precice/SolverInterface.hpp: No such file or directory
+    643 | #include "precice/SolverInterface.hpp"
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  compilation terminated.
+  error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+  ----------------------------------------
+  ERROR: Failed building wheel for pyprecice
+Failed to build pyprecice
+ERROR: Could not build wheels for pyprecice which use PEP 517 and cannot be installed directly
+```
+
+There are two possible reasons, why preCICE is not found:
+
+1. preCICE is not installed. Please download and install the C++ library preCICE. See [above](https://github.com/precice/python-bindings/blob/develop/README.md#required-dependencies).
+2. preCICE is installed, but cannot be found. Please make sure that preCICE can be found during the installation process. See our wiki page on [linking to preCICE](https://github.com/precice/precice/wiki/Linking-to-preCICE) and [the instructions above](https://github.com/precice/python-bindings/blob/develop/README.md#precice-at-custom-location-setting-paths).
 
 ### Version of Cython is too old
 
 In case the compilation fails with `shared_ptr.pxd not found` messages, check if you use the latest version of Cython.
 
-### Version of pip3 is too old
+### `Python.h` missing
 
-If you see the following error
 ```
-error: option --single-version-externally-managed not recognized
-```
-your version of pip might be too old. Please update pip and try again. One possible way for updating pip is to run the following commands:
-```
-wget -q https://bootstrap.pypa.io/get-pip.py -O get-pip.py && python3 get-pip.py
-```
-*Be aware that `python3 get-pip.py` might require root privileges.*
+$ python3 -m pip install pyprecice
+Collecting pyprecice
+...
+  /tmp/pip-build-7rj4_h93/pyprecice/precice.cpp:25:20: fatal error: Python.h: No such file or directory
+  compilation terminated.
+  error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
 
-Check your version of pip via `pip3 --version`. For version 8.1.1 and 9.0.1 we know that this problem occurs. *Remark:* you get versions 8.1.1 of pip if you use `sudo apt install python3-pip` on Ubuntu 16.04 (pip version 9.0.1 on Ubuntu 18.04)
+  ----------------------------------------
+  Failed building wheel for pyprecice 
+```
+
+Please try to install `python3-dev`. E.g. via `apt install python3-dev`. Please make sure that you use the correct version (e.g. `python3.5-dev` or `python3.6-dev`). You can check your version via `python3 --version`.
+
+### `libprecice.so` is not found at runtime
+
+```
+$ python3 -c "import precice"
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ImportError: libprecice.so.2: cannot open shared object file: No such file or directory
+```
+
+Make sure that your `LD_LIBRARY_PATH` includes the directory that contains `libprecice.so`. The actual path depends on how you installed preCICE. Example: If preCICE was installed using `sudo make install` and you did not define a `CMAKE_INSTALL_PREFIX` the library path is `/usr/local/lib`. This means you have to `export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH`.
 
 ### I'm using preCICE < 2.0.0, but there is no matching version of the bindings. What can I do?
 
-If you want to use the old python bindings (released with preCICE version < 2.0.0), please refer to the documentation of the corresponding preCICE version. 
+If you want to use the old experimental python bindings (released with preCICE version < 2.0.0), please refer to the corresponding preCICE version. Example: for preCICE v1.6.1 there are three different versions of the python bindings: [`precice_future`](https://github.com/precice/precice/tree/v1.6.1/src/precice/bindings/python_future), [`precice`](https://github.com/precice/precice/tree/v1.6.1/src/precice/bindings/python) and [`PySolverInterface`](https://github.com/precice/precice/tree/v1.6.1/src/precice/bindings/PySolverInterface). Installation instructions can be found in the corresponding `README` files.
 
 ### Installing the python bindings for Python 2.7.17
 
 *Note that the instructions in this section are outdated and refer to the deprecated python bindings. Until we have updated information on the installation procedure for the python bindings under this use-case, we will keep these instructions, since they might still be very useful* (Originally contributed by [huangq1234553](https://github.com/huangq1234553) to the precice wiki in [`precice/precice/wiki:8bb74b7`](https://github.com/precice/precice/wiki/Dependencies/8bb74b78a7ebc54983f4822af82fb3d638021faa).)
+
+<details><summary>show details</summary>
 
 This guide provides steps to install python bindings for precice-1.6.1 for a conda environment Python 2.7.17 on the CoolMUC. Note that preCICE no longer supports Python 2 after v1.4.0. Hence, some modifications to the python setup code was necessary. Most steps are similar if not identical to the basic guide without petsc or python above. This guide assumes that the Eigen dependencies have already been installed.
 
@@ -192,7 +262,6 @@ Run the setup file using the default Python 2.7.17.
 ```
 python setup.py install --user
 ```
-</p>
 </details>
 
 # Contributors
