@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* Added checks for correct input to API functions accepting array-like input (e.g. `write_block_scalar_data`). https://github.com/precice/python-bindings/pull/80
 * `packaging` and `pip` are now optional dependencies. https://github.com/precice/python-bindings/pull/63
 * Feature: Bindings are now available via Spack. https://github.com/spack/spack/pull/19558
 
