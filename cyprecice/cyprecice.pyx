@@ -23,6 +23,15 @@ cdef bytes convert(s):
         raise TypeError("Could not convert.")
 
 
+def check_array_like(argument, argument_name, function_name):
+    try:
+        assert(argument.__len__)
+        assert(argument.__getitem__)
+    except AttributeError:
+        raise Exception("{} requires array_like input for {}, but was provided the following input type: {}".format(
+            function_name, argument_name, type(argument)))
+
+
 cdef class Interface:
     """
     Main Application Programming Interface of preCICE.
@@ -930,7 +939,7 @@ cdef class Interface:
             ID to write to.
         vertex_ids : array_like
             Indices of the vertices.
-        values : numpy.array
+        values : array_like
             Values to be written
 
         Notes
@@ -948,6 +957,9 @@ cdef class Interface:
         >>> values = np.array([v1 v2, v3, v4, v5])
         >>> interface.write_block_scalar_data(data_id, vertex_ids, values)
         """
+        check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_data")
+        check_array_like(values, "values", "write_block_scalar_data")
+
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
 
@@ -1113,6 +1125,8 @@ cdef class Interface:
         >>> 5
 
         """
+        check_array_like(vertex_ids, "vertex_ids", "read_block_scalar_data")
+
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
