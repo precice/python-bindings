@@ -8,7 +8,7 @@ jobs:
       - name: autopep8
         uses: peter-evans/autopep8@v1
         with:
-          args: --recursive --in-place --aggressive --aggressive --exit-code .
+          args: --recursive --in-place --aggressive --aggressive --exit-code --ignore E402 .
       - name: Fail if autopep8 made changes
         if: ${{ steps.autopep8.outputs.exit-code }} == 2
         run: exit 1
