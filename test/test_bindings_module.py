@@ -245,6 +245,14 @@ class TestBindings(TestCase):
             1, np.array([1, 2, 3]))
         self.assertTrue(np.array_equal(write_data, read_data))
 
+    def test_read_write_block_scalar_data_single_float(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = 8
+        with self.assertRaises(TypeError):
+            solver_interface.write_block_scalar_data(1, 1, write_data)
+        with self.assertRaises(TypeError):
+            solver_interface.read_block_scalar_data(1, 1)
+
     def test_read_write_block_scalar_data_empty(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         write_data = np.array([])
