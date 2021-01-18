@@ -451,11 +451,8 @@ cdef class Interface:
         """
         check_array_like(position, "position", "set_mesh_vertex")
 
-        if not isinstance(position, np.ndarray):
-            position = np.asarray(position)
-
         if len(position) > 0:
-            dimensions = position.size
+            dimensions = len(position)
             assert(dimensions == self.get_dimensions())
         elif len(position) == 0:
             dimensions = self.get_dimensions()
@@ -584,9 +581,6 @@ cdef class Interface:
         """
         check_array_like(vertex_ids, "vertex_ids", "get_mesh_vertices")
 
-        if not isinstance(vertex_ids, np.ndarray):
-            positions = np.asarray(vertex_ids)
-
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _positions = np.empty(size * self.get_dimensions(), dtype=np.double)
@@ -640,12 +634,17 @@ cdef class Interface:
         array([1, 2, 3, 4, 5])
         """
         check_array_like(positions, "positions", "get_mesh_vertex_ids_from_positions")
-
+          
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
 
-        size, dimensions = positions.shape
-        assert(dimensions == self.get_dimensions())
+        if len(positions) > 0:
+            size, dimensions = positions.shape
+            assert(dimensions == self.get_dimensions())
+        elif len(positions) == 0:
+            size = positions.shape[0]
+            dimensions = self.get_dimensions()            
+
         cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
         cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(int(size), dtype=np.int32)
         self.thisptr.getMeshVertexIDsFromPositions (mesh_id, size, <const double*>_positions.data, <int*>vertex_ids.data)
@@ -888,8 +887,6 @@ cdef class Interface:
         check_array_like(vertex_ids, "vertex_ids", "write_block_vector_data")
         check_array_like(values, "values", "write_block_vector_data")
 
-        if not isinstance(vertex_ids, np.ndarray):
-            vertex_ids = np.asarray(vertex_ids)
         if not isinstance(values, np.ndarray):
             values = np.asarray(values)
 
@@ -901,7 +898,10 @@ cdef class Interface:
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values.flatten(), dtype=np.double)
-        assert(size == _vertex_ids.size)
+
+        assert(_values.size == size * self.get_dimensions())
+        assert(_vertex_ids.size == size)
+
         self.thisptr.writeBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
     def write_vector_data (self, data_id, vertex_id, value):
@@ -942,11 +942,8 @@ cdef class Interface:
         """
         check_array_like(value, "value", "write_vector_data")
 
-        if not isinstance(value, np.ndarray):
-            value = np.asarray(value)
-
         assert(len(value) > 0)
-        dimensions = value.size
+        dimensions = len(value)
         assert(dimensions == self.get_dimensions())
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
         self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
@@ -981,20 +978,19 @@ cdef class Interface:
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_data")
         check_array_like(values, "values", "write_block_scalar_data")
+        
+        if len(values) > 0:
+            assert(len(vertex_ids) == len(values))
+            size = len(vertex_ids)
+        if len(values) == 0:
+            size = 0
 
-        if not isinstance(vertex_ids, np.ndarray):
-            vertex_ids = np.asarray(vertex_ids)
-        if not isinstance(values, np.ndarray):
-            values = np.asarray(values)
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
-
-        if len(values) > 0:
-            assert(_values.size == _vertex_ids.size)
-            size = vertex_ids.size
-        if len(values) == 0:
-            size = 0
+        
+        assert(_values.size == size)
+        assert(_vertex_ids.size == size)
 
         self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
@@ -1068,9 +1064,6 @@ cdef class Interface:
         >>> (5, 3)
         """
         check_array_like(vertex_ids, "vertex_ids", "read_block_vector_data")
-
-        if not isinstance(vertex_ids, np.ndarray):
-            vertex_ids = np.asarray(vertex_ids)
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         size = _vertex_ids.size
