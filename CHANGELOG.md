@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* Added checks for correct input to API functions accepting array-like input (e.g. `write_block_scalar_data`). https://github.com/precice/python-bindings/pull/80
 * Use github actions for CI. https://github.com/precice/python-bindings/pull/67, https://github.com/precice/python-bindings/pull/68
 * Do major restructuring of codebase. https://github.com/precice/python-bindings/pull/71
 * Support `__version__` and provide version via python-versioneer. https://github.com/precice/python-bindings/pull/70
