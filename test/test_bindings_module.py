@@ -3,6 +3,7 @@ from unittest import TestCase
 import numpy as np
 from mpi4py import MPI
 
+
 class TestBindings(TestCase):
     """
     Test suite to check correct behaviour of python bindings.
@@ -312,16 +313,20 @@ class TestBindings(TestCase):
         fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
         fake_data_name = "FakeData"  # compare to test/SolverInterface.cpp, fake_data_name
         fake_data_ID = 15  # compare to test/SolverInterface.cpp, fake_data_ID
-        self.assertTrue(solver_interface.get_data_id(fake_data_name, fake_mesh_id) == fake_data_ID)
+        self.assertTrue(
+            solver_interface.get_data_id(
+                fake_data_name,
+                fake_mesh_id) == fake_data_ID)
 
     def test_get_version_information(self):
         version_info = precice.get_version_information()
-        fake_version_info = b"dummy";  # compare to test/SolverInterface.cpp
+        fake_version_info = b"dummy"  # compare to test/SolverInterface.cpp
         self.assertEqual(version_info, fake_version_info)
 
     def test_action_write_initial_data(self):
         return_constant = precice.action_write_initial_data()
-        dummy_constant = b"dummy_write_initial_data"  # compare to test/SolverInterface.cpp
+        # compare to test/SolverInterface.cpp
+        dummy_constant = b"dummy_write_initial_data"
         self.assertEqual(return_constant, dummy_constant)
 
     def test_action_write_iteration_checkpoint(self):

@@ -31,7 +31,7 @@ if uses_pip:
                       "the module packaging by running 'pip3 install --user packaging', since it is needed to perform "
                       "additional security checks. You can continue installation. However, if you face problems when "
                       "installing or running pyprecice, it might be a good idea to install packaging to enable "
-                      "additional checks.")        
+                      "additional checks.")
     if "pip" in sys.modules and "packaging" in sys.modules:
         if version.parse(pip.__version__) < version.parse("19.0"):
             # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies.
@@ -62,12 +62,14 @@ def get_extensions(is_test):
     compile_args.append("-std=c++11")
     compile_args.append("-I{}".format(numpy.get_include()))
 
-    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice", "cyprecice" + ".pyx")]
+    bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
+                                     "cyprecice" + ".pyx")]
 
     if not is_test:
         link_args.append("-lprecice")
     if is_test:
-        bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test", "SolverInterface.cpp"))
+        bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
+                                             "SolverInterface.cpp"))
 
     return [
         Extension(
@@ -118,8 +120,11 @@ class my_test(test, object):
 this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
-    
-my_cmdclass = {'test': my_test, 'build_ext': my_build_ext, 'install': my_install}
+
+my_cmdclass = {
+    'test': my_test,
+    'build_ext': my_build_ext,
+    'install': my_install}
 
 # build precice.so python extension to be added to "PYTHONPATH" later
 setup(
@@ -135,7 +140,8 @@ setup(
     license='LGPL-3.0',
     python_requires='>=3',
     install_requires=['numpy', 'mpi4py'],
-    # mpi4py is only needed, if preCICE was compiled with MPI, see https://github.com/precice/python-bindings/issues/8
+    # mpi4py is only needed, if preCICE was compiled with MPI
+    # see https://github.com/precice/python-bindings/issues/8
     packages=['precice'],
     zip_safe=False  # needed because setuptools are used
 )
