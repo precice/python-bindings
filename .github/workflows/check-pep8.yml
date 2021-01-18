@@ -1,4 +1,4 @@
-name: Check code formatting
+name: autopep8
 on: push
 jobs:
   autopep8:
