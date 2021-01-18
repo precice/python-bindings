@@ -11,7 +11,7 @@ jobs:
         with:
           args: --recursive --diff --aggressive --aggressive --exit-code --ignore E402 --exclude ./spack/var/spack/repos/builtin/packages/py-pyprecice/package.py .
       - name: Fail if autopep8 made changes
-        if: ${{ steps.autopep8.outputs.exit-code }} == 2
+        if: ${{ steps.autopep8.outputs.exit-code == 2 }}
         run: |
           echo ${{ steps.autopep8.outputs.exit-code }}
           exit 1
