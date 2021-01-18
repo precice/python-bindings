@@ -8,37 +8,41 @@ uses_pip = "pip" in __file__
 # check whether pip is used for installation. If pip is not used, dependencies defined in pyproject.toml might be
 # missing.
 if not uses_pip:
-    warnings.warn("It looks like you are not using pip for installation. Installing the package via 'pip3 install "
-                  "--user .' is recommended. You can still use 'python3 setup.py install --user', if you want and if "
-                  "the bindings work correctly, you do not have to worry. However, if you face problems during "
-                  "installation or running pyprecice, this means that you have to make sure that all dependencies are "
-                  "installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list "
-                  "of dependencies.")
+    warnings.warn(
+        "It looks like you are not using pip for installation. Installing the package via 'pip3 install "
+        "--user .' is recommended. You can still use 'python3 setup.py install --user', if you want and if "
+        "the bindings work correctly, you do not have to worry. However, if you face problems during "
+        "installation or running pyprecice, this means that you have to make sure that all dependencies are "
+        "installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list "
+        "of dependencies.")
 
 if uses_pip:
     # If installed with pip we need to check its version
     try:
         import pip
     except ModuleNotFoundError:
-        raise Exception("It looks like you are trying to use pip for installation of the package, but pip is not "
-                        "installed on your system (or cannot be found). This can lead to problems with missing "
-                        "dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. "
-                        "Alternatively, you can also run python3 setup.py install --user.")
+        raise Exception(
+            "It looks like you are trying to use pip for installation of the package, but pip is not "
+            "installed on your system (or cannot be found). This can lead to problems with missing "
+            "dependencies. Please make sure that pip is discoverable. Try python3 -c 'import pip'. "
+            "Alternatively, you can also run python3 setup.py install --user.")
     try:
         from packaging import version
     except ModuleNotFoundError:
-        warnings.warn("It looks like you are trying to use pip for installation of the package. Please install, "
-                      "the module packaging by running 'pip3 install --user packaging', since it is needed to perform "
-                      "additional security checks. You can continue installation. However, if you face problems when "
-                      "installing or running pyprecice, it might be a good idea to install packaging to enable "
-                      "additional checks.")
+        warnings.warn(
+            "It looks like you are trying to use pip for installation of the package. Please install, "
+            "the module packaging by running 'pip3 install --user packaging', since it is needed to perform "
+            "additional security checks. You can continue installation. However, if you face problems when "
+            "installing or running pyprecice, it might be a good idea to install packaging to enable "
+            "additional checks.")
     if "pip" in sys.modules and "packaging" in sys.modules:
         if version.parse(pip.__version__) < version.parse("19.0"):
             # version 19.0 is required, since we are using pyproject.toml for definition of build-time depdendencies.
             # See https://pip.pypa.io/en/stable/news/#id209
-            raise Exception("You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade "
-                            "your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user"
-                            " flag.".format(pip.__version__))
+            raise Exception(
+                "You are using pip version {}. However, pip version >= 19.0 is required. Please upgrade "
+                "your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user"
+                " flag.".format(pip.__version__))
 
 from setuptools import setup
 from setuptools import Command
@@ -91,8 +95,9 @@ class my_build_ext(build_ext, object):
             self.distribution.is_test = False
 
         if not self.distribution.ext_modules:
-            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test),
-                                                      compiler_directives={'language_level': "3"})
+            self.distribution.ext_modules = cythonize(
+                get_extensions(self.distribution.is_test),
+                compiler_directives={'language_level': "3"})
 
         super().finalize_options()
 
@@ -105,8 +110,9 @@ class my_install(install, object):
             self.distribution.is_test = False
 
         if not self.distribution.ext_modules:
-            self.distribution.ext_modules = cythonize(get_extensions(self.distribution.is_test),
-                                                      compiler_directives={'language_level': "3"})
+            self.distribution.ext_modules = cythonize(
+                get_extensions(self.distribution.is_test),
+                compiler_directives={'language_level': "3"})
 
         super().finalize_options()
 
