@@ -1,9 +1,9 @@
 ## Guide to release new version of python-bindings
 The developer who is releasing a new version of the python-bindings is expected to follow this work flow:
 
-The release of the `python-bindings` repository is made directly from a release branch called `release_v2.1.1.1`. This branch is mainly needed to help other developers with testing. latest commit of the `develop` branch (no independent release branch).
+The release of the `python-bindings` repository is made directly from a release branch called `release_v2.1.1.1`. This branch is mainly needed to help other developers with testing.
 
-1. Create a branch called `release_v2.1.1.1` from develop
+1. Create a branch called `release_v2.1.1.1` from the latest commit of the `develop` branch.
 
 2. [Open a Pull Request `master` <-- `release_v2.1.1.1`](https://github.com/precice/python-bindings/compare/master...master) named after the version (i.e. `Release v2.1.1.1`) and briefly describe the new features of the release in the PR description.
 
