@@ -9,7 +9,7 @@ The release of the `python-bindings` repository is made directly from a release 
 
 3. Bump the version in the following places:
 
-    * `CHANGELOG.md` on `release v2.1.1.1`.
+    * `CHANGELOG.md` on `python-bindings-v2.1.1.1`.
     * There is no need to bump the version anywhere else, since we use the [python-versioneer](https://github.com/python-versioneer/python-versioneer/) for maintaining the version everywhere else.
 
 4. [Draft a New Release](https://github.com/precice/python-bindings/releases/new) in the `Releases` section of the repository page in a web browser. The release tag needs to be the exact version number (i.e.`v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing tags](https://github.com/precice/python-bindings/tags)). Use `@target:master`. Release title is also the version number (i.e. `v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing releases](https://github.com/precice/python-bindings/tags)). 
