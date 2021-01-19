@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## 2.2.0.1
 
 * Format complete codebase according to PEP8 and test formatting. https://github.com/precice/python-bindings/pull/82
 * Added checks for correct input to API functions accepting array-like input (e.g. `write_block_scalar_data`). https://github.com/precice/python-bindings/pull/80
