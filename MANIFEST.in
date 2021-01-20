@@ -7,7 +7,8 @@ include *.md
 include LICENSE.txt
 
 # Include cython files
-include *.pyx
-include *.pxd
-include test/*.pyx
-include test/*.pxd
+include cyprecice/*.pyx
+include cyprecice/*.pxd
+include test/test_bindings_module.py
+include versioneer.py
+include precice/_version.py

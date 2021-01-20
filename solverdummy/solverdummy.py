@@ -5,7 +5,8 @@ import numpy as np
 import precice
 
 parser = argparse.ArgumentParser()
-parser.add_argument("configurationFileName", help="Name of the xml config file.", type=str)
+parser.add_argument("configurationFileName",
+                    help="Name of the xml config file.", type=str)
 parser.add_argument("participantName", help="Name of the solver.", type=str)
 parser.add_argument("meshName", help="Name of the mesh.", type=str)
 
@@ -33,7 +34,8 @@ num_vertices = 3  # Number of vertices
 solver_process_index = 0
 solver_process_size = 1
 
-interface = precice.Interface(participant_name, configuration_file_name, solver_process_index, solver_process_size)
+interface = precice.Interface(participant_name, configuration_file_name,
+                              solver_process_index, solver_process_size)
 
 mesh_id = interface.get_mesh_id(mesh_name)
 dimensions = interface.get_dimensions()
@@ -55,9 +57,11 @@ write_data_id = interface.get_data_id(write_data_name, mesh_id)
 dt = interface.initialize()
 
 while interface.is_coupling_ongoing():
-    if interface.is_action_required(precice.action_write_iteration_checkpoint()):
+    if interface.is_action_required(
+            precice.action_write_iteration_checkpoint()):
         print("DUMMY: Writing iteration checkpoint")
-        interface.mark_action_fulfilled(precice.action_write_iteration_checkpoint())
+        interface.mark_action_fulfilled(
+            precice.action_write_iteration_checkpoint())
 
     if interface.is_read_data_available():
         read_data = interface.read_block_vector_data(read_data_id, vertex_ids)
@@ -65,14 +69,17 @@ while interface.is_coupling_ongoing():
     write_data = read_data + 1
 
     if interface.is_write_data_required(dt):
-        interface.write_block_vector_data(write_data_id, vertex_ids, write_data)
+        interface.write_block_vector_data(
+            write_data_id, vertex_ids, write_data)
 
     print("DUMMY: Advancing in time")
     dt = interface.advance(dt)
 
-    if interface.is_action_required(precice.action_read_iteration_checkpoint()):
+    if interface.is_action_required(
+            precice.action_read_iteration_checkpoint()):
         print("DUMMY: Reading iteration checkpoint")
-        interface.mark_action_fulfilled(precice.action_read_iteration_checkpoint())
+        interface.mark_action_fulfilled(
+            precice.action_read_iteration_checkpoint())
 
 interface.finalize()
 print("DUMMY: Closing python solver dummy...")
