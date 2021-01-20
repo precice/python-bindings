@@ -4,7 +4,7 @@ The Spack package `py-pyprecice` provides the python bindings via Spack and was 
 
 Note that the file `var/spack/repos/builtin/packages/py-pyprecice/package.py` is a template that can be specified using `jinja2`. Run `python3 jinja-instrantiate.py` to do so. You may use the `--branch` argument to specify a branch. Example:
 ```
-python3 jinja-instantiate --branch feature > my_package_script.py
+python3 jinja-instantiate.py --branch feature > my_package_script.py
 ```
 
 ## Docker image ci-spack-pyprecice-deps-1804
