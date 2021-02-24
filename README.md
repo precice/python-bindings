@@ -269,7 +269,7 @@ python setup.py install --user
 </details>
 
 ### ValueError while importing preCICE
-If you face with an error something like
+If you face the error:
 
 ```bash
 ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
