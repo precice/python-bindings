@@ -24,7 +24,7 @@ Please refer to [precice.org](https://www.precice.org/installation-bindings-pyth
 We recommend using pip3 (version 19.0.0 or newer required) for the sake of simplicity. You can check your pip3 version via `pip3 --version`. To update pip3, use the following line:
 
 ```
-$ pip3 install --upgrade pip
+$ pip3 install --user --upgrade pip
 ```
 
 ## Using pip3
