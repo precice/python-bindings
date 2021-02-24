@@ -275,7 +275,7 @@ If you face with an error something like
 ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
 ```
 
-make sure that you are using up-to-date version of NumPy. You can update NumPy with
+make sure that you are using an up-to-date version of NumPy. You can update NumPy with
 
 ```bash
 pip3 install numpy --upgrade
