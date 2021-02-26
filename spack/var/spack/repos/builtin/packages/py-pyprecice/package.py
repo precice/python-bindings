@@ -52,7 +52,7 @@ class PyPyprecice(PythonPackage):
     depends_on("py-mpi4py", type=("build", "run"), when="+mpi")
     depends_on("py-cython@0.29:", type=("build"))
 
-    phases = ['install_lib', 'build_ext', 'install']
+    phases = ['build_ext', 'install']
 
     def build_ext_args(self, spec, prefix):
         return [
@@ -63,3 +63,5 @@ class PyPyprecice(PythonPackage):
     def install(self, spec, prefix):
         if self.version <= Version("2.1.1.1"):
             self.setup_py("install", "--prefix={0}".format(prefix))
+        else:
+            super.install(spec, prefix)
