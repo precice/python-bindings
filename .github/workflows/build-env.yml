@@ -7,7 +7,8 @@ on:
   push:                   # Trigger on push, since dispatch does not work if not on default branch. See https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
 
 jobs:
-  docker:
+  build-spack-pyprecice-deps:
+    name: Builds the baseimage for spack providing dependencies
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -20,10 +21,7 @@ jobs:
         run: pip3 install --user jinja2
       - name: Specify Package Script
         run: |
-          python3 spack/jinja-instantiate.py --branch develop > spack//opt/spack/var/spack/repos/builtin/packages/py-pyprecice/package.py
-          ls spack/var/spack/repos/builtin/packages/py-pyprecice
-          cp spack/var/spack/repos/builtin/packages/py-pyprecice/*.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/
-          ls spack/var/spack/repos/builtin/packages/py-pyprecice
+          python3 spack/jinja-instantiate.py --branch develop > spack/repo/packages/py-pyprecice/package.py
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
       - name: Login to registry
