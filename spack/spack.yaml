@@ -1,6 +1,5 @@
 spack:
   specs:
-    - pkgconfig
     - py-pyprecice
   packages:
     all:
