@@ -9,7 +9,7 @@ jobs:
     name: build_spack
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    container: benjaminrueth/ci-spack-pyprecice-deps-1804
+    container: precice/ci-spack-pyprecice-deps-1804
     defaults:
       run:
         shell: "bash --login -eo pipefail {0}"
@@ -29,9 +29,7 @@ jobs:
       - name: Specify Package Script
         run: |
           python3 spack/jinja-instantiate.py --branch ${{ steps.extract_branch.outputs.branch }} > /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/package.py
-          ls spack/var/spack/repos/builtin/packages/py-pyprecice
-          cp spack/var/spack/repos/builtin/packages/py-pyprecice/*.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/
-          ls spack/var/spack/repos/builtin/packages/py-pyprecice
+          cp spack/repo/packages/py-pyprecice/*.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/
       - name: Try to build py-pyprecice with spack
         run: |
           . /opt/spack/share/spack/setup-env.sh && spack env activate precice && spack add py-pyprecice@develop ^precice@develop && spack concretize -f && spack install -v

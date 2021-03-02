@@ -1,0 +1,6 @@
+spack:
+  specs:
+    - py-pyprecice
+  packages:
+    all:
+      target: [x86_64]

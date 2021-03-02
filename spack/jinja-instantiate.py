@@ -8,7 +8,7 @@ parser.add_argument('--branch', type=str, help="Branch to be checked out",
 args = parser.parse_args()
 
 f = open(path.join(path.dirname(__file__),
-                   "var/spack/repos/builtin/packages/py-pyprecice/package.py"),
+                   "package-template.py"),
          "r")
 
 template = jinja2.Template(f.read())
