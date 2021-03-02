@@ -3,7 +3,8 @@ name: Update build environment
 on:
   workflow_dispatch:      # Trigger by hand from the UI
   schedule:
-    - cron: '0 0 * * 0'  # Schedule it every Sunday
+    - cron: '0 0 * * 0'   # Schedule it every Sunday
+  push:                   # Trigger on push, since dispatch does not work if not on default branch. See https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
 
 jobs:
   docker:
