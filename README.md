@@ -24,7 +24,7 @@ Please refer to [precice.org](https://www.precice.org/installation-bindings-pyth
 We recommend using pip3 (version 19.0.0 or newer required) for the sake of simplicity. You can check your pip3 version via `pip3 --version`. To update pip3, use the following line:
 
 ```
-$ pip3 install --upgrade pip
+$ pip3 install --user --upgrade pip
 ```
 
 ## Using pip3
@@ -267,6 +267,20 @@ Run the setup file using the default Python 2.7.17.
 python setup.py install --user
 ```
 </details>
+
+### ValueError while importing preCICE
+If you face the error:
+
+```bash
+ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
+```
+
+make sure that you are using an up-to-date version of NumPy. You can update NumPy with
+
+```bash
+pip3 install numpy --upgrade
+```
+
 
 # Contributors
 
