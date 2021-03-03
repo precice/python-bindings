@@ -7,5 +7,4 @@ ADD . /sources
 RUN spack --color=always env create --without-view ci /sources/spack/spack.yaml && \
     spack --color=always -e ci repo add /sources/spack/repo && \
     spack --color=always -e ci install --fail-fast --only=dependencies && \
-    spack --color=always env rm -y ci && \
     spack --color=always clean -a
