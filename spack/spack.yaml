@@ -1,6 +1,6 @@
 spack:
   specs:
-    - py-pyprecice
+    - py-pyprecice@develop
   packages:
     all:
       target: [x86_64]
