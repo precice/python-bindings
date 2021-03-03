@@ -18,8 +18,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Move Package Script
         run: |
-          cp spack/repo/packages/py-pyprecice/package.py /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/
-          cp spack/repo/packages/py-pyprecice/*.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/
+          cp spack/repo/packages/py-pyprecice/package.py /sources/spack/repo/packages/py-pyprecice/
+          cp spack/repo/packages/py-pyprecice/*.patch /sources/spack/repo/packages/py-pyprecice/
       - name: Try to build py-pyprecice with spack
         run: |
           . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop
