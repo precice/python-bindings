@@ -20,9 +20,6 @@ jobs:
         run: |
           cp spack/repo/packages/py-pyprecice/package.py /sources/spack/repo/packages/py-pyprecice/
           cp spack/repo/packages/py-pyprecice/*.patch /sources/spack/repo/packages/py-pyprecice/
-      - name: Try to build py-pyprecice with spack
+      - name: Try to build py-pyprecice with spack and test it
         run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop
-      - name: Import precice and print version
-        run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack load py-pyprecice && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
+          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop && spack load precice py-numpy py-mpi4py py-wheel py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
