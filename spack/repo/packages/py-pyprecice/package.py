@@ -60,6 +60,6 @@ class PyPyprecice(PythonPackage):
             "--library-dirs=" + spec["precice"].libs.directories[0]
         ]
 
-    def install(self, spec, prefix):
-        if self.version <= Version("2.1.1.1"):
-            self.setup_py("install", "--prefix={0}".format(prefix))
+    # def install(self, spec, prefix):
+    #     if self.version <= Version("2.1.1.1"):
+    #         self.setup_py("install", "--prefix={0}".format(prefix))
