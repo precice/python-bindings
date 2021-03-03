@@ -45,5 +45,5 @@ jobs:
         with:
           push: true
           context: .
-          file: spack/ci-spack-pyprecice-external-deps-1804.dockerfile
-          tags: precice/ci-spack-pyprecice-external-deps-1804
+          file: spack/ci-spack-pyprecice-external-deps-2004.dockerfile
+          tags: precice/ci-spack-pyprecice-external-deps-2004
