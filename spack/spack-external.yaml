@@ -1,0 +1,14 @@
+spack:
+  specs:
+    - py-pyprecice@develop
+  packages:
+    all:
+      target: [x86_64]
+    openmpi:
+      buildable: False
+    openblas:
+      buildable: False
+    libxml2:
+      buildable: False
+    python:
+      buildable: False
