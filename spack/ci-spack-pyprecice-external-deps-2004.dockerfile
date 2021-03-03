@@ -21,7 +21,7 @@ RUN apt-get -qq update && apt-get -qq install \
     rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/spack/spack.git
-RUN . spack/share/spack/setup-env.sh
+RUN /bin/sh spack/share/spack/setup-env.sh
 
 WORKDIR /sources
 
