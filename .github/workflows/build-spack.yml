@@ -8,7 +8,7 @@ jobs:
   build_spack:
     name: build_spack
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     container: precice/ci-spack-pyprecice-deps-1804
     defaults:
       run:
