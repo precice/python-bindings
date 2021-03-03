@@ -25,4 +25,4 @@ jobs:
           . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop
       - name: Import precice and print version
         run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
+          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack load py-pyprecice && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
