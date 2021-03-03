@@ -8,7 +8,5 @@ spack:
       buildable: False
     openblas:
       buildable: False
-    libxml2:
-      buildable: False
     python:
       buildable: False
