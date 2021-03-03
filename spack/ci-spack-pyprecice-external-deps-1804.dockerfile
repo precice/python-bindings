@@ -7,6 +7,5 @@ WORKDIR /sources
 ADD . /sources
 RUN spack --color=always env create --without-view ci /sources/spack/spack-external.yaml
 RUN spack --color=always -e ci repo add /sources/spack/repo
-RUN spack --color=always -e ci external find
 RUN spack --color=always -e ci install --fail-fast --only=dependencies
 RUN spack --color=always clean -a

@@ -4,9 +4,8 @@ spack:
   packages:
     all:
       target: [x86_64]
-    openmpi:
-      buildable: False
-    openblas:
-      buildable: False
     python:
+      externals:
+      - spec: python@3.6.9+bz2+ctypes+dbm+lzma+nis+pyexpat+readline+sqlite3+ssl~tix~tkinter+uuid+zlib
+        prefix: /usr
       buildable: False
