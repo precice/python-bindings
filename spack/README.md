@@ -18,6 +18,5 @@ docker push USERNAME/ci-spack-pyprecice-deps-1804.dockerfile
 ```
 ## When a new spack release is necessary
 
-* Add checksum of newest version(s) to https://github.com/precice/python-bindings/blob/develop/spack/package-template.py. You can get checksum for any released version by running `spack checksum py-pyprecice`.
-* Run `python3 jinja-instantiate > package.py` to generate the latest version of `package.py`.
+* Add checksum of newest version(s) to https://github.com/precice/python-bindings/blob/develop/spack/repo/packages/py-pyprecice/package.py. You can get checksum for any released version by running `spack checksum py-pyprecice`.
 * Use `package.py` together with the patches provided in `python-bindings/spack/repo/packages/py-pyprecice` to [create a pull request for Spack](https://github.com/spack/spack/compare) and submit the new release.

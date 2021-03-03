@@ -13,15 +13,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install pip3
-        run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-          python3 get-pip.py
-      - name: Install jinja2
-        run: pip3 install --user jinja2
-      - name: Specify Package Script
-        run: |
-          python3 spack/jinja-instantiate.py --branch develop > spack/repo/packages/py-pyprecice/package.py
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
       - name: Login to registry
