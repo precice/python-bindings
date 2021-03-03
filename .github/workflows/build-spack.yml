@@ -22,7 +22,7 @@ jobs:
           cp spack/repo/packages/py-pyprecice/*.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/
       - name: Try to build py-pyprecice with spack
         run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate precice && spack dev-build py-pyprecice@develop
+          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop
       - name: Import precice and print version
         run: |
           . /opt/spack/share/spack/setup-env.sh && spack env activate precice && python3 -c "import precice; print(precice.__version__)"
