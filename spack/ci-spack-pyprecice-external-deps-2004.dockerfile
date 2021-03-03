@@ -1,6 +1,9 @@
 # Build stage with Spack pre-installed and ready to be used
 FROM ubuntu:20.04
 
+ARG DEBIAN_FRONTEND=noninteractive
+# this is necessary to avoid timeouts during installation due to interactive installs
+
 # Installing necessary dependencies for preCICE, boost 1.71 from apt-get
 RUN apt-get -qq update && apt-get -qq install \
     build-essential \
