@@ -7,6 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Installing necessary dependencies for preCICE, boost 1.71 from apt-get
 RUN apt-get -qq update && apt-get -qq install \
     curl \
+    unzip \
     build-essential \
     locales \
     libboost-all-dev \
