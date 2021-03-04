@@ -41,6 +41,8 @@ class PyPyprecice(PythonPackage):
     depends_on("precice@2.0.1", when="@2.0.1.1:2.0.1.99")
     depends_on("precice@2.0.0", when="@2.0.0.1:2.0.0.99")
 
+    depends_on("openssh")  # needed by OpenMPI. See https://github.com/precice/python-bindings/pull/76
+
     depends_on("python@3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy", type=("build", "run"))
