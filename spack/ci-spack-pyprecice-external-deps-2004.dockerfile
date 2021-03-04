@@ -6,6 +6,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Installing necessary dependencies for preCICE, boost 1.71 from apt-get
 RUN apt-get -qq update && apt-get -qq install \
+    curl \
     build-essential \
     locales \
     libboost-all-dev \
@@ -21,15 +22,14 @@ RUN apt-get -qq update && apt-get -qq install \
     rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/spack/spack.git
-RUN /bin/sh spack/share/spack/setup-env.sh
 
 WORKDIR /sources
+ADD . /sources
 
 # Mount the current sources into the build container
 # and build the default environment
-ADD . /sources
-RUN spack --color=always external find --scope user --not-buildable
-RUN spack --color=always env create --without-view ci /sources/spack/spack.yaml
-RUN spack --color=always -e ci repo add /sources/spack/repo
-RUN spack --color=always -e ci install --fail-fast --only=dependencies
-RUN spack --color=always clean -a
+RUN /spack/bin/spack --color=always external find --not-buildable
+RUN /spack/bin/spack --color=always env create --without-view ci /sources/spack/spack.yaml
+RUN /spack/bin/spack --color=always -e ci repo add /sources/spack/repo
+RUN /spack/bin/spack --color=always -e ci install --fail-fast --only=dependencies
+RUN /spack/bin/spack --color=always clean -a
