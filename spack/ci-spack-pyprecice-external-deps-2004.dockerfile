@@ -24,13 +24,13 @@ RUN apt-get -qq update && apt-get -qq install \
 RUN git clone https://github.com/spack/spack.git
 
 WORKDIR /sources
-ADD . /sources
+ADD ./spack/repo /py-pyprecice-repo
 
 # Mount the current sources into the build container
 # and build the default environment
 RUN /spack/bin/spack --color=always external find --not-buildable
 RUN /spack/bin/spack --color=always env create --without-view ci
-RUN /spack/bin/spack --color=always -e add py-pyprecice@develop%gcc@9.3.0
-RUN /spack/bin/spack --color=always -e ci repo add /sources/spack/repo
+RUN /spack/bin/spack --color=always -e ci add py-pyprecice@develop%gcc@9.3.0
+RUN /spack/bin/spack --color=always -e ci repo add /py-pyprecice-repo
 RUN /spack/bin/spack --color=always -e ci install --fail-fast --only=dependencies
 RUN /spack/bin/spack --color=always clean -a
