@@ -1,6 +1,6 @@
 # Build stage with Spack pre-installed and ready to be used
 FROM spack/ubuntu-bionic:latest 
-WORKDIR /sources
+
 # Mount the current sources into the build container
 # and build the default environment
 ADD ./spack/repo /py-pyprecice-repo
