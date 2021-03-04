@@ -4,7 +4,8 @@ WORKDIR /sources
 # Mount the current sources into the build container
 # and build the default environment
 ADD . /sources
-RUN spack --color=always env create --without-view ci /sources/spack/spack.yaml && \
+RUN spack --color=always env create --without-view ci && \
+    spack --color=always -e ci spec py-pyprecice@develop && \
     spack --color=always -e ci repo add /sources/spack/repo && \
     spack --color=always -e ci install --fail-fast --only=dependencies && \
     spack --color=always clean -a
