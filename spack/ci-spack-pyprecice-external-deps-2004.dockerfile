@@ -31,6 +31,7 @@ ADD ./spack/repo /py-pyprecice-repo
 # and build the default environment
 RUN /spack/bin/spack --color=always external find --not-buildable
 RUN /spack/bin/spack --color=always env create --without-view ci
+RUN /spack/bin/spack --color=always -e ci install py-wheel
 RUN /spack/bin/spack --color=always -e ci add py-pyprecice@develop%gcc@9.3.0
 RUN /spack/bin/spack --color=always -e ci repo add /py-pyprecice-repo
 RUN /spack/bin/spack --color=always -e ci install --fail-fast --only=dependencies
