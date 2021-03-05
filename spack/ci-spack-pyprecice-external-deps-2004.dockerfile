@@ -26,6 +26,8 @@ RUN apt-get -qq update && apt-get -qq install \
 
 RUN git clone https://github.com/spack/spack.git
 
+RUN pip3 install cython  # needed for successfully building py-numpy
+
 ADD ./spack/repo /py-pyprecice-repo
 
 RUN source /spack/share/spack/setup-env.sh && \
