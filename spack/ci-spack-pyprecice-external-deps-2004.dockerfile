@@ -20,6 +20,7 @@ RUN apt-get -qq update && apt-get -qq install \
     python3-wheel \
     python3-numpy \
     petsc-dev \
+    mpich \
     wget \
     bzip2 \
     cmake && \
@@ -27,7 +28,6 @@ RUN apt-get -qq update && apt-get -qq install \
 
 RUN git clone https://github.com/spack/spack.git
 
-WORKDIR /sources
 ADD ./spack/repo /py-pyprecice-repo
 
 RUN source /spack/share/spack/setup-env.sh && \
