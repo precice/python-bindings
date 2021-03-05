@@ -16,9 +16,7 @@ RUN apt-get -qq update && apt-get -qq install \
     libxml2-dev \
     git \
     python3-dev \
-    python3-setuptools \
-    python3-wheel \
-    python3-numpy \
+    python3-pip \
     petsc-dev \
     mpich \
     wget \
