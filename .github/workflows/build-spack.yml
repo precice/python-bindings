@@ -37,8 +37,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Move Package Script
         run: |
-          cp spack/repo/packages/py-pyprecice/package.py /py-pyprecice-repo/packages/py-pyprecice/
-          cp spack/repo/packages/py-pyprecice/*.patch /py-pyprecice-repo/packages/py-pyprecice/
+          cp /spack/repo/packages/py-pyprecice/package.py /py-pyprecice-repo/packages/py-pyprecice/
+          cp /spack/repo/packages/py-pyprecice/*.patch /py-pyprecice-repo/packages/py-pyprecice/
       - name: Try to build py-pyprecice with spack and test it
         run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"          
+          . /spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"          
