@@ -23,3 +23,22 @@ jobs:
       - name: Try to build py-pyprecice with spack and test it
         run: |
           . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
+          
+  build_spack_external:
+    name: build_spack
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container: precice/ci-spack-pyprecice-external-deps-2004
+    defaults:
+      run:
+        shell: "bash --login -eo pipefail {0}"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Move Package Script
+        run: |
+          cp spack/repo/packages/py-pyprecice/package.py /py-pyprecice-repo/packages/py-pyprecice/
+          cp spack/repo/packages/py-pyprecice/*.patch /py-pyprecice-repo/packages/py-pyprecice/
+      - name: Try to build py-pyprecice with spack and test it
+        run: |
+          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack dev-build py-pyprecice@develop && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"          
