@@ -4,7 +4,6 @@ on:
   workflow_dispatch:      # Trigger by hand from the UI
   schedule:
     - cron: '0 0 * * 0'   # Schedule it every Sunday
-  push:
 
 jobs:
   build-spack-pyprecice-deps:
