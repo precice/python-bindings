@@ -23,6 +23,7 @@ jobs:
       - name: Try to build py-pyprecice with spack and test it
         run: |
           . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack arch && spack find && spack dev-build py-pyprecice@develop target=x86_64 && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
+<<<<<<< HEAD
 
   build_spack_external:
     name: build_spack
@@ -42,4 +43,6 @@ jobs:
           cp spack/repo/packages/py-pyprecice/*.patch /py-pyprecice-repo/packages/py-pyprecice/
       - name: Try to build py-pyprecice with spack and test it
         run: |
-          . /spack/share/spack/setup-env.sh && spack env activate ci && spack arch && spack external find && spack find && spack dev-build py-pyprecice@develop target=x86_64 && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
+          . /spack/share/spack/setup-env.sh && spack env activate ci && spack arch && spack find && spack dev-build py-pyprecice@develop target=x86_64 && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
+=======
+>>>>>>> spack-ci-improvements
