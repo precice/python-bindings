@@ -453,7 +453,7 @@ cdef class Interface:
 
         if len(position) > 0:
             dimensions = len(position)
-            assert dimensions == self.get_dimensions(), "Dimensions of vertex coordinate in set_mesh_vertex does not match with dimensions in problem definition"
+            assert dimensions == self.get_dimensions(), "Dimensions of vertex coordinate in set_mesh_vertex does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
         elif len(position) == 0:
             dimensions = self.get_dimensions()
 
@@ -530,7 +530,7 @@ cdef class Interface:
 
         if len(positions) > 0:
             size, dimensions = positions.shape
-            assert dimensions == self.get_dimensions(), "Dimensions of vertex coordinates in set_mesh_vertices does not match with dimensions in problem definition"
+            assert dimensions == self.get_dimensions(), "Dimensions of vertex coordinates in set_mesh_vertices does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
         elif len(positions) == 0:
             size = positions.shape[0]
             dimensions = self.get_dimensions()
@@ -640,7 +640,7 @@ cdef class Interface:
 
         if len(positions) > 0:
             size, dimensions = positions.shape
-            assert dimensions == self.get_dimensions(), "Dimensions of position coordinates in get_mesh_vertex_ids_from_positions does not match with dimensions in problem definition"
+            assert dimensions == self.get_dimensions(), "Dimensions of position coordinates in get_mesh_vertex_ids_from_positions does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
         elif len(positions) == 0:
             size = positions.shape[0]
             dimensions = self.get_dimensions()            
@@ -892,15 +892,15 @@ cdef class Interface:
 
         if len(values) > 0:
             size, dimensions = values.shape
-            assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_block_vector_data does not match with dimensions in problem definition"
+            assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_block_vector_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
         if len(values) == 0:
             size = 0
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values.flatten(), dtype=np.double)
 
-        assert _values.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided."
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_data. Check length of vertex ids input"
+        assert _values.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_values.size, size * self.get_dimensions())
+        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
 
         self.thisptr.writeBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
@@ -944,8 +944,8 @@ cdef class Interface:
         assert len(value) > 0, "Input vector data is empty in write_vector_data"
 
         dimensions = len(value)
-        
-        assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_vector_data does not match with dimensions in problem definition"
+
+        assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_vector_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
         
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
         
@@ -991,9 +991,8 @@ cdef class Interface:
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
         
-        assert _values.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check length of input data provided"
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check length of vertex ids input"
-
+        assert _values.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check size of input data provided. Provided size: {}, expected size: {}".format(_values.size, size)
+        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check size of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
         self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
     def write_scalar_data (self, data_id, vertex_id, double value):
