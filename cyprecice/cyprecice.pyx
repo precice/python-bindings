@@ -454,7 +454,7 @@ cdef class Interface:
 
         if len(position) > 0:
             dimensions = len(position)
-            assert(dimensions == self.get_dimensions())
+            assert dimensions == self.get_dimensions(), "Dimensions of vertex coordinate in set_mesh_vertex does not match with dimensions in problem definition"
         elif len(position) == 0:
             dimensions = self.get_dimensions()
 
@@ -531,7 +531,7 @@ cdef class Interface:
 
         if len(positions) > 0:
             size, dimensions = positions.shape
-            assert(dimensions == self.get_dimensions())
+            assert dimensions == self.get_dimensions(), "Dimensions of vertex coordinates in set_mesh_vertices does not match with dimensions in problem definition"
         elif len(positions) == 0:
             size = positions.shape[0]
             dimensions = self.get_dimensions()
@@ -641,7 +641,7 @@ cdef class Interface:
 
         if len(positions) > 0:
             size, dimensions = positions.shape
-            assert(dimensions == self.get_dimensions())
+            assert dimensions == self.get_dimensions(), "Dimensions of position coordinates in get_mesh_vertex_ids_from_positions does not match with dimensions in problem definition"
         elif len(positions) == 0:
             size = positions.shape[0]
             dimensions = self.get_dimensions()            
@@ -893,7 +893,7 @@ cdef class Interface:
 
         if len(values) > 0:
             size, dimensions = values.shape
-            assert(dimensions == self.get_dimensions())
+            assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_block_vector_data does not match with dimensions in problem definition"
         if len(values) == 0:
             size = 0
 
@@ -946,7 +946,7 @@ cdef class Interface:
         assert(len(value) > 0)
 
         dimensions = len(value)
-        assert(dimensions == self.get_dimensions())
+        assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_vector_data does not match with dimensions in problem definition"
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
         self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
 
