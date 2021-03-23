@@ -899,8 +899,8 @@ cdef class Interface:
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values.flatten(), dtype=np.double)
 
-        assert(_values.size == size * self.get_dimensions())
-        assert(_vertex_ids.size == size)
+        assert _values.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided."
+        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_data. Check length of vertex ids input"
 
         self.thisptr.writeBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
@@ -941,12 +941,14 @@ cdef class Interface:
         >>> interface.write_vector_data(data_id, vertex_id, value)
         """
         check_array_like(value, "value", "write_vector_data")
-
-        assert(len(value) > 0)
+        assert len(value) > 0, "Input vector data is empty in write_vector_data"
 
         dimensions = len(value)
+        
         assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_vector_data does not match with dimensions in problem definition"
+        
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
+        
         self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
 
     def write_block_scalar_data (self, data_id, vertex_ids, values):
@@ -986,12 +988,11 @@ cdef class Interface:
         if len(values) == 0:
             size = 0
 
-
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
         
-        assert(_values.size == size)
-        assert(_vertex_ids.size == size)
+        assert _values.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check length of input data provided"
+        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check length of vertex ids input"
 
         self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
