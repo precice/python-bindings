@@ -1,0 +1,135 @@
+name: Build and Test
+on: push
+      
+jobs:  
+  setup_for_spack:
+    name: Run setup.py phases needed by spack
+    needs: [setup_test]
+    runs-on: ubuntu-latest
+    container: precice/precice
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
+      - name: Run setup.py phases needed by spack
+        run: |
+          python3 setup.py install_lib
+          python3 setup.py build_ext
+
+  setup_install:
+    name: Run setup install
+    runs-on: ubuntu-latest
+    container: precice/precice
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
+      - name: Run setup install
+        run:  python3 setup.py install --user
+      - name: Test install
+        run:  python3 -c "import precice"
+        
+  setup_install_single_version_externally_managed:
+    name: Run setup install --single-version-externally-managed (for spack)
+    needs: [setup_install]
+    runs-on: ubuntu-latest
+    container: precice/precice
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
+      - name: Run setup install --single-version-externally-managed
+        run:  python3 setup.py install --single-version-externally-managed --root=/
+        
+  setup_test:
+    name: Run setup test
+    runs-on: ubuntu-latest
+    container: precice/ci-ubuntu-1804
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
+      - name: Checkout precice and make required files discoverable
+        run: | 
+          git clone https://github.com/precice/precice.git precice-core
+          mkdir -p precice
+          cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
+      - name: Run setup test
+        run: |
+          export CFLAGS=-I$GITHUB_WORKSPACE
+          python3 setup.py test
+        
+  pip_install:
+    name: Run pip install
+    needs: [setup_test]
+    runs-on: ubuntu-latest
+    container: precice/precice
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
+      - name: Run pip install
+        run:  pip3 install --user .
+      - name: Run pip install
+        run:  python3 -c "import precice"
+
+  solverdummy_test:
+    name: Run solverdummy
+    needs: [setup_install, setup_test]
+    runs-on: ubuntu-latest
+    container: precice/precice
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
+      - name: Run pip install
+        run:  pip3 install --user .
+      - name: Run solverdummy
+        run:  python3 solverdummy/solverdummy.py solverdummy/precice-config.xml SolverOne MeshOne & python3 solverdummy/solverdummy.py solverdummy/precice-config.xml SolverTwo MeshTwo
+        

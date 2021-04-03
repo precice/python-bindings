@@ -2,10 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## 2.2.0.1
 
+* Format complete codebase according to PEP8 and test formatting. https://github.com/precice/python-bindings/pull/82
+* Added checks for correct input to API functions accepting array-like input (e.g. `write_block_scalar_data`). https://github.com/precice/python-bindings/pull/80
+* Use github actions for CI. https://github.com/precice/python-bindings/pull/67, https://github.com/precice/python-bindings/pull/68
+* Do major restructuring of codebase. https://github.com/precice/python-bindings/pull/71
+* Support `__version__` and provide version via python-versioneer. https://github.com/precice/python-bindings/pull/70
 * `packaging` and `pip` are now optional dependencies. https://github.com/precice/python-bindings/pull/63
 * Feature: Bindings are now available via Spack. https://github.com/spack/spack/pull/19558
+
+## 2.1.1.2
+
 * Bugfix: Bindings also support empty read/write data for block read/write operations (like C++ preCICE API). https://github.com/precice/python-bindings/pull/69
 
 ## 2.1.1.1

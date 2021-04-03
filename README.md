@@ -1,13 +1,17 @@
 Python language bindings for the C++ library preCICE
 ----------------------------------------------------
 
-<a style="text-decoration: none" href="https://travis-ci.org/precice/python-bindings" target="_blank">
-    <img src="https://travis-ci.org/precice/python-bindings.svg?branch=develop" alt="Build status">
+<a style="text-decoration: none" href="https://travis-ci.com/precice/python-bindings" target="_blank">
+    <img src="https://travis-ci.com/precice/python-bindings.svg?branch=develop" alt="Build status">
 </a>
 
 [![Upload Python Package](https://github.com/precice/python-bindings/workflows/Upload%20Python%20Package/badge.svg?branch=master)](https://pypi.org/project/pyprecice/)
 
 This package provides python language bindings for the C++ library [preCICE](https://github.com/precice/precice). Note that the first three digits of the version number of the bindings indicate the preCICE version that the bindings support. The last digit represents the version of the bindings. Example: `v2.0.0.1` and `v2.0.0.2` of the bindings represent versions `1` and `2` of the bindings that are compatible with preCICE `v2.0.0`.
+
+# User documentation
+
+Please refer to [precice.org](https://www.precice.org/installation-bindings-python.html) for information on how to install and use the python bindings. Information below is intended for advanced users and developers.
 
 # Required dependencies
 
@@ -20,7 +24,7 @@ This package provides python language bindings for the C++ library [preCICE](htt
 We recommend using pip3 (version 19.0.0 or newer required) for the sake of simplicity. You can check your pip3 version via `pip3 --version`. To update pip3, use the following line:
 
 ```
-$ pip3 install --upgrade pip
+$ pip3 install --user --upgrade pip
 ```
 
 ## Using pip3
@@ -263,6 +267,20 @@ Run the setup file using the default Python 2.7.17.
 python setup.py install --user
 ```
 </details>
+
+### ValueError while importing preCICE
+If you face the error:
+
+```bash
+ValueError: numpy.ndarray size changed, may indicate binary incompatibility. Expected 88 from C header, got 80 from PyObject
+```
+
+make sure that you are using an up-to-date version of NumPy. You can update NumPy with
+
+```bash
+pip3 install numpy --upgrade
+```
+
 
 # Contributors
 
