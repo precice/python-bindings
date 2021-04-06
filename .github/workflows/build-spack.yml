@@ -9,32 +9,17 @@ jobs:
     name: build_spack
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    container: benjaminrueth/ci-spack-pyprecice-deps-1804
+    container: precice/ci-spack-pyprecice-deps-1804
     defaults:
       run:
         shell: "bash --login -eo pipefail {0}"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install pip3
+      - name: Move Package Script
         run: |
-          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-          python3 get-pip.py
-      - name: Install jinja2
-        run: pip3 install --user jinja2        
-      - name: Extract branch name  # from https://stackoverflow.com/a/58035262/5158031
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-      - name: Specify Package Script
+          cp spack/repo/packages/py-pyprecice/package.py /py-pyprecice-repo/packages/py-pyprecice/
+          cp spack/repo/packages/py-pyprecice/*.patch /py-pyprecice-repo/packages/py-pyprecice/
+      - name: Try to build py-pyprecice with spack and test it
         run: |
-          python3 spack/jinja-instantiate.py --branch ${{ steps.extract_branch.outputs.branch }} > /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/package.py
-          ls spack/var/spack/repos/builtin/packages/py-pyprecice
-          cp spack/var/spack/repos/builtin/packages/py-pyprecice/*.patch /opt/spack/var/spack/repos/builtin/packages/py-pyprecice/
-          ls spack/var/spack/repos/builtin/packages/py-pyprecice
-      - name: Try to build py-pyprecice with spack
-        run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate precice && spack add py-pyprecice@develop ^precice@develop && spack concretize -f && spack install -v
-      - name: Import precice and print version
-        run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate precice && python3 -c "import precice; print(precice.__version__)"
+          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack arch && spack find && spack dev-build py-pyprecice@develop target=x86_64 && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"

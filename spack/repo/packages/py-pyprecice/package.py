@@ -18,7 +18,7 @@ class PyPyprecice(PythonPackage):
     maintainers = ["ajaust", "BenjaminRodenberg"]
 
     # Always prefer final version of release candidate
-    version("develop", branch="{{ branch }}")
+    version("develop", branch="develop")
     version('2.2.0.1', sha256='032fa58193cfa69e3be37557977056e8f507d89b40c490a351d17271269b25ad')
     version('2.1.1.2', sha256='363eb3eeccf964fd5ee87012c1032353dd1518662868f2b51f04a6d8a7154045')
     version("2.1.1.1", sha256="972f574549344b6155a8dd415b6d82512e00fa154ca25ae7e36b68d4d2ed2cf4")
@@ -40,8 +40,6 @@ class PyPyprecice(PythonPackage):
     depends_on("precice@2.0.2", when="@2.0.2.1:2.0.2.99")
     depends_on("precice@2.0.1", when="@2.0.1.1:2.0.1.99")
     depends_on("precice@2.0.0", when="@2.0.0.1:2.0.0.99")
-
-    depends_on("openssh")  # needed by OpenMPI. See https://github.com/precice/python-bindings/pull/76
 
     depends_on("python@3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
