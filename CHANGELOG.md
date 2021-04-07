@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.2.0.2
+* Improved error messgaes for all assertions 
+
 ## 2.2.0.1
 
 * Format complete codebase according to PEP8 and test formatting. https://github.com/precice/python-bindings/pull/82
