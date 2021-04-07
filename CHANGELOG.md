@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.2.0.2
+
+* Improved error messgaes for all assertions. https://github.com/precice/python-bindings/pull/9
+* Improve CI w.r.t spack package. https://github.com/precice/python-bindings/pull/89
+
 ## 2.2.0.1
 
 * Format complete codebase according to PEP8 and test formatting. https://github.com/precice/python-bindings/pull/82
