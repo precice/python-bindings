@@ -59,6 +59,8 @@ cdef class Interface:
             Rank of the process
         solver_process_size : int
             Size of the process
+        communicator: mpi4py.MPI.Intracomm, optional
+            Custom MPI communicator to use
 
         Returns
         -------
