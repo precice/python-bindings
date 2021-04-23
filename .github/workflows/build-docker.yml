@@ -2,8 +2,6 @@ name: Update docker image
 
 on:
   workflow_dispatch:      # Trigger by hand from the UI
-  release:
-    types: released
   push:
     branches:
       - develop
@@ -15,6 +13,10 @@ jobs:
     env:
         docker_username: precice
     steps:
+      - name: Get branch name
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV    
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Set up Docker Buildx
@@ -29,6 +31,6 @@ jobs:
         with:
           push: true
           file: "./tools/releasing/packaging/docker/Dockerfile"
-          tags: ${{ env.docker_username }}/python-bindings:${GITHUB_REF##*/},${{ env.docker_username }}/python-bindings:latest
+          tags: ${{ env.docker_username }}/python-bindings:${{ env.branch }},${{ env.docker_username }}/python-bindings:latest
           build-args: |
-            branch=${GITHUB_REF##*/}
+            branch=${{ env.branch }}
