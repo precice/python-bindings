@@ -17,9 +17,8 @@ jobs:
           rm -rf /var/lib/apt/lists/*
       - name: Install bindings
         run:  pip3 install --user .
-      - name: Check whether preCICE was built with MPI
-        run:
-          python3 
+      - name: Check whether preCICE was built with MPI  # reformat version information as a dict and check whether preCICE was compiled with MPI
+        run: python3 -c "import precice; assert({item.split('=')[0]:item.split('=')[-1] for item in str(precice.get_version_information()).split(';')}['PRECICE_MPICommunication']=='N')"
       - name: Run solverdummies
         run: | 
           cd solverdummy/
