@@ -20,6 +20,7 @@ RUN python3 -m pip install --user --upgrade pip
 
 # Rebuild image if force_rebuild after that command
 ARG CACHEBUST
+ARG branch=develop
 
 # Builds the precice python bindings for python3
 RUN python3 -m pip install --user https://github.com/precice/python-bindings/archive/$branch.zip
