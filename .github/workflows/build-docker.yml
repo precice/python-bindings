@@ -2,12 +2,11 @@ name: Update docker image
 
 on:
   workflow_dispatch:      # Trigger by hand from the UI
-  on:
-    release:
-      types: released
-    push:
-      branches:
-        - develop
+  release:
+    types: released
+  push:
+    branches:
+      - develop
 
 jobs:
   build-and-release-docker-image:
