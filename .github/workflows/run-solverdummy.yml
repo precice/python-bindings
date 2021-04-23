@@ -22,5 +22,5 @@ jobs:
           python3 
       - name: Run solverdummies
         run: | 
-          cd solverdummies/
+          cd solverdummy/
           python3 solverdummy.py precice-config.xml SolverOne MeshOne & python3 solverdummy.py precice-config.xml SolverTwo MeshTwo        
