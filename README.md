@@ -17,8 +17,6 @@ Please refer to [precice.org](https://www.precice.org/installation-bindings-pyth
 
 **preCICE**: Refer to [the preCICE wiki](https://github.com/precice/precice/wiki#1-get-precice) for information on building and installation.
 
-**MPI**: `mpi4py` requires MPI to be installed on your system.
-
 # Installing the package
 
 We recommend using pip3 (version 19.0.0 or newer required) for the sake of simplicity. You can check your pip3 version via `pip3 --version`. To update pip3, use the following line:
