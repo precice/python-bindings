@@ -3,6 +3,7 @@ ARG branch=develop
 ARG from=precice/precice:${branch}
 FROM $from
 
+USER root
 # Installing necessary dependencies
 RUN apt-get -qq update && apt-get -qq install \
     apt-utils && \
