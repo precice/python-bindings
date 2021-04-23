@@ -23,4 +23,4 @@ ARG CACHEBUST
 ARG branch=develop
 
 # Builds the precice python bindings for python3
-RUN python3 -m pip install --user https://github.com/precice/python-bindings/archive/$branch.zip
+RUN pip3 install --user git+https://github.com/precice/python-bindings.git@$branch
