@@ -78,7 +78,7 @@ jobs:
         run: |
           sudo apt-get -yy update
           sudo apt-get install -y python3-pip libopenmpi-dev
-          rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
