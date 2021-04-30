@@ -74,10 +74,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install & upgrade pip3 and install OpenMPI
+      - name: Install & upgrade pip3
         run: |
           sudo apt-get -yy update
-          sudo apt-get install -y python3-pip libopenmpi-dev
+          sudo apt-get install -y python3-pip
           sudo rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
