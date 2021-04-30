@@ -17,14 +17,14 @@ jobs:
         python-version: '3.x'
     - name: Install dependencies
       uses: BSFishy/pip-action@v1
-        with:
-          packages: |
-            setuptools
-            wheel
-            twine
-            cython
-            packaging
-            numpy
+      with:
+        packages: |
+          setuptools
+          wheel
+          twine
+          cython
+          packaging
+          numpy
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.TEST_PYPI_USERNAME }}
