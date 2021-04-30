@@ -1,7 +1,7 @@
 import precice
 from unittest import TestCase
 import numpy as np
-from mpi4py import MPI
+#from mpi4py import MPI
 
 
 class TestBindings(TestCase):
@@ -12,11 +12,11 @@ class TestBindings(TestCase):
     def test_constructor(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         self.assertTrue(True)
-
-    def test_constructor_custom_mpi_comm(self):
-        solver_interface = precice.Interface(
-            "test", "dummy.xml", 0, 1, MPI.COMM_WORLD)
-        self.assertTrue(True)
+    
+    #def test_constructor_custom_mpi_comm(self):
+    #    solver_interface = precice.Interface(
+    #        "test", "dummy.xml", 0, 1, MPI.COMM_WORLD)
+    #    self.assertTrue(True)
 
     def test_version(self):
         precice.__version__
