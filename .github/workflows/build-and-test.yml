@@ -72,16 +72,12 @@ jobs:
     name: Run setup test
     runs-on: ubuntu-latest
     steps:
-      - name: Build OpenMPI
-        run : |
-          apt-get -yy update
-          apt-get install -y libopenmpi-dev
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install & upgrade pip3
+      - name: Install & upgrade pip3 and install OpenMPI
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip
+          apt-get install -y python3-pip libopenmpi-dev
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
