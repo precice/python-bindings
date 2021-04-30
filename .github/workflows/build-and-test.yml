@@ -10,12 +10,15 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-      - uses: BSFishy/pip-action@v1
-        with:
-          packages: toml
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
+          pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup.py phases needed by spack
         run: |
@@ -29,12 +32,15 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-      - uses: BSFishy/pip-action@v1
-        with:
-          packages: toml
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
+          pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup install
         run:  python3 setup.py install --user
@@ -49,12 +55,15 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
-      - uses: BSFishy/pip-action@v1
-        with:
-          packages: toml
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
+          pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup install --single-version-externally-managed
         run:  python3 setup.py install --single-version-externally-managed --root=/
@@ -95,7 +104,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - uses: actions/setup-python@v1  
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
       - name: Run pip install
@@ -109,7 +123,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - uses: actions/setup-python@v1
+      - name: Install & upgrade pip3
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip
+          rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
       - name: Run solverdummy
