@@ -101,7 +101,7 @@ jobs:
           python3 setup.py test
 
   setup_test_no_mpi:
-    name: Run setup test
+    name: Run setup test (without MPI based tests)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
