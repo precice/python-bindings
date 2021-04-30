@@ -77,7 +77,7 @@ jobs:
       - name: Install & upgrade pip3 and install OpenMPI
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip libopenmpi-dev
+          apt-get install -y python3-pip
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
