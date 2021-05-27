@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - "*"
+  schedule:
+    - cron: '0 4 * * 1'   # Schedule it every Sunday
       
 jobs:  
   build_spack:
