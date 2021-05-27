@@ -1,10 +1,6 @@
 Python language bindings for the C++ library preCICE
 ----------------------------------------------------
 
-<a style="text-decoration: none" href="https://travis-ci.com/precice/python-bindings" target="_blank">
-    <img src="https://travis-ci.com/precice/python-bindings.svg?branch=develop" alt="Build status">
-</a>
-
 [![Upload Python Package](https://github.com/precice/python-bindings/workflows/Upload%20Python%20Package/badge.svg?branch=master)](https://pypi.org/project/pyprecice/)
 
 This package provides python language bindings for the C++ library [preCICE](https://github.com/precice/precice). Note that the first three digits of the version number of the bindings indicate the preCICE version that the bindings support. The last digit represents the version of the bindings. Example: `v2.0.0.1` and `v2.0.0.2` of the bindings represent versions `1` and `2` of the bindings that are compatible with preCICE `v2.0.0`.

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.2.1.1
+
+* Remove Travis CI https://github.com/precice/python-bindings/pull/103
+* Improve CI w.r.t. testing dockerimage and autopep8 formatting: https://github.com/precice/python-bindings/pull/98
+
 ## 2.2.0.2
 
 * Improved error messgaes for all assertions. https://github.com/precice/python-bindings/pull/9
