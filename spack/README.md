@@ -4,7 +4,7 @@ The Spack package `py-pyprecice` provides the python bindings via Spack and was 
 
 ## Docker image `precice/ci-spack-pyprecice-deps-1804`
 
-The workflow `build_env` in `.github/workflows/build-spack.yml` creates the image `precice/ci-spack-pyprecice-deps-1804`. This image contains all dependencies of `py-pyprecice@develop`.
+The workflow `build-spack-pyprecice-deps` in `.github/workflows/build-env.yml` creates the image `precice/ci-spack-pyprecice-deps-1804`. This image contains all dependencies of `py-pyprecice@develop`.
 
 The workflow `build_spack` in `.github/workflows/build-spack.yml` uses the image `precice/ci-spack-pyprecice-deps-1804` to reduce build time. The workflow uses the `package.py` from this repository to build the latest version of the bindings and run a small test on this version.
 
