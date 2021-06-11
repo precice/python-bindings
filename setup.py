@@ -127,16 +127,26 @@ this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-my_cmdclass = {
-    'test': my_test,
-    'build_ext': my_build_ext,
-    'install': my_install}
+
+cmdclass = versioneer.get_cmdclass()
+#if has_cython:
+#        cmdclass.update(build_ext=build_ext)
+
+cmdclass.update(build_ext=my_build_ext)
+cmdclass.update(install=my_install)
+cmdclass.update(test=my_test)
+
+
+#my_cmdclass = {
+#    'test': my_test,
+#    'build_ext': my_build_ext,
+#    'install': my_install}
 
 # build precice.so python extension to be added to "PYTHONPATH" later
 setup(
     name=APPNAME,
     version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(my_cmdclass),
+    cmdclass=cmdclass,
     description='Python language bindings for the preCICE coupling library',
     long_description=long_description,
     long_description_content_type='text/markdown',
