@@ -74,10 +74,42 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install & upgrade pip3 and install OpenMPI
+      - name: Install & upgrade pip3
         run: |
           sudo apt-get -yy update
-          sudo apt-get install -y python3-pip libopenmpi-dev
+          sudo apt-get install -y python3-pip
+          sudo rm -rf /var/lib/apt/lists/*
+          pip3 install --upgrade --user pip
+      - name: Install OpenMPI and mpi4py
+        run: |
+          sudo apt-get -yy update
+          sudo apt-get install -y libopenmpi-dev
+          sudo rm -rf /var/lib/apt/lists/*
+          pip3 install --user mpi4py
+      - name: Checkout precice and make required files discoverable
+        run: |
+          git clone https://github.com/precice/precice.git precice-core
+          mkdir -p precice
+          cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
+      - name: Install dependencies
+        run: |
+          pip3 install --user toml
+          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
+      - name: Run setup test
+        run: |
+          export CFLAGS=-I$GITHUB_WORKSPACE
+          python3 setup.py test
+
+  setup_test_no_mpi:
+    name: Run setup test (without MPI based tests)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Install & upgrade pip3
+        run: |
+          sudo apt-get -yy update
+          sudo apt-get install -y python3-pip
           sudo rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Checkout precice and make required files discoverable
@@ -93,7 +125,7 @@ jobs:
         run: |
           export CFLAGS=-I$GITHUB_WORKSPACE
           python3 setup.py test
-        
+
   pip_install:
     name: Run pip install
     needs: [setup_test]

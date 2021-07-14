@@ -1,7 +1,13 @@
 import precice
 from unittest import TestCase
 import numpy as np
-from mpi4py import MPI
+import warnings
+try:
+    from mpi4py import MPI
+    has_mpi = True
+except ModuleNotFoundError:
+    warnings.warn("No MPI detected. Some tests will not be run.")
+    has_mpi = False
 
 
 class TestBindings(TestCase):
@@ -13,10 +19,11 @@ class TestBindings(TestCase):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         self.assertTrue(True)
 
-    def test_constructor_custom_mpi_comm(self):
-        solver_interface = precice.Interface(
-            "test", "dummy.xml", 0, 1, MPI.COMM_WORLD)
-        self.assertTrue(True)
+    if has_mpi:
+        def test_constructor_custom_mpi_comm(self):
+            solver_interface = precice.Interface(
+                "test", "dummy.xml", 0, 1, MPI.COMM_WORLD)
+            self.assertTrue(True)
 
     def test_version(self):
         precice.__version__
