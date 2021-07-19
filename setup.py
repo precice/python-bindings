@@ -129,8 +129,6 @@ with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 
 cmdclass = versioneer.get_cmdclass()
-#if has_cython:
-#        cmdclass.update(build_ext=build_ext)
 cmdclass.update(build_ext=my_build_ext)
 cmdclass.update(install=my_install)
 cmdclass.update(test=my_test)
