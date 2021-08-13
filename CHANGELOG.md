@@ -2,10 +2,6 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
-
-* Synchronize spack package with https://github.com/spack/spack/pull/25077 via https://github.com/precice/python-bindings/pull/116.
-
 ## 2.2.1.1
 
 * Remove Travis CI https://github.com/precice/python-bindings/pull/103
