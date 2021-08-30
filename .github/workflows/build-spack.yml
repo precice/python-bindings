@@ -28,7 +28,7 @@ jobs:
         run: |
           . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack arch && spack find && spack dev-build pyprecice.test.py-pyprecice@develop target=x86_64 && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && mkdir runner && cd runner && python3 -c "import precice; print(precice.__version__)"
   build_spack_external:
-    name: build_spack
+    name: build_spack_external
     runs-on: ubuntu-latest
     timeout-minutes: 15
     container: precice/ci-spack-pyprecice-external-deps-2004
