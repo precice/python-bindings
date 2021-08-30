@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Improve CI w.r.t spack package. https://github.com/precice/python-bindings/pull/117
+* Synchronize spack package with https://github.com/spack/spack/pull/25077 via https://github.com/precice/python-bindings/pull/116.
+
+## 2.2.1.1
+
+* Remove Travis CI https://github.com/precice/python-bindings/pull/103
+* Improve CI w.r.t. testing dockerimage and autopep8 formatting: https://github.com/precice/python-bindings/pull/98
+
+## 2.2.0.2
+
+* Improved error messgaes for all assertions. https://github.com/precice/python-bindings/pull/9
+* Improve CI w.r.t spack package. https://github.com/precice/python-bindings/pull/89
+
 ## 2.2.0.1
 
 * Format complete codebase according to PEP8 and test formatting. https://github.com/precice/python-bindings/pull/82
