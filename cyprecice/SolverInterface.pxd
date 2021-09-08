@@ -101,6 +101,12 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void readScalarData (const int dataID, const int valueIndex, double& value)
 
+        # direct mesh access
+
+        void setMeshAccessRegion (const int meshID, const double* boundingBox)
+
+        void getMeshVerticesAndIDs (const int meshID, const int size, int* ids, double* coordinates)
+
 cdef extern from "precice/SolverInterface.hpp" namespace "precice":
     string getVersionInformation()
 
