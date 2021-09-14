@@ -32,6 +32,7 @@ SolverInterface:: SolverInterface
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
+  fake_bounding_box = std::vector<double>();
 }
 
 SolverInterface::SolverInterface(
@@ -49,6 +50,7 @@ SolverInterface::SolverInterface(
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
+  fake_bounding_box = std::vector<double>();
 }
 
 SolverInterface::~SolverInterface() = default;
@@ -349,6 +351,20 @@ void SolverInterface:: readScalarData
 {
     value = fake_read_write_buffer[0]; 
 }
+
+void SolverInterface:: setMeshAccessRegion
+(
+  int meshID,
+  const double* boundingBox ) const
+{}
+
+void SolverInterface:: getMeshVerticesAndIDs
+(
+  int meshID,
+  int size,
+  const int* valueIndices,
+  const double* coordinates ) const
+{}
 
 std::string getVersionInformation()
 {
