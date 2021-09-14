@@ -77,6 +77,8 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         # data access
 
+        bool isMeshConnectivityRequired (int meshID)
+
         bool hasData (const string& dataName, int meshID) const
 
         int getDataID (const string& dataName, int meshID)
