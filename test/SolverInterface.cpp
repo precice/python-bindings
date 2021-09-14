@@ -10,6 +10,7 @@ std::vector<int> fake_ids;
 int n_fake_vertices;
 std::string fake_data_name;
 int fake_data_id;
+std::vector<double> fake_bounding_box;
 
 namespace precice {
 
@@ -362,8 +363,8 @@ void SolverInterface:: getMeshVerticesAndIDs
 (
   int meshID,
   int size,
-  const int* valueIndices,
-  const double* coordinates ) const
+  int* valueIndices,
+  double* coordinates ) const
 {}
 
 std::string getVersionInformation()

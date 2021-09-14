@@ -1260,9 +1260,9 @@ cdef class Interface:
             he coordinates associated to the IDs and corresponding data values (dim * size)
         """
         size = self.get_mesh_vertex_size(mesh_id)
-        cdef np.ndarray[int, ndim=1] _ids = np.empty(size, dtype=np.int)
+        cdef np.ndarray[int, ndim=1] _ids = np.empty(size, dtype=np.int32)
         dimensions = self.get_dimensions()
-        cdef np.ndarray[int, ndim=1] _coordinates = np.empty(size*dimensions, dtype=np.double)
+        cdef np.ndarray[double, ndim=1] _coordinates = np.empty(size*dimensions, dtype=np.double)
 
         self.thisptr.getMeshVerticesAndIDs(mesh_id, size, <int*>_ids.data, <double*>_coordinates.data)
 
