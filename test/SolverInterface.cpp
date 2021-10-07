@@ -155,7 +155,7 @@ bool SolverInterface::hasToEvaluateFineModel() const
 
 bool SolverInterface:: isMeshConnectivityRequired
 (
-  int           meshID )
+  int           meshID ) const
 {
   return 0;
 }
