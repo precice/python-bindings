@@ -153,6 +153,13 @@ bool SolverInterface::hasToEvaluateFineModel() const
   return 0;
 }
 
+bool SolverInterface:: isMeshConnectivityRequired
+(
+  int           meshID )
+{
+  return 0;
+}
+
 int SolverInterface:: setMeshVertex
 (
   int           meshID,
