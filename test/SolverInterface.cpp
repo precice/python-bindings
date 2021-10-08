@@ -355,14 +355,14 @@ void SolverInterface:: readScalarData
 
 void SolverInterface:: setMeshAccessRegion
 (
-  int meshID,
+  const int meshID,
   const double* boundingBox ) const
 {}
 
 void SolverInterface:: getMeshVerticesAndIDs
 (
-  int meshID,
-  int size,
+  const int meshID,
+  const int size,
   int* valueIndices,
   double* coordinates ) const
 {}

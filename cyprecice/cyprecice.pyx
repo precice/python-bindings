@@ -8,6 +8,7 @@ The python module precice offers python language bindings to the C++ coupling li
 cimport cyprecice
 import numpy as np
 from mpi4py import MPI
+import warnings
 
 from cpython.version cimport PY_MAJOR_VERSION  # important for determining python version in order to properly normalize string input. See http://docs.cython.org/en/latest/src/tutorial/strings.html#general-notes-about-c-strings and https://github.com/precice/precice/issues/68 .
 
@@ -1195,22 +1196,21 @@ cdef class Interface:
 
     def set_mesh_access_region (self, mesh_id, bounding_box):
         """
-        EXPERIMENTAL
         This function is required if you don't want to use the mapping schemes in preCICE, but rather 
         want to use your own solver for data mapping. As opposed to the usual preCICE mapping, only a
         single mesh (from the other participant) is now involved in this situation since an 'own' 
         mesh defined by the participant itself is not required any more. In order to re-partition the
         received mesh, the participant needs to define the mesh region it wants read data from and 
         write data to. The mesh region is specified through an axis-aligned bounding box given by the
-        lower and upper [min and max] bounding-box limits in each space dimension [x, y, z].
+        lower and upper [min and max] bounding-box limits in each space dimension [x, y, z]. This function is still
+        experimental
 
         Parameters
         ----------
         mesh_id : int
             ID of the mesh you want to access through the bounding box
         bounding_box : array_like
-            Axis aligned bounding boxes which has in 3D the format 
-            [x_min, x_max, y_min, y_max, z_min, z_max]
+            Axis aligned bounding box. Example for 3D the format: [x_min, x_max, y_min, y_max, z_min, z_max]
 
         Notes
         -----
@@ -1237,6 +1237,8 @@ cdef class Interface:
         0.5, i.e. the defined access region as computed through the involved provided mesh is by 50% 
         enlarged.
         """
+        warnings.warn("The function set_mesh_access_region is still experimental.")
+
         check_array_like(bounding_box, "bounding_box", "set_mesh_access_region")
         cdef np.ndarray[double, ndim=1] _bounding_box = np.ascontiguousarray(bounding_box, dtype=np.double)
 
@@ -1245,7 +1247,7 @@ cdef class Interface:
     def get_mesh_vertices_and_ids (self, mesh_id):
         """
         Iterating over the region of interest defined by bounding boxes and reading the corresponding 
-        coordinates omitting the mapping.
+        coordinates omitting the mapping. This function is still experimental.
 
         Parameters
         ----------
@@ -1259,6 +1261,8 @@ cdef class Interface:
         coordinates : numpy.ndarray
             he coordinates associated to the IDs and corresponding data values (dim * size)
         """
+        warnings.warn("The function get_mesh_vertices_and_ids is still experimental.")
+
         size = self.get_mesh_vertex_size(mesh_id)
         cdef np.ndarray[int, ndim=1] _ids = np.empty(size, dtype=np.int32)
         dimensions = self.get_dimensions()
