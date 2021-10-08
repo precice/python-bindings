@@ -780,6 +780,23 @@ cdef class Interface:
         self.thisptr.setMeshQuadWithEdges (mesh_id, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id)
 
     # data access
+
+    def is_mesh_connectivity_required (self, mesh_id):
+        """
+        Checks if the given mesh requires connectivity.
+
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the associated mesh.
+
+        Returns
+        -------
+        tag : bool
+            True if mesh connectivity is required.
+        """
+        return self.thisptr.isMeshConnectivityRequired(mesh_id)
+
     def has_data (self, str data_name, mesh_id):
         """
         Checks if the data with given name is used by a solver and mesh.

@@ -30,6 +30,12 @@ class TestBindings(TestCase):
         # directly in the test, not in test/SolverInterface.hpp
         self.assertEqual(fake_dimension, solver_interface.get_dimensions())
 
+    def test_is_mesh_connectivity_required(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_bool = 0  # compare to output in test/SolverInterface.cpp
+        fake_mesh_id = 0
+        self.assertEqual(fake_bool, solver_interface.is_mesh_connectivity_required(fake_mesh_id))
+
     def test_get_mesh_id(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         # TODO: it would be nice to be able to mock the output of the interface
