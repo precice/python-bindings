@@ -406,3 +406,9 @@ class TestBindings(TestCase):
         return_constant = precice.action_read_iteration_checkpoint()
         dummy_constant = b"dummy_read_iteration"  # compare to test/SolverInterface.cpp
         self.assertEqual(return_constant, dummy_constant)
+
+    def test_set_mesh_access_region(self):
+        solver_interface = precice.Interface("test", "dummy.yml", 0, 1)
+        fake_mesh_id = 0
+        fake_bounding_box = [0, 1, 2, 3, 4, 5]
+        solver_interface.set_mesh_access_region(fake_mesh_id, fake_bounding_box)
