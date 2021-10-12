@@ -1257,6 +1257,14 @@ cdef class Interface:
         warnings.warn("The function set_mesh_access_region is still experimental.")
 
         check_array_like(bounding_box, "bounding_box", "set_mesh_access_region")
+
+        if not isinstance(bounding_box, np.ndarray):
+            bounding_box = np.asarray(bounding_box)
+
+        assert len(bounding_box) > 0, "Bounding box cannot be empty."
+
+        assert len(bounding_box) == (self.get_dimensions() * 2), "Dimensions of bounding box in set_mesh_access_region does not match with dimensions in problem definition."
+
         cdef np.ndarray[double, ndim=1] _bounding_box = np.ascontiguousarray(bounding_box, dtype=np.double)
 
         self.thisptr.setMeshAccessRegion(mesh_id, <double*>_bounding_box.data)

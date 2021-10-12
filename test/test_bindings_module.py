@@ -430,7 +430,6 @@ class TestBindings(TestCase):
             coordinates[i, 0] = i * fake_dimension
             coordinates[i, 1] = i * fake_dimension + 1
             coordinates[i, 2] = i * fake_dimension + 2
-            
         fake_ids, fake_coordinates = solver_interface.get_mesh_vertices_and_ids(fake_mesh_id)
         self.assertTrue(np.array_equal(fake_ids, vertex_ids))
         self.assertTrue(np.array_equal(fake_coordinates, coordinates))
