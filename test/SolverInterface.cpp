@@ -11,6 +11,7 @@ int n_fake_vertices;
 std::string fake_data_name;
 int fake_data_id;
 std::vector<double> fake_bounding_box;
+std::vector<double> fake_coordinates;
 
 namespace precice {
 
@@ -35,6 +36,8 @@ SolverInterface:: SolverInterface
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
   fake_bounding_box.resize(fake_dimensions*2);
   std::iota(fake_bounding_box.begin(), fake_bounding_box.end(), 0);
+  fake_coordinates.resize(n_fake_vertices*fake_dimensions);
+  std::iota(fake_coordinates.begin(), fake_coordinates.end(), 0);
 }
 
 SolverInterface::SolverInterface(
@@ -368,6 +371,7 @@ void SolverInterface:: setMeshAccessRegion
   const double* boundingBox ) const
 {
     assert(meshID == fake_mesh_id);
+
     for(int i = 0; i < fake_bounding_box.size(); i++){
         assert(boundingBox[i] == fake_bounding_box[i]);
     }
@@ -379,7 +383,17 @@ void SolverInterface:: getMeshVerticesAndIDs
   const int size,
   int* valueIndices,
   double* coordinates ) const
-{}
+{
+    assert(meshID == fake_mesh_id);
+    assert(size == fake_ids.size());
+
+    for(int i = 0; i < fake_ids.size(); i++){
+        valueIndices[i] = fake_ids[i];
+    }
+    for(int i = 0; i < fake_coordinates.size(); i++){
+        coordinates[i] = fake_coordinates[i];
+    }
+}
 
 std::string getVersionInformation()
 {

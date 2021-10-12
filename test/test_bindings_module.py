@@ -414,7 +414,23 @@ class TestBindings(TestCase):
         self.assertEqual(return_constant, dummy_constant)
 
     def test_set_mesh_access_region(self):
-        solver_interface = precice.Interface("test", "dummy.yml", 0, 1)
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_mesh_id = 0
         fake_bounding_box = [0, 1, 2, 3, 4, 5]
         solver_interface.set_mesh_access_region(fake_mesh_id, fake_bounding_box)
+
+    def test_get_mesh_vertices_and_ids(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_mesh_id = 0
+        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
+        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
+        vertex_ids = np.arange(n_fake_vertices)
+        coordinates = np.zeros((n_fake_vertices, fake_dimension))
+        for i in range(n_fake_vertices):
+            coordinates[i, 0] = i * fake_dimension
+            coordinates[i, 1] = i * fake_dimension + 1
+            coordinates[i, 2] = i * fake_dimension + 2
+            
+        fake_ids, fake_coordinates = solver_interface.get_mesh_vertices_and_ids(fake_mesh_id)
+        self.assertTrue(np.array_equal(fake_ids, vertex_ids))
+        self.assertTrue(np.array_equal(fake_coordinates, coordinates))
