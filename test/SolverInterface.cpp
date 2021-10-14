@@ -351,7 +351,7 @@ void SolverInterface:: readBlockScalarData
   const int* valueIndices,
   double*    values ) const
 {
-  for(int i = 0; i<size; i++){
+  for(int i = 0; i < size; i++){
       values[i] = fake_read_write_buffer[i];
     }
 }
