@@ -390,13 +390,14 @@ class TestBindings(TestCase):
 
     def test_set_mesh_access_region(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0
-        fake_bounding_box = [0, 1, 2, 3, 4, 5]
+        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
+        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
+        fake_bounding_box = np.arange(fake_dimension * 2)
         solver_interface.set_mesh_access_region(fake_mesh_id, fake_bounding_box)
 
     def test_get_mesh_vertices_and_ids(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0
+        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
         n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
         fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
         vertex_ids = np.arange(n_fake_vertices)
