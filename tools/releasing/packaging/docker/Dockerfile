@@ -1,6 +1,6 @@
 # Dockerfile to build a ubuntu image containing the installed Debian package of a release 
 ARG branch=develop
-ARG from=precice/precice:${branch}
+ARG from=precice/precice:develop
 FROM $from
 
 USER root
