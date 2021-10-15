@@ -9,6 +9,7 @@ RUN apt-get -qq update && apt-get -qq install \
     apt-utils && \
     apt-get -qq install \
     software-properties-common \
+    sudo \
     python3-dev \
     python3-pip && \
     rm -rf /var/lib/apt/lists/*
