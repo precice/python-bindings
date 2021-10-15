@@ -33,4 +33,4 @@ jobs:
           file: "./tools/releasing/packaging/docker/Dockerfile"
           tags: ${{ env.docker_username }}/python-bindings:${{ env.branch }},${{ env.docker_username }}/python-bindings:latest
           build-args: |
-            branch=${{ env.branch }}
+            branch=develop
