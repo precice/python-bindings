@@ -31,6 +31,6 @@ jobs:
         with:
           push: true
           file: "./tools/releasing/packaging/docker/Dockerfile"
-          tags: ${{ env.docker_username }}/python-bindings:${{ env.branch }},${{ env.docker_username }}/python-bindings:latest
+          tags: ${{ env.docker_username }}/python-bindings:develop,${{ env.docker_username }}/python-bindings:latest
           build-args: |
             branch=develop
