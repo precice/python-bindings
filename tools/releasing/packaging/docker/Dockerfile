@@ -13,7 +13,23 @@ RUN apt-get -qq update && apt-get -qq install \
     python3-pip && \
     rm -rf /var/lib/apt/lists/*
 
+## Needed, because precice/precice:latest does not create a user?
+## ------>
+# Create user precice
+ARG uid=1000
+ARG gid=1000
+RUN groupadd -g ${gid} precice \
+    && useradd -u ${uid} -g ${gid} -m -s /bin/bash precice \
+    && sudo usermod -a -G sudo precice
+
+# Setup passwordless sudo
+RUN echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# Switch to the user precice
 USER precice
+WORKDIR /home/precice
+ENV USER=precice
+## <-----
 
 # Upgrade pip to newest version (pip version from 18.04 apt-get is outdated)
 RUN python3 -m pip install --user --upgrade pip
