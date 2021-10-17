@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+## 2.3.0.1
+
 * Improve CI w.r.t spack package. https://github.com/precice/python-bindings/pull/117
+* Mesh connectivity requirement API function: https://github.com/precice/python-bindings/pull/126
+* Direct mesh access API functions: https://github.com/precice/python-bindings/pull/124
 
 ## 2.2.1.1
 
