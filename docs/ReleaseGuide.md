@@ -23,6 +23,6 @@ The release of the `python-bindings` repository is made directly from a release 
 
 6. Merge `master` into `develop` for synchronization of `develop`.
 
-7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft. This will create the corresponding tag and trigger (publishing the release to PyPI)[https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22].
+7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
 
 8. Update Spack package (refer to `python-bindings/spack/README.md`).
