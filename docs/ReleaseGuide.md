@@ -16,6 +16,7 @@ The release of the `python-bindings` repository is made directly from a release 
 
     * *Note:* We use the [python-versioneer](https://github.com/python-versioneer/python-versioneer/) for maintaining the version. Therefore the tag directly defines the version in all relevant places.
     * *Note:* If it is a pre-release then the option *This is a pre-release* needs to be selected at the bottom of the page. Use `@target:python-bindings-v2.1.1.1` for a pre-release, since we will never merge a pre-release into master.
+    * Use the `Auto-generate release notes` feature. See, for example, https://github.com/precice/python-bindings/releases/tag/v2.3.0.1
 
     a) If a pre-release is made: Directly hit the "Publish release" button in your Release Draft. Now you can check the artifacts (e.g. release on [PyPI](https://pypi.org/project/pyprecice/#history)) of the release. *Note:* As soon as a new tag is created github actions will take care of deploying the new version on PyPI using [this workflow](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
 
