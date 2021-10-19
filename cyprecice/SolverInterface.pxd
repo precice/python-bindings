@@ -27,21 +27,21 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         int getDimensions() const
 
-        bool isCouplingOngoing()
+        bool isCouplingOngoing() const
 
-        bool isReadDataAvailable()
+        bool isReadDataAvailable() const
 
-        bool isWriteDataRequired (double computedTimestepLength)
+        bool isWriteDataRequired (double computedTimestepLength) const
 
-        bool isTimeWindowComplete()
+        bool isTimeWindowComplete() const
 
-        bool hasToEvaluateSurrogateModel ()
+        bool hasToEvaluateSurrogateModel () const
 
-        bool hasToEvaluateFineModel ()
+        bool hasToEvaluateFineModel () const
 
         # action methods
 
-        bool isActionRequired (const string& action)
+        bool isActionRequired (const string& action) const
 
         void markActionFulfilled (const string& action)
 
@@ -49,21 +49,21 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool hasMesh (const string& meshName ) const
 
-        int getMeshID (const string& meshName)
+        int getMeshID (const string& meshName) const
 
         set[int] getMeshIDs ()
 
-        # MeshHandle getMeshHandle (const string& meshName)
+        bool isMeshConnectivityRequired (int meshID) const
 
         int setMeshVertex (int meshID, const double* position)
 
-        int getMeshVertexSize (int meshID)
+        int getMeshVertexSize (int meshID) const
 
         void setMeshVertices (int meshID, int size, const double* positions, int* ids)
 
-        void getMeshVertices (int meshID, int size, const int* ids, double* positions)
+        void getMeshVertices (int meshID, int size, const int* ids, double* positions) const
 
-        void getMeshVertexIDsFromPositions (int meshID, int size, double* positions, int* ids)
+        void getMeshVertexIDsFromPositions (int meshID, int size, double* positions, int* ids) const
 
         int setMeshEdge (int meshID, int firstVertexID, int secondVertexID)
 
@@ -79,7 +79,7 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool hasData (const string& dataName, int meshID) const
 
-        int getDataID (const string& dataName, int meshID)
+        int getDataID (const string& dataName, int meshID) const
 
         void mapReadDataTo (int toMeshID)
 
@@ -93,13 +93,19 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void writeScalarData (const int dataID, const int valueIndex, const double value)
 
-        void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double* values)
+        void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double* values) const
 
-        void readVectorData (const int dataID, const int valueIndex, double* value)
+        void readVectorData (const int dataID, const int valueIndex, double* value) const
 
-        void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double* values)
+        void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double* values) const
 
-        void readScalarData (const int dataID, const int valueIndex, double& value)
+        void readScalarData (const int dataID, const int valueIndex, double& value) const
+
+        # direct mesh access
+
+        void setMeshAccessRegion (const int meshID, const double* boundingBox) const
+
+        void getMeshVerticesAndIDs (const int meshID, const int size, int* ids, double* coordinates) const
 
 cdef extern from "precice/SolverInterface.hpp" namespace "precice":
     string getVersionInformation()

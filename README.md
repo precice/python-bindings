@@ -7,11 +7,11 @@ This package provides python language bindings for the C++ library [preCICE](htt
 
 # User documentation
 
-Please refer to [precice.org](https://www.precice.org/installation-bindings-python.html) for information on how to install and use the python bindings. Information below is intended for advanced users and developers.
+Please refer to [the preCICE documentation](https://www.precice.org/installation-bindings-python.html) for information on how to install and use the python bindings. Information below is intended for advanced users and developers.
 
 # Required dependencies
 
-**preCICE**: Refer to [the preCICE wiki](https://github.com/precice/precice/wiki#1-get-precice) for information on building and installation.
+**preCICE**: Refer to [the preCICE documentation](https://precice.org/installation-overview.html) for information on building and installation.
 
 **MPI**: `mpi4py` requires MPI to be installed on your system.
 
@@ -55,11 +55,11 @@ If preCICE (the C++ library) was installed in a custom prefix, or only built but
 - `LIBRARY_PATH`, `LD_LIBRARY_PATH` to the library location, or `$prefix/lib`
 - `CPATH` either to the `src` directory or the `$prefix/include`
 
-The precice wiki provides more informaiton on [linking preCICE](https://github.com/precice/precice/wiki/Linking-to-preCICE).
+The preCICE documentation provides more informaiton on [linking preCICE](https://precice.org/installation-linking.html).
 
 ## Using Spack
 
-You can also install the python language bindings for preCICE via Spack by installing the Spack package `py-pyprecice`. Refer to [our installation guide for preCICE via Spack](https://github.com/precice/precice/wiki/preCICE-with-Spack) for getting started with Spack.
+You can also install the python language bindings for preCICE via Spack by installing the Spack package `py-pyprecice`. Refer to [our installation guide for preCICE via Spack](https://precice.org/installation-spack.html) for getting started with Spack.
 
 ## Using setup.py
 
@@ -141,7 +141,7 @@ $ python3 -c "import precice"
 
 # Usage
 
-You can find the documentation of the implemented interface in the file `precice.pyx`. For an example of how `pyprecice` can be used please refer to the [1D elastic tube example](https://github.com/precice/precice/wiki/1D-elastic-tube-using-the-Python-API). 
+You can find the documentation of the implemented interface in the file `precice.pyx`. For an example of how `pyprecice` can be used please refer to the [1D elastic tube example](https://precice.org/tutorials-elastic-tube-1d.html#python). 
 
 **Note** The python package that is installed is called `pyprecice`. It provides the python module `precice` that can be use in your code via `import precice`, for example.
 
@@ -166,7 +166,7 @@ ERROR: Could not build wheels for pyprecice which use PEP 517 and cannot be inst
 There are two possible reasons, why preCICE is not found:
 
 1. preCICE is not installed. Please download and install the C++ library preCICE. See [above](https://github.com/precice/python-bindings/blob/develop/README.md#required-dependencies).
-2. preCICE is installed, but cannot be found. Please make sure that preCICE can be found during the installation process. See our wiki page on [linking to preCICE](https://github.com/precice/precice/wiki/Linking-to-preCICE) and [the instructions above](https://github.com/precice/python-bindings/blob/develop/README.md#precice-at-custom-location-setting-paths).
+2. preCICE is installed, but cannot be found. Please make sure that preCICE can be found during the installation process. See our wiki page on [linking to preCICE](https://precice.org/installation-linking.html) and [the instructions above](https://github.com/precice/python-bindings/blob/develop/README.md#precice-at-custom-location-setting-paths).
 
 ### Version of Cython is too old
 
@@ -280,7 +280,7 @@ pip3 install numpy --upgrade
 
 # Contributors
 
-* [Benjamin Rüth](https://github.com/BenjaminRueth)
+* [Benjamin Rodenberg](https://github.com/BenjaminRodenberg)
 * [Ishaan Desai](https://github.com/IshaanDesai)
 * [Saumitra Vinay Joshi](https://github.com/saumiJ) contributed first working prototype in [`3db9c9` on `precice/precice`](https://github.com/precice/precice/commit/3db9c95e527db1e1cacb2fd116a5ce13ee877513)
 * [Frédéric Simonis](https://github.com/fsimonis)

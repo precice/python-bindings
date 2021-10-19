@@ -38,6 +38,9 @@ interface = precice.Interface(participant_name, configuration_file_name,
                               solver_process_index, solver_process_size)
 
 mesh_id = interface.get_mesh_id(mesh_name)
+
+assert (interface.is_mesh_connectivity_required(mesh_id) is False)
+
 dimensions = interface.get_dimensions()
 
 vertices = np.zeros((num_vertices, dimensions))
