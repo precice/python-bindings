@@ -22,8 +22,29 @@ The release of the `python-bindings` repository is made directly from a release 
 
     b) If this is a "real" release: As soon as one approving review is made, merge the release PR (from `python-bindings-v2.1.1.1`) into `master`.
 
-6. Merge `master` into `develop` for synchronization of `develop`.
+5. Merge `master` into `develop` for synchronization of `develop`.
 
-7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
+6. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
+
+7. Add an empty commit on master via `git checkout master`, then `git commit --allow-empty -m "post-tag bump"`. Check that everything is in order via `git log`. Important: The `tag` and `origin/master` should not point to the same commit. For example:
+
+```
+commit 44b715dde4e3194fa69e61045089ca4ec6925fe3 (HEAD -> master, origin/master)
+Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
+Date:   Wed Oct 20 10:52:41 2021 +0200
+
+    post-tag bump
+
+commit d2645cc51f84ad5eda43b9c673400aada8e1505a (tag: v2.3.0.1)
+Merge: 2039557 aca2354
+Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
+Date:   Tue Oct 19 12:57:24 2021 +0200
+
+    Merge pull request #132 from precice/python-bindings-v2.3.0.1
+    
+    Release v2.3.0.1
+```
+
+For more details refer to https://github.com/precice/python-bindings/issues/109 and https://github.com/python-versioneer/python-versioneer/issues/217.
 
 8. Update Spack package (refer to `python-bindings/spack/README.md`).
