@@ -65,13 +65,14 @@ def get_extensions(is_test):
     link_args = []
     compile_args.append("-std=c++11")
     compile_args.append("-I{}".format(numpy.get_include()))
-    compile_args.append("pkg-config --cflags libprecice")
+    compile_args.append(os.popen("pkg-config --cflags libprecice").read())
+    print(compile_args)
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
                                      "cyprecice" + ".pyx")]
 
     if not is_test:
-        link_args.append("pkg-config --libs")
+        link_args.append(os.popen("pkg-config --libs libprecice").read())
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
                                              "SolverInterface.cpp"))
