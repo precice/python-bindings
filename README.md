@@ -15,6 +15,8 @@ Please refer to [the preCICE documentation](https://www.precice.org/installation
 
 **MPI**: `mpi4py` requires MPI to be installed on your system.
 
+**pkg-config**: `pkg-config` is used to determine dependencies.
+
 # Installing the package
 
 We recommend using pip3 (version 19.0.0 or newer required) for the sake of simplicity. You can check your pip3 version via `pip3 --version`. To update pip3, use the following line:

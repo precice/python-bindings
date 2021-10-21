@@ -48,6 +48,7 @@ class PyPyprecice(PythonPackage):
     depends_on("py-cython@0.29:", type="build")
     depends_on("py-packaging", when="@:2.1", type="build")
     depends_on("py-pip", when="@:2.1", type="build")
+    depends_on("pkgconfig", when="@:2.3.0.2", type="build")
 
     @when("@:2.1")
     def patch(self):
