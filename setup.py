@@ -44,7 +44,7 @@ if uses_pip:
                 "your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user"
                 " flag.".format(pip.__version__))
 
-#check for pkg-config and whether it can find preCICE
+# check for pkg-config and whether it can find preCICE
 out = os.system('pkg-config libprecice')
 if out == 256:  # error code, if lib is not found by pkg-config
     raise Exception("pkg-config is not able to find libprecice. Is preCICE installed correctly?.")
