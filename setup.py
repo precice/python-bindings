@@ -44,6 +44,13 @@ if uses_pip:
                 "your pip installation via 'pip3 install --upgrade pip'. You might have to add the --user"
                 " flag.".format(pip.__version__))
 
+#check for pkg-config and whether it can find preCICE
+out = os.system('pkg-config libprecice')
+if out == 256:  # error code, if lib is not found by pkg-config
+    raise Exception("pkg-config is not able to find libprecice. Is preCICE installed correctly?.")
+elif out == 32512:  # error code, if pkg-config is not found
+    raise Exception("pkg-config is not found. Please install pkg-config.")
+
 from setuptools import setup
 from setuptools import Command
 from setuptools.command.test import test
