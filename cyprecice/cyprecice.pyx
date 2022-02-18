@@ -1179,7 +1179,7 @@ cdef class Interface:
         self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
         return _values
 
-    def read_scalar_data (self, data_id, vertex_id):
+    def read_scalar_data (self, data_id, vertex_id, relative_read_time=None):
         """
         Reads scalar data of a vertex. This function needs a value of a specified vertex from a dataID.
 
@@ -1189,6 +1189,8 @@ cdef class Interface:
             ID to read from.
         vertex_id : int
             Index of the vertex.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
 
         Returns
         -------
@@ -1208,7 +1210,11 @@ cdef class Interface:
         >>> value = interface.read_scalar_data(data_id, vertex_id)
         """
         cdef double _value
-        self.thisptr.readScalarData (data_id, vertex_id, _value)
+        if relative_read_time == None:
+            self.thisptr.readScalarData (data_id, vertex_id, _value)
+        else:
+            self.thisptr.readScalarData (data_id, vertex_id, relative_read_time, _value)
+
         return _value
 
     def set_mesh_access_region (self, mesh_id, bounding_box):
