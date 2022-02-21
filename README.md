@@ -1,3 +1,5 @@
+⚠️ The latest version of the documentation for the python bindings can be found on [precice.org](https://precice.org/installation-bindings-python.html). The information from this `README` is currently under revision and will be moved ⚠️
+
 Python language bindings for the C++ library preCICE
 ----------------------------------------------------
 
