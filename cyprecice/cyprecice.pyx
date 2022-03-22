@@ -430,6 +430,17 @@ cdef class Interface:
         """
         raise Exception("The API method get_mesh_handle is not yet available for the Python bindings.")
 
+    def reset_mesh(self, mesh_id):
+        """
+        Resets the given mesh
+
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to reset.
+        """
+        self.thisptr.resetMesh(mesh_id)
+
 
     def set_mesh_vertex(self, mesh_id, position):
         """

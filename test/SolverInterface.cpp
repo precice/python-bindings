@@ -168,6 +168,11 @@ bool SolverInterface:: isMeshConnectivityRequired
   return 0;
 }
 
+void SolverInterface::resetMesh(int meshID)
+{
+}
+
+
 int SolverInterface:: setMeshVertex
 (
   int           meshID,

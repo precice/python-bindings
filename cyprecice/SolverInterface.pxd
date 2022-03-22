@@ -55,6 +55,8 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool isMeshConnectivityRequired (int meshID) const
 
+        void resetMesh (int meshID)
+
         int setMeshVertex (int meshID, const double* position)
 
         int getMeshVertexSize (int meshID) const
