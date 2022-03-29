@@ -28,6 +28,7 @@ jobs:
       - name: Generate build directory
         run: |
           ls -lah
+          ls -lah precice
           mkdir -p precice/build
       - name: Configure
         working-directory: precice/build
