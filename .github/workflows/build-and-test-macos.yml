@@ -32,7 +32,7 @@ jobs:
           ls -lah
           ls -lah precice-repo
           mkdir -p precice-repo/build
-      - name: Configure
+      - name: Configure preCICE
         working-directory: precice-repo/build
         env:
           CXX: ${{ matrix.CXX }}
@@ -41,7 +41,7 @@ jobs:
           PETSc: ${{ contains(matrix.CONFIG, 'PETSc') }}
         run: |
           cmake --version
-          cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=${{ matrix.TYPE }} -DPRECICE_MPICommunication=${{ env.MPI }} -DPRECICE_PETScMapping=${{ env.PETSc }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+          cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=${{ matrix.TYPE }} -DPRECICE_MPICommunication=${{ env.MPI }} -DPRECICE_PETScMapping=${{ env.PETSc }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
@@ -57,7 +57,7 @@ jobs:
         with:
           name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CompileCommands
           path: precice-repo/build/compile_commands.json
-      - name: Compile and install
+      - name: Compile and install preCICE
         working-directory: precice-repo/build
         run: |
           make -j $(sysctl -n hw.ncpu)
@@ -67,12 +67,12 @@ jobs:
         with:
           name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} TestOutput
           path: precice-repo/build/TestOutput/
-      - name: Check out Python Bindings
+      - name: Check out Python binding repository
         uses: actions/checkout@v3
       - name: Install & upgrade pip3
         run: python3 -m ensurepip --upgrade
-      - name: Run pip install
+      - name: Install bindings using pip
         run: |
           pip3 install --user .
-      - name: Import Python Bindings
+      - name: Import Python bindings
         run:  python3 -c "import precice"
