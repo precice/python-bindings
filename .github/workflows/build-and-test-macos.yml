@@ -28,10 +28,7 @@ jobs:
           ref: 'master'
           path: 'precice-repo'
       - name: Generate build directory
-        run: |
-          ls -lah
-          ls -lah precice-repo
-          mkdir -p precice-repo/build
+        run: mkdir -p precice-repo/build
       - name: Configure preCICE
         working-directory: precice-repo/build
         env:
@@ -77,5 +74,4 @@ jobs:
           pip3 install --user .
       - name: Import Python bindings
         run: |
-          export DYLD_LIBRARY_PATH="/usr/local/lib/":"${DYLD_LIBRARY_PATH}"
           python3 -c "import precice"
