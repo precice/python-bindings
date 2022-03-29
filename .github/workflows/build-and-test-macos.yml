@@ -27,8 +27,8 @@ jobs:
           path: 'precice'
       - name: Generate build directory
         run: |
-        ls -lah
-        mkdir -p precice/build
+          ls -lah
+          mkdir -p precice/build
       - name: Configure
         working-directory: precice/build
         env:
