@@ -52,7 +52,7 @@ from Cython.Distutils.extension import Extension
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
 import numpy
-
+import pkgconfig
 
 # name of Interfacing API
 APPNAME = "pyprecice"
@@ -65,12 +65,15 @@ def get_extensions(is_test):
     link_args = []
     compile_args.append("-std=c++11")
     compile_args.append("-I{}".format(numpy.get_include()))
+    compile_args.append( pkgconfig.cflags('libprecice') )
+
+    #link_args.append( pkgconfig.libs('libprecice') )
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
                                      "cyprecice" + ".pyx")]
 
     if not is_test:
-        link_args.append("-lprecice")
+        link_args.append( pkgconfig.libs('libprecice') )
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
                                              "SolverInterface.cpp"))
