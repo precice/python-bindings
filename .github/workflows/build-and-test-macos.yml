@@ -1,4 +1,4 @@
-name: Build and Test Python bindings on macOS
+name: Build and Test (macOS)
 on:
   push:
     branches:
