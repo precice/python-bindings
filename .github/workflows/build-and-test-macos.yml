@@ -73,6 +73,7 @@ jobs:
         run: python3 -m ensurepip --upgrade
       - name: Install bindings using pip
         run: |
+          export CPLUS_INCLUDE_PATH="/usr/local/include":${CPLUS_INCLUDE_PATH}
           pip3 install --user .
       - name: Import Python bindings
         run:  python3 -c "import precice"
