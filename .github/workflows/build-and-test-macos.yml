@@ -74,6 +74,7 @@ jobs:
       - name: Install bindings using pip
         run: |
           export CPLUS_INCLUDE_PATH="/usr/local/include":${CPLUS_INCLUDE_PATH}
+          export DYLD_LIBRARY_PATH="/usr/local/lib":${DYLD_LIBRARY_PATH}
           pip3 install --user .
       - name: Import Python bindings
         run:  python3 -c "import precice"
