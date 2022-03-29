@@ -1,0 +1,61 @@
+name: Build and Test Python bindings on macOS
+on:
+  push:
+    branches-ignore:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }}
+    runs-on: [self-hosted, macOS]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - CONFIG: MPIPETSc
+            CXX: 'clang++'
+            TYPE: Debug
+    steps:
+    - name: Generate build directory
+      run: mkdir -p build
+    - name: Configure
+      working-directory: build
+      env:
+        CXX: ${{ matrix.CXX }}
+        CXXFLAGS: "-Wall"
+        MPI: ${{ contains(matrix.CONFIG, 'MPI') }}
+        PETSc: ${{ contains(matrix.CONFIG, 'PETSc') }}
+      run: |
+        cmake --version
+        cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=${{ matrix.TYPE }} -DPRECICE_MPICommunication=${{ env.MPI }} -DPRECICE_PETScMapping=${{ env.PETSc }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CMakeCache
+        path: build/CMakeCache.txt
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CMakeLogs
+        path: 'build/CMakeFiles/*.log'
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CompileCommands
+        path: build/compile_commands.json
+    - name: Compile
+      working-directory: build
+      run: |
+        make -j $(sysctl -n hw.ncpu)
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} TestOutput
+        path: build/TestOutput/
+    - name: Install & upgrade pip3
+      run: python -m ensurepip --upgrade
+    - name: Run pip install
+      run:  pip3 install --user .
+    - name: Run pip install
+      run:  python3 -c "import precice"
