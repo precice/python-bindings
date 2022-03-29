@@ -64,6 +64,8 @@ jobs:
         with:
           name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} TestOutput
           path: precice-repo/build/TestOutput/
+      - name: Check out Python Bindings
+        uses: actions/checkout@v3
       - name: Install & upgrade pip3
         run: python -m ensurepip --upgrade
       - name: Run pip install
