@@ -58,7 +58,7 @@ jobs:
           name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CompileCommands
           path: precice-repo/build/compile_commands.json
       - name: Compile
-        working-directory: build
+        working-directory: precice-repo/build
         run: |
           make -j $(sysctl -n hw.ncpu)
       - uses: actions/upload-artifact@v2
