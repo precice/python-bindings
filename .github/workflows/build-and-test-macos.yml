@@ -57,10 +57,11 @@ jobs:
         with:
           name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CompileCommands
           path: precice-repo/build/compile_commands.json
-      - name: Compile
+      - name: Compile and install
         working-directory: precice-repo/build
         run: |
           make -j $(sysctl -n hw.ncpu)
+          make install
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
@@ -72,7 +73,6 @@ jobs:
         run: python3 -m ensurepip --upgrade
       - name: Run pip install
         run: |
-          export CPLUS_INCLUDE_PATH="/usr/include"
           pip3 install --user .
       - name: Import Python Bindings
         run:  python3 -c "import precice"
