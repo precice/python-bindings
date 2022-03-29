@@ -41,7 +41,7 @@ jobs:
           PETSc: ${{ contains(matrix.CONFIG, 'PETSc') }}
         run: |
           cmake --version
-          cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=${{ matrix.TYPE }} -DPRECICE_MPICommunication=${{ env.MPI }} -DPRECICE_PETScMapping=${{ env.PETSc }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+          cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=${{ matrix.TYPE }} -DPRECICE_MPICommunication=${{ env.MPI }} -DPRECICE_PETScMapping=${{ env.PETSc }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
@@ -71,6 +71,8 @@ jobs:
       - name: Install & upgrade pip3
         run: python3 -m ensurepip --upgrade
       - name: Run pip install
-        run:  pip3 install --user .
+        run: |
+          export CPLUS_INCLUDE_PATH="/usr/include"
+          pip3 install --user .
       - name: Import Python Bindings
         run:  python3 -c "import precice"
