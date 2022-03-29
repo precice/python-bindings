@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }}
-    runs-on: macos-11
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
@@ -19,6 +19,8 @@ jobs:
             CXX: 'clang++'
             TYPE: Debug
     steps:
+      - name: Install preCICE dependencies
+        run: brew install cmake eigen libxml2 boost petsc openmpi python3 numpy
       - name: Check out preCICE
         uses: actions/checkout@v3
         with:
