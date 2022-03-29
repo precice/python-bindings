@@ -76,4 +76,6 @@ jobs:
           export PKG_CONFIG_PATH="/usr/local/lib/precice/pkgconfig":"${PKG_CONFIG_PATH}"
           pip3 install --user .
       - name: Import Python bindings
-        run:  python3 -c "import precice"
+        run: |
+          export DYLD_LIBRARY_PATH="/usr/local/lib/":"${DYLD_LIBRARY_PATH}"
+          python3 -c "import precice"
