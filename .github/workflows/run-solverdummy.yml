@@ -25,5 +25,5 @@ jobs:
         run: python3 -c "import precice; assert({item.split('=')[0]:item.split('=')[-1] for item in str(precice.get_version_information()).split(';')}['PRECICE_MPICommunication']=='Y')"
       - name: Run solverdummies
         run: | 
-          cd solverdummy/
+          cd examples/solverdummy/
           python3 solverdummy.py precice-config.xml SolverOne MeshOne & python3 solverdummy.py precice-config.xml SolverTwo MeshTwo        
