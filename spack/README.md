@@ -15,7 +15,7 @@ The workflow `build_spack` in `.github/workflows/build-spack.yml` uses the image
 
   1. Add the repository to your Spack installation if you have not done that before. You can check the repositories available with your Spack installation via `spack repo list`. If there is a repository called `pyprecice.test`, check whether it points to the correct path. The correct path is the `spack/repo` directory of python-bindings repository. If the repository is missing, add it via
 
-     ```bash
+     ```text
      spack repo add ${REPOSITORY_ROOT}/spack/repo
      ```
 
@@ -26,7 +26,7 @@ The workflow `build_spack` in `.github/workflows/build-spack.yml` uses the image
      spack env activate -p pyprecicetest-VERSIONNUMBER
      ```
 
-     Note that the dots `.` in the version number must be replaced by underscores or similar. This means, one would create an environment named `pyprecicetest-2_0_0_1` instead of `pyprecicetest-2.0.0.1` since the `.` character is not allowed for Spack environments.
+     Note that the dots `.` of the version number are not allowed in the name of Spack environments. One could, e.g., create an environment named `pyprecicetest-2_0_0_1` instead of `pyprecicetest-2.0.0.1`.
 
   3. We add the `py-pyprecice` package from our repository to the environment via
 
@@ -34,7 +34,7 @@ The workflow `build_spack` in `.github/workflows/build-spack.yml` uses the image
      spack add pyprecice.test.py-pyprecice@VERSIONNUMBER
      ```
 
-     This ensures that one uses the local repository which has the namespace `pyprecice.test` when installing `py-precice`. Note that when speciying the `VERSIONNUMBER` you use the actual version number with dots, e.g. `2.0.0.1`.
+     This ensures that one uses the local repository which has the namespace `pyprecice.test` when installing `py-precice`. Note that when speciying the `VERSIONNUMBER` you use the actual version number with dots, e.g., `2.0.0.1`, but you have to drop the `v` character from the versioning of the bindings.
 
   4. Concretize the software packages
 
