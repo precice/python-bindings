@@ -15,7 +15,7 @@ Please refer to [the preCICE documentation](https://www.precice.org/installation
 
 **preCICE**: Refer to [the preCICE documentation](https://precice.org/installation-overview.html) for information on building and installation.
 
-**C++**: A working C++ compilers, e.g., `g++`.
+**C++**: A working C++ compiler, e.g., `g++`.
 
 **MPI**: `mpi4py` requires MPI to be installed on your system.
 

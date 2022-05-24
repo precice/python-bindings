@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ## 2.4.0.0
 
-* Move solverdummy into examples/ folder and remove MeshName from its input arguments. https://github.com/precice/python-bindings/pull/141 and https://github.com/precice/python-bindings/pull/142
+* Move solverdummy into examples/ folder and remove MeshName from its input arguments. https://github.com/precice/python-bindings/pull/141
+* Remove MeshName from input arguments of solverdummy. https://github.com/precice/python-bindings/pull/142
 
 ## 2.3.0.1
 
