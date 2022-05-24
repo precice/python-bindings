@@ -136,5 +136,7 @@ jobs:
       - name: Run pip install
         run:  pip3 install --user .
       - name: Run solverdummy
-        run:  python3 solverdummy/solverdummy.py solverdummy/precice-config.xml SolverOne MeshOne & python3 solverdummy/solverdummy.py solverdummy/precice-config.xml SolverTwo MeshTwo
+        run: |
+          cd examples/solverdummy/
+          python3 solverdummy.py precice-config.xml SolverOne MeshOne & python3 solverdummy.py precice-config.xml SolverTwo MeshTwo
         

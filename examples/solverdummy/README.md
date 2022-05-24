@@ -7,8 +7,8 @@
 # Run
 
 You can test the dummy solver by coupling two instances with each other. Open two terminals and run
- * `python3 solverdummy.py precice-config.xml SolverOne MeshOne`
- * `python3 solverdummy.py precice-config.xml SolverTwo MeshTwo`
+ * `python3 solverdummy.py precice-config.xml SolverOne`
+ * `python3 solverdummy.py precice-config.xml SolverTwo`
 
 # Next Steps
 

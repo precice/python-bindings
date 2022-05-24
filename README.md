@@ -1,3 +1,5 @@
+⚠️ The latest version of the documentation for the python bindings can be found on [precice.org](https://precice.org/installation-bindings-python.html). The information from this `README` is currently under revision and will be moved ⚠️
+
 Python language bindings for the C++ library preCICE
 ----------------------------------------------------
 
@@ -12,6 +14,8 @@ Please refer to [the preCICE documentation](https://www.precice.org/installation
 # Required dependencies
 
 **preCICE**: Refer to [the preCICE documentation](https://precice.org/installation-overview.html) for information on building and installation.
+
+**C++**: A working C++ compiler, e.g., `g++`.
 
 **MPI**: `mpi4py` requires MPI to be installed on your system.
 
