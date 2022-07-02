@@ -1211,6 +1211,63 @@ cdef class Interface:
         self.thisptr.readScalarData (data_id, vertex_id, _value)
         return _value
 
+def write_block_vector_gradient_data (self, data_id, vertex_ids, gradientValues):
+        """
+        Writes vector data given as block. This function writes values of specified vertices to a dataID.
+        Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
+        of vertices and D = dimensions of geometry
+
+        Parameters
+        ----------
+        data_id : int
+            Data ID to write to.
+        vertex_ids : array_like
+            Indices of the vertices.
+        gradientValues : array_like
+             Gradient values differentiated in the spacial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
+
+        Notes
+        -----
+        Previous calls:
+            count of available elements at values matches the configured dimension
+            count of available elements at vertex_ids matches the given size
+            initialize() has been called
+            Data with dataID has attribute hasGradient = true
+            
+        Examples
+        --------
+        Write block vector data for a 2D problem with 5 vertices:
+        >>> data_id = 1
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> values = np.array([[v1_x, v1_y], [v2_x, v2_y], [v3_x, v3_y], [v4_x, v4_y], [v5_x, v5_y]])
+        >>> interface.write_block_vector_data(data_id, vertex_ids, values)
+
+        Write block vector data for a 3D (D=3) problem with 5 (N=5) vertices:
+        >>> data_id = 1
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
+        >>> interface.write_block_vector_data(data_id, vertex_ids, values)
+        """
+        check_array_like(vertex_ids, "vertex_ids", "write_block_vector_gradient_data")
+        check_array_like(values, "values", "write_block_vector_gradient_data")
+
+        if not isinstance(values, np.ndarray):
+            values = np.asarray(values)
+
+        if len(values) > 0:
+            size, dimensions = values.shape
+            assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_block_vector_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
+        if len(values) == 0:
+            size = 0
+
+        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
+
+        assert _gradientValues.size == size * self.get_dimensions() * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_values.size, size * self.get_dimensions())
+        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
+
+        self.thisptr.writeBlockVectorGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
+
     def set_mesh_access_region (self, mesh_id, bounding_box):
         """
         This function is required if you don't want to use the mapping schemes in preCICE, but rather 
