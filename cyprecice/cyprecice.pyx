@@ -1211,7 +1211,7 @@ cdef class Interface:
         self.thisptr.readScalarData (data_id, vertex_id, _value)
         return _value
 
-        def write_block_vector_gradient_data (self, data_id, vertex_ids, gradientValues):
+    def write_block_vector_gradient_data (self, data_id, vertex_ids, gradientValues):
         """
         Writes vector gradient data given as block. This function writes values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
@@ -1249,21 +1249,21 @@ cdef class Interface:
         >>> interface.write_block_vector_data(data_id, vertex_ids, values)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_vector_gradient_data")
-        check_array_like(values, "values", "write_block_vector_gradient_data")
+        check_array_like(gradientValues, "gradientValues", "write_block_vector_gradient_data")
 
-        if not isinstance(values, np.ndarray):
-            values = np.asarray(values)
+        if not isinstance(gradientValues, np.ndarray):
+            gradientValues = np.asarray(gradientValues)
 
-        if len(values) > 0:
-            size, dimensions = values.shape
+        if len(gradientValues) > 0:
+            size, dimensions = gradientValues.shape
             assert dimensions == self.get_dimensions() * self.get_dimensions(), "Dimensions of vector data in write_block_vector_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions() *  self.get_dimensions())
-        if len(values) == 0:
+        if len(gradientValues) == 0:
             size = 0
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
 
-        assert _gradientValues.size == size * self.get_dimensions() * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_values.size, size * self.get_dimensions() * self.get_dimensions())
+        assert _gradientValues.size == size * self.get_dimensions() * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, size * self.get_dimensions() * self.get_dimensions())
         assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
 
         self.thisptr.writeBlockVectorGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
@@ -1317,9 +1317,9 @@ cdef class Interface:
 
         assert _gradientValues.size == self.get_dimensions(), "Vector data provided for vertex {} in write_scalar_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions())
       
-        self.thisptr.writeScalarGradientData (data_id, size, vertex_id, <const double*>_gradientValues.data)
+        self.thisptr.writeScalarGradientData(data_id, vertex_id, <const double*>_gradientValues.data)
 
-        def write_vector_gradient_data (self, data_id, vertex_id, gradientValues):
+    def write_vector_gradient_data (self, data_id, vertex_id, gradientValues):
         """
         Writes vector gradient data to a vertex
         This function writes the corresponding gradient matrix value of a specified vertex to a dataID.
@@ -1368,9 +1368,9 @@ cdef class Interface:
 
         assert _gradientValues.size == self.get_dimensions()* self.get_dimensions(), "Vector data provided for vertex {} in write_scalar_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions() * self.get_dimensions())
       
-        self.thisptr.writeVectorGradientData (data_id, size, vertex_id, <const double*>_gradientValues.data)
+        self.thisptr.writeVectorGradientData(data_id, vertex_id, <const double*>_gradientValues.data)
 
- def write_block_scalar_gradient_data (self, data_id, vertex_ids, gradientValues):
+    def write_block_scalar_gradient_data (self, data_id, vertex_ids, gradientValues):
         """
         Writes scalar gradient data given as block. This function writes values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
@@ -1407,23 +1407,23 @@ cdef class Interface:
         >>> values = np.array([[v1_dx, v1_dy, v1x_dz], [v2_dx. v2_dy, v2_dz]])
         >>> interface.write_block_scalar_data(data_id, vertex_ids, values)
         """
-        check_array_like(vertex_ids, "vertex_ids", "write_block_vector_gradient_data")
-        check_array_like(values, "values", "write_block_vector_gradient_data")
+        check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_gradient_data")
+        check_array_like(gradientValues, "gradientValues", "write_block_sclar_gradient_data")
 
-        if not isinstance(values, np.ndarray):
-            values = np.asarray(values)
+        if not isinstance(gradientValues, np.ndarray):
+            gradientValues = np.asarray(gradientValues)
 
-        if len(values) > 0:
-            size, dimensions = values.shape
-            assert dimensions == self.get_dimensions() , "Dimensions of vector data in write_block_vector_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
-        if len(values) == 0:
+        if len(gradientValues) > 0:
+            size, dimensions = gradientValues.shape
+            assert dimensions == self.get_dimensions() , "Dimensions of vector data in write_block_scalar_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
+        if len(gradientValues) == 0:
             size = 0
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
 
-        assert _gradientValues.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_values.size, size * self.get_dimensions())
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
+        assert _gradientValues.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, size * self.get_dimensions())
+        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
 
         self.thisptr.writeBlockScalarGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
