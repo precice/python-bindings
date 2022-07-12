@@ -637,7 +637,7 @@ cdef class Interface:
         array([1, 2, 3, 4, 5])
         """
         check_array_like(positions, "positions", "get_mesh_vertex_ids_from_positions")
-          
+
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
 
@@ -646,7 +646,7 @@ cdef class Interface:
             assert dimensions == self.get_dimensions(), "Dimensions of position coordinates in get_mesh_vertex_ids_from_positions does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
         elif len(positions) == 0:
             size = positions.shape[0]
-            dimensions = self.get_dimensions()            
+            dimensions = self.get_dimensions()
 
         cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
         cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(int(size), dtype=np.int32)
@@ -966,9 +966,9 @@ cdef class Interface:
         dimensions = len(value)
 
         assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_vector_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
-        
+
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
-        
+
         self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
 
     def write_block_scalar_data (self, data_id, vertex_ids, values):
@@ -1001,7 +1001,7 @@ cdef class Interface:
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_data")
         check_array_like(values, "values", "write_block_scalar_data")
-        
+
         if len(values) > 0:
             assert(len(vertex_ids) == len(values))
             size = len(vertex_ids)
@@ -1010,7 +1010,7 @@ cdef class Interface:
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
-        
+
         assert _values.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check size of input data provided. Provided size: {}, expected size: {}".format(_values.size, size)
         assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check size of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
         self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
@@ -1044,7 +1044,7 @@ cdef class Interface:
         """
         self.thisptr.writeScalarData (data_id, vertex_id, value)
 
-    def read_block_vector_data (self, data_id, vertex_ids):
+    def read_block_vector_data (self, data_id, vertex_ids, relative_read_time=None):
         """
         Reads vector data into a provided block. This function reads values of specified vertices
         from a dataID. Values are read into a block of continuous memory.
@@ -1055,6 +1055,8 @@ cdef class Interface:
             ID to read from.
         vertex_ids : array_like
             Indices of the vertices.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
 
         Returns
         -------
@@ -1090,10 +1092,13 @@ cdef class Interface:
         size = _vertex_ids.size
         dimensions = self.get_dimensions()
         cdef np.ndarray[np.double_t, ndim=1] _values = np.empty(size * dimensions, dtype=np.double)
-        self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        if relative_read_time == None:
+            self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        else:
+            self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
         return _values.reshape((size, dimensions))
 
-    def read_vector_data (self, data_id, vertex_id):
+    def read_vector_data (self, data_id, vertex_id, relative_read_time=None):
         """
         Reads vector data form a vertex. This function reads a value of a specified vertex
         from a dataID.
@@ -1104,6 +1109,8 @@ cdef class Interface:
             ID to read from.
         vertex_id : int
             Index of the vertex.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
 
         Returns
         -------
@@ -1134,10 +1141,14 @@ cdef class Interface:
         """
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
-        self.thisptr.readVectorData (data_id, vertex_id, <double*>_value.data)
+        if relative_read_time == None:
+            self.thisptr.readVectorData (data_id, vertex_id, <double*>_value.data)
+        else:
+            self.thisptr.readVectorData (data_id, vertex_id, relative_read_time, <double*>_value.data)
+
         return _value
 
-    def read_block_scalar_data (self, data_id, vertex_ids):
+    def read_block_scalar_data (self, data_id, vertex_ids, relative_read_time=None):
         """
         Reads scalar data as a block. This function reads values of specified vertices from a dataID.
         Values are provided as a block of continuous memory.
@@ -1148,6 +1159,8 @@ cdef class Interface:
             ID to read from.
         vertex_ids : array_like
             Indices of the vertices.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
 
         Returns
         -------
@@ -1176,7 +1189,11 @@ cdef class Interface:
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
-        self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        if relative_read_time == None:
+            self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        else:
+            self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
+
         return _values
 
     def read_scalar_data (self, data_id, vertex_id, relative_read_time=None):
@@ -1219,11 +1236,11 @@ cdef class Interface:
 
     def set_mesh_access_region (self, mesh_id, bounding_box):
         """
-        This function is required if you don't want to use the mapping schemes in preCICE, but rather 
+        This function is required if you don't want to use the mapping schemes in preCICE, but rather
         want to use your own solver for data mapping. As opposed to the usual preCICE mapping, only a
-        single mesh (from the other participant) is now involved in this situation since an 'own' 
+        single mesh (from the other participant) is now involved in this situation since an 'own'
         mesh defined by the participant itself is not required any more. In order to re-partition the
-        received mesh, the participant needs to define the mesh region it wants read data from and 
+        received mesh, the participant needs to define the mesh region it wants read data from and
         write data to. The mesh region is specified through an axis-aligned bounding box given by the
         lower and upper [min and max] bounding-box limits in each space dimension [x, y, z]. This function is still
         experimental
@@ -1239,25 +1256,25 @@ cdef class Interface:
         -----
         Defining a bounding box for serial runs of the solver (not to be confused with serial coupling
         mode) is valid. However, a warning is raised in case vertices are filtered out completely
-        on the receiving side, since the associated data values of the filtered vertices are filled 
+        on the receiving side, since the associated data values of the filtered vertices are filled
         with zero data.
 
         This function can only be called once per participant and rank and trying to call it more than
         once results in an error.
 
-        If you combine the direct access with a mapping (say you want to read data from a defined 
+        If you combine the direct access with a mapping (say you want to read data from a defined
         mesh, as usual, but you want to directly access and write data on a received mesh without a
         mapping) you may not need this function at all since the region of interest is already defined
-        through the defined mesh used for data reading. This is the case if you define any mapping 
+        through the defined mesh used for data reading. This is the case if you define any mapping
         involving the directly accessed mesh on the receiving participant. (In parallel, only the cases
         read-consistent and write-conservative are relevant, as usual).
 
-        The safety factor scaling (see safety-factor in the configuration file) is not applied to the 
+        The safety factor scaling (see safety-factor in the configuration file) is not applied to the
         defined access region and a specified safety will be ignored in case there is no additional
         mapping involved. However, in case a mapping is in addition to the direct access involved, you
         will receive (and gain access to) vertices inside the defined access region plus vertices inside
-        the safety factor region resulting from the mapping. The default value of the safety factor is 
-        0.5, i.e. the defined access region as computed through the involved provided mesh is by 50% 
+        the safety factor region resulting from the mapping. The default value of the safety factor is
+        0.5, i.e. the defined access region as computed through the involved provided mesh is by 50%
         enlarged.
         """
         warnings.warn("The function set_mesh_access_region is still experimental.")
@@ -1277,7 +1294,7 @@ cdef class Interface:
 
     def get_mesh_vertices_and_ids (self, mesh_id):
         """
-        Iterating over the region of interest defined by bounding boxes and reading the corresponding 
+        Iterating over the region of interest defined by bounding boxes and reading the corresponding
         coordinates omitting the mapping. This function is still experimental.
 
         Parameters
