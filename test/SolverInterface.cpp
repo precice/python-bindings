@@ -63,9 +63,6 @@ SolverInterface::~SolverInterface() = default;
 
 double SolverInterface:: initialize(){return -1;}
 
-void SolverInterface:: initializeData()
-{}
-
 double SolverInterface:: advance
 (
   double computedTimestepLength )
@@ -78,18 +75,6 @@ int SolverInterface:: getDimensions() const
 {return fake_dimensions;}
 
 bool SolverInterface:: isCouplingOngoing() const
-{
-  return 0;
-}
-
-bool SolverInterface:: isReadDataAvailable() const
-{
-  return 0;
-}
-
-bool SolverInterface:: isWriteDataRequired
-(
-  double computedTimestepLength ) const
 {
   return 0;
 }
@@ -261,17 +246,6 @@ void SolverInterface:: setMeshQuadWithEdges
   int thirdVertexID,
   int fourthVertexID )
 {}
-
-void SolverInterface:: mapReadDataTo
-(
-  int toMeshID )
-{}
-
-void SolverInterface:: mapWriteDataFrom
-(
-  int fromMeshID )
-{}
-
 
 void SolverInterface:: writeBlockVectorData
 (

@@ -17,8 +17,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         double initialize ()
 
-        void initializeData ()
-
         double advance (double computedTimestepLength)
 
         void finalize()
@@ -28,10 +26,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
         int getDimensions() const
 
         bool isCouplingOngoing() const
-
-        bool isReadDataAvailable() const
-
-        bool isWriteDataRequired (double computedTimestepLength) const
 
         bool isTimeWindowComplete() const
 
@@ -80,10 +74,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
         bool hasData (const string& dataName, int meshID) const
 
         int getDataID (const string& dataName, int meshID) const
-
-        void mapReadDataTo (int toMeshID)
-
-        void mapWriteDataFrom (int fromMeshID)
 
         void writeBlockVectorData (const int dataID, const int size, const int* valueIndices, const double* values)
 

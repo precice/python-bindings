@@ -97,7 +97,10 @@ cdef class Interface:
 
     def initialize (self):
         """
-        Fully initializes preCICE.
+        Fully initializes preCICE and initializes coupling data. The starting values for coupling data are zero by
+        default. To provide custom values, first set the data using the Data Access methods before calling this
+        method to finally exchange the data.
+
         This function handles:
             - Parallel communication to the coupling partner/s is setup.
             - Meshes are exchanged between coupling partners and the parallel partitions are created.
@@ -110,32 +113,6 @@ cdef class Interface:
             Maximum length of first timestep to be computed by the solver.
         """
         return self.thisptr.initialize ()
-
-    def initialize_data (self):
-        """
-        Initializes coupling data. The starting values for coupling data are zero by default.
-        To provide custom values, first set the data using the Data Access methods and
-        call this method to finally exchange the data.
-
-        Serial Coupling Scheme: Only the first participant has to call this method, the second participant
-            receives the values on calling initialize().
-
-        Parallel Coupling Scheme:
-            - Values in both directions are exchanged.
-            - Both participants need to call initializeData().
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called successfully.
-            The action WriteInitialData is required
-            advance() has not yet been called.
-            finalize() has not yet been called.
-
-        Tasks completed:
-            Initial coupling data was exchanged.
-        """
-        self.thisptr.initializeData ()
 
 
     def advance (self, double computed_timestep_length):
@@ -220,56 +197,6 @@ cdef class Interface:
            initialize() has been called successfully.
         """
         return self.thisptr.isCouplingOngoing ()
-
-
-    def is_read_data_available (self):
-        """
-        Checks if new data to be read is available. Data is classified to be new, if it has been received
-        while calling initialize() and before calling advance(), or in the last call of advance().
-        This is always true, if a participant does not make use of subcycling, i.e. choosing smaller
-        timesteps than the limits returned in intitialize() and advance().
-
-        It is allowed to read data even if this function returns false. This is not recommended
-        due to performance reasons. Use this function to prevent unnecessary reads.
-
-        Returns
-        -------
-        tag : bool
-            Whether new data is available to be read.
-
-        Notes
-        -----
-        Previous calls:
-           initialize() has been called successfully.
-        """
-        return self.thisptr.isReadDataAvailable ()
-
-
-    def is_write_data_required (self, double computed_timestep_length):
-        """
-        Checks if new data has to be written before calling advance().
-        This is always true, if a participant does not make use of subcycling, i.e. choosing smaller
-        timesteps than the limits returned in intitialize() and advance().
-
-        It is allowed to write data even if this function returns false. This is not recommended
-        due to performance reasons. Use this function to prevent unnecessary writes.
-
-        Parameters
-        ----------
-        computed_timestep_length : double
-            Length of timestep used by the solver.
-
-        Returns
-        -------
-        tag : bool
-            Whether new data has to be written.
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called successfully.
-        """
-        return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
 
     def is_time_window_complete (self):
@@ -832,41 +759,6 @@ cdef class Interface:
             ID of the corresponding data.
         """
         return self.thisptr.getDataID (convert(data_name), mesh_id)
-
-    def map_read_data_to (self, to_mesh_id):
-        """
-        Computes and maps all read data mapped to the mesh with given ID.
-        This is an explicit request to map read data to the Mesh associated with toMeshID.
-        It also computes the mapping if necessary.
-
-        Parameters
-        ----------
-        to_mesh_id : int
-            ID of mesh to map the read data to.
-
-        Notes
-        -----
-        Previous calls:
-            A mapping to to_mesh_id was configured.
-        """
-        self.thisptr.mapReadDataTo (to_mesh_id)
-
-    def map_write_data_from (self, from_mesh_id):
-        """
-        Computes and maps all write data mapped from the mesh with given ID. This is an explicit request
-        to map write data from the Mesh associated with fromMeshID. It also computes the mapping if necessary.
-
-        Parameters
-        ----------
-        from_mesh_id : int
-            ID from which to map write data.
-
-        Notes
-        -----
-        Previous calls:
-            A mapping from from_mesh_id was configured.
-        """
-        self.thisptr.mapWriteDataFrom (from_mesh_id)
 
     def write_block_vector_data (self, data_id, vertex_ids, values):
         """
