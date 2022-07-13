@@ -1427,6 +1427,32 @@ cdef class Interface:
 
         self.thisptr.writeBlockScalarGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
+    def is_gradient_data_required(self,data_id):
+        """
+        Returns true if gradient data is required for a dataID.
+        Parameters
+        ----------
+        data_id : int
+            Data ID to check.
+
+        Returns
+        -------
+        bool
+            True if gradient data is required for a dataID.
+
+        Notes
+        -----
+        Previous calls:
+            initialize() has been called
+
+        Examples
+        --------
+        Check if gradient data is required for a dataID:
+        >>> data_id = 1
+        >>> interface.is_gradient_data_required(data_id)
+        """
+        return self.thisptr.isGradientDataRequired(data_id)
+
 
     def set_mesh_access_region (self, mesh_id, bounding_box):
         """
