@@ -1245,8 +1245,8 @@ cdef class Interface:
         Write block vector data for a 3D (D=3) problem with 2 (N=2) vertices:
         >>> data_id = 1
         >>> vertex_ids = [1, 2]
-        >>> values = np.array([[v1x_dx, v1y_dx, v1z_dx, v1x_dy, v1y_dy, v1z_dy, v1x_dz, v1y_dz, v1z_dz], [v2x_dx, v2y_dx, v2z_dx, v2x_dy, v2y_dy, v2z_dy, v2x_dz, v2y_dz, v2z_dz]])
-        >>> interface.write_block_vector_data(data_id, vertex_ids, values)
+        >>> gradientValues = np.array([[v1x_dx, v1y_dx, v1z_dx, v1x_dy, v1y_dy, v1z_dy, v1x_dz, v1y_dz, v1z_dz], [v2x_dx, v2y_dx, v2z_dx, v2x_dy, v2y_dy, v2z_dy, v2x_dz, v2y_dz, v2z_dz]])
+        >>> interface.write_block_vector_data(data_id, vertex_ids, gradientValues)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_vector_gradient_data")
         check_array_like(gradientValues, "gradientValues", "write_block_vector_gradient_data")
