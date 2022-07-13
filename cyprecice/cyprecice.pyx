@@ -1215,7 +1215,7 @@ cdef class Interface:
         """
         Writes vector gradient data given as block. This function writes values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
-        of vertices and D = dimensions of geometry squared.
+        of vertices and D = number of gradient components.
 
         Parameters
         ----------
