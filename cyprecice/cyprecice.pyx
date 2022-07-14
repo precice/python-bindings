@@ -1415,7 +1415,7 @@ cdef class Interface:
 
         if len(gradientValues) > 0:
             size, dimensions = gradientValues.shape
-            assert dimensions == self.get_dimensions() , "Dimensions of vector data in write_block_scalar_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
+            assert dimensions == self.get_dimensions() , "Dimensions of scalar gradient data  provided in write_block_scalar_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
         if len(gradientValues) == 0:
             size = 0
 
