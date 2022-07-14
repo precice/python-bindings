@@ -1304,7 +1304,7 @@ cdef class Interface:
         Write scalar data for a 2D problem with 5 vertices:
         >>> data_id = 1
         >>> vertex_id = 5
-        >>> gradientValue = [v5_dx,v5_dy]
+        >>> gradientValue = [v5_dx, v5_dy]
         >>> interface.write_scalar_gradient_data(data_id, vertex_id, gradientValue)
         """
 
