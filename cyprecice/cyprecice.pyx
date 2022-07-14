@@ -1429,7 +1429,7 @@ cdef class Interface:
 
     def is_gradient_data_required(self,data_id):
         """
-        Returns true if gradient data is required for a dataID.
+        Checks if the given data set requires gradient data. We check if the data object has been intialized with the gradient flag.
         Parameters
         ----------
         data_id : int
@@ -1439,11 +1439,6 @@ cdef class Interface:
         -------
         bool
             True if gradient data is required for a dataID.
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called
 
         Examples
         --------
