@@ -1301,7 +1301,7 @@ cdef class Interface:
 
         Examples
         --------
-        Write scalar data for a 2D problem with 5 vertices:
+        Write scalar data for a 2D problem:
         >>> data_id = 1
         >>> vertex_id = 5
         >>> gradientValue = [v5_dx, v5_dy]
