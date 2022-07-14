@@ -1398,7 +1398,7 @@ cdef class Interface:
         Write block gradient scalar data for a 2D problem with 2 vertices:
         >>> data_id = 1
         >>> vertex_ids = [1, 2]
-        >>> gradientValues = np.array([[v1_dx, v1_dy],[v2_dx, v2_dy]])
+        >>> gradientValues = np.array([[v1_dx, v1_dy], [v2_dx, v2_dy]])
         >>> interface.write_block_scalar_gradient_data(data_id, vertex_ids, gradientValues)
 
         Write block scalar data for a 3D (D=3) problem with 2 (N=2) vertices:
