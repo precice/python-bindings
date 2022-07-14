@@ -1401,11 +1401,11 @@ cdef class Interface:
         >>> gradientValues = np.array([[v1_dx, v1_dy],[v2_dx, v2_dy]])
         >>> interface.write_block_scalar_gradient_data(data_id, vertex_ids, gradientValues)
 
-        Write block vector data for a 3D (D=3) problem with 2 (N=2) vertices:
+        Write block scalar data for a 3D (D=3) problem with 2 (N=2) vertices:
         >>> data_id = 1
         >>> vertex_ids = [1, 2]
         >>> values = np.array([[v1_dx, v1_dy, v1x_dz], [v2_dx. v2_dy, v2_dz]])
-        >>> interface.write_block_scalar_data(data_id, vertex_ids, values)
+        >>> interface.write_block_scalar_gradient_data(data_id, vertex_ids, values)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_gradient_data")
         check_array_like(gradientValues, "gradientValues", "write_block_sclar_gradient_data")
