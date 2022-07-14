@@ -1239,7 +1239,7 @@ cdef class Interface:
         Write block gradient vector data for a 2D problem with 2 vertices:
         >>> data_id = 1
         >>> vertex_ids = [1, 2]
-        >>> gradientValues = np.array([[v1x_dx, v1y_dx,v1x_dy, v1y_dy], [v2x_dx, v2y_dx,v2x_dy, v2y_dy]])
+        >>> gradientValues = np.array([[v1x_dx, v1y_dx, v1x_dy, v1y_dy], [v2x_dx, v2y_dx, v2x_dy, v2y_dy]])
         >>> interface.write_block_vector_gradient_data(data_id, vertex_ids, gradientValues)
 
         Write block vector data for a 3D (D=3) problem with 2 (N=2) vertices:
