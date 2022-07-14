@@ -1395,7 +1395,7 @@ cdef class Interface:
             
         Examples
         --------
-        Write block gradient vector data for a 2D problem with 2 vertices:
+        Write block gradient scalar data for a 2D problem with 2 vertices:
         >>> data_id = 1
         >>> vertex_ids = [1, 2]
         >>> gradientValues = np.array([[v1_dx, v1_dy],[v2_dx, v2_dy]])
