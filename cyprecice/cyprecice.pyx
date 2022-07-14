@@ -1213,7 +1213,7 @@ cdef class Interface:
 
     def write_block_vector_gradient_data (self, data_id, vertex_ids, gradientValues):
         """
-        Writes vector gradient data given as block. This function writes values of specified vertices to a dataID.
+        Writes vector gradient data given as block. This function writes gradient values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
         of vertices and D = number of gradient components.
 
