@@ -454,7 +454,7 @@ class TestBindings(TestCase):
         solver_interface.write_scalar_gradient_data(1, 1, write_data)
         self.assertTrue(np.array_equal(write_data, solver_interface.fake_gradient_buffer))
 
-    def test_write_block_vector__gradient_data(self):
+    def test_write_block_vector_gradient_data(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         write_data = np.array([[3, 7, 8, 3, 4, 5, 6, 7, 8], [7, 6, 5, 1, 2, 3, 7, 6, 5]], dtype=np.double)
         solver_interface.write_block_vector_gradient_data(1, np.array([1, 2]), write_data)

@@ -39,6 +39,7 @@ SolverInterface:: SolverInterface
   std::iota(fake_bounding_box.begin(), fake_bounding_box.end(), 0);
   fake_coordinates.resize(n_fake_vertices*fake_dimensions);
   std::iota(fake_coordinates.begin(), fake_coordinates.end(), 0);
+  fake_gradient_buffer = std::vector<double>();
 }
 
 SolverInterface::SolverInterface(
@@ -58,6 +59,7 @@ SolverInterface::SolverInterface(
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
   fake_bounding_box.resize(fake_dimensions*2);
   std::iota(fake_bounding_box.begin(), fake_bounding_box.end(), 0);
+  fake_gradient_buffer = std::vector<double>();
 }
 
 SolverInterface::~SolverInterface() = default;
