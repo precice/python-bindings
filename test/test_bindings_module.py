@@ -426,9 +426,9 @@ class TestBindings(TestCase):
     def test_write_block_scalar_gradient_data_single_float(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_dimension = 3
-        n_fake_vertices = 3
+        n_fake_vertices = 4
         vertex_ids = np.arange(n_fake_vertices)
-        write_data = np.random.rand(fake_dimension, fake_dimension)
+        write_data = np.random.rand(n_fake_vertices, fake_dimension)
         solver_interface.write_block_scalar_gradient_data(1, vertex_ids, write_data)
         read_data = solver_interface.read_block_vector_data(1, vertex_ids)
         self.assertTrue(np.array_equal(write_data, read_data))
@@ -456,17 +456,21 @@ class TestBindings(TestCase):
 
     def test_write_scalar_gradient_data(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        write_data = [3.0, 4.0, 5.0]
+        fake_dimension = 3
+        write_data = np.random.rand(fake_dimension)
         solver_interface.write_scalar_gradient_data(1, 1, write_data)
-        read_data = solver_interface.read_block_scalar_data(1, np.array(range(3)))
-        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+        read_data = solver_interface.read_vector_data(1, 1)
+        self.assertTrue(np.array_equiv(write_data, read_data))
 
     def test_write_block_vector_gradient_data(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        write_data = np.array([[3, 7, 8, 3, 4, 5, 6, 7, 8], [7, 6, 5, 1, 2, 3, 7, 6, 5]], dtype=np.double)
-        solver_interface.write_block_vector_gradient_data(1, np.array([1, 2]), write_data)
-        read_data = solver_interface.read_block_scalar_data(1, np.array(range(18)))
-        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+        fake_dimension = 3
+        n_fake_vertices = 4
+        vertex_ids = np.arange(n_fake_vertices)
+        write_data = np.random.rand(n_fake_vertices, fake_dimension * fake_dimension)
+        solver_interface.write_block_vector_gradient_data(1, vertex_ids, write_data)
+        read_data = solver_interface.read_block_vector_data(1, np.array(range(n_fake_vertices * fake_dimension)))
+        self.assertTrue(np.array_equiv(write_data.flatten(), read_data.flatten()))
 
     def test_write_block_vector_gradient_data_empty(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
