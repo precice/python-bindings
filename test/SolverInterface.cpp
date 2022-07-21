@@ -4,7 +4,6 @@
 #include <cassert>
 
 std::vector<double> fake_read_write_buffer;
-std::vector<double> fake_gradient_buffer;
 int fake_dimensions;
 int fake_mesh_id;
 std::vector<int> fake_ids;
@@ -39,7 +38,6 @@ SolverInterface:: SolverInterface
   std::iota(fake_bounding_box.begin(), fake_bounding_box.end(), 0);
   fake_coordinates.resize(n_fake_vertices*fake_dimensions);
   std::iota(fake_coordinates.begin(), fake_coordinates.end(), 0);
-  fake_gradient_buffer = std::vector<double>();
 }
 
 SolverInterface::SolverInterface(
@@ -59,7 +57,6 @@ SolverInterface::SolverInterface(
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
   fake_bounding_box.resize(fake_dimensions*2);
   std::iota(fake_bounding_box.begin(), fake_bounding_box.end(), 0);
-  fake_gradient_buffer = std::vector<double>();
 }
 
 SolverInterface::~SolverInterface() = default;
@@ -409,9 +406,9 @@ void SolverInterface::writeBlockVectorGradientData(
     const int    *valueIndices,
     const double *gradientValues)
 {
-  fake_gradient_buffer.clear();
+  fake_read_write_buffer.clear();
   for (int i = 0; i < size * this->getDimensions() * this->getDimensions(); i++) {
-    fake_gradient_buffer.push_back(gradientValues[i]);
+    fake_read_write_buffer.push_back(gradientValues[i]);
   }
 }
 
@@ -420,9 +417,9 @@ void SolverInterface::writeScalarGradientData(
     int           valueIndex,
     const double *gradientValues)
 {
-  fake_gradient_buffer.clear();
+  fake_read_write_buffer.clear();
   for (int i = 0; i < this->getDimensions(); i++) {
-    fake_gradient_buffer.push_back(gradientValues[i]);
+    fake_read_write_buffer.push_back(gradientValues[i]);
   }
 }
 void SolverInterface::writeBlockScalarGradientData(
@@ -431,9 +428,9 @@ void SolverInterface::writeBlockScalarGradientData(
     const int    *valueIndices,
     const double *gradientValues)
 {
-  fake_gradient_buffer.clear();
+  fake_read_write_buffer.clear();
   for (int i = 0; i < size * this->getDimensions(); i++) {
-    fake_gradient_buffer.push_back(gradientValues[i]);
+    fake_read_write_buffer.push_back(gradientValues[i]);
   }
 }
 
@@ -442,9 +439,9 @@ void SolverInterface::writeVectorGradientData(
     int           valueIndex,
     const double *gradientValues)
 {
-  fake_gradient_buffer.clear();
+  fake_read_write_buffer.clear();
   for (int i = 0; i < this->getDimensions() * this->getDimensions(); i++) {
-    fake_gradient_buffer.push_back(gradientValues[i]);
+    fake_read_write_buffer.push_back(gradientValues[i]);
   }
 }
 
