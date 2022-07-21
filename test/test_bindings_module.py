@@ -487,7 +487,7 @@ class TestBindings(TestCase):
         read_data = solver_interface.read_block_scalar_data(1, np.array(range(18)))
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
-    def test_read_write_block_vector_gradient_data_mixed(self):
+    def test_write_block_vector_gradient_data_mixed(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         write_data = [(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 3.0, 7.0, 8.0), (4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 7.0, 6.0, 5.0)]
         solver_interface.write_block_vector_gradient_data(1, np.array([1, 2]), write_data)
@@ -516,7 +516,7 @@ class TestBindings(TestCase):
         read_data = solver_interface.read_block_scalar_data(1, np.array(range(9)))
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
-    def test_write_vector_data_list(self):
+    def test_write_vector_gradient_data_list(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         write_data = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
         solver_interface.write_vector_gradient_data(1, 1, write_data)
