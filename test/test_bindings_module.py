@@ -425,11 +425,13 @@ class TestBindings(TestCase):
 
     def test_write_block_scalar_gradient_data_single_float(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        write_data = [8.0, 9.0, 10.0]
-        with self.assertRaises(TypeError):
-            solver_interface.write_block_scalar_gradient_data(1, 1, write_data)
-        with self.assertRaises(TypeError):
-            solver_interface.read_block_scalar_data(1, np.array(range(3)))
+        fake_dimension = 3
+        n_fake_vertices = 3
+        vertex_ids = np.arange(n_fake_vertices)
+        write_data = np.random.rand(fake_dimension, fake_dimension)
+        solver_interface.write_block_scalar_gradient_data(1, vertex_ids, write_data)
+        read_data = solver_interface.read_block_vector_data(1, vertex_ids)
+        self.assertTrue(np.array_equal(write_data, read_data))
 
     def test_write_block_scalar_gradient_data_empty(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
