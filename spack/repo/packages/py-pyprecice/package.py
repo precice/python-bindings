@@ -34,6 +34,7 @@ class PyPyprecice(PythonPackage):
 
     depends_on("precice@develop", when="@develop")
     depends_on("precice")
+    depends_on("precice@2.4.0", when="@2.4.0.1:2.4.0")
     depends_on("precice@2.3.0", when="@2.3.0.1:2.3.1")
     depends_on("precice@2.2.1", when="@2.2.1.1:2.2.1")
     depends_on("precice@2.2.0", when="@2.2.0.1:2.2.0")
@@ -48,8 +49,8 @@ class PyPyprecice(PythonPackage):
     depends_on("py-numpy", type=("build", "link", "run"))
     depends_on("py-mpi4py", type=("build", "run"))
     depends_on("py-cython@0.29:", type="build")
-    depends_on("py-packaging", when="@:2.1", type="build")
-    depends_on("py-pip", when="@:2.1", type="build")
+    depends_on("py-packaging", type="build")
+    depends_on("py-pip@19.0.0:", type="build")
 
     @when("@:2.1")
     def patch(self):
