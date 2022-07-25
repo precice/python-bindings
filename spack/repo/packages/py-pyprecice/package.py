@@ -33,7 +33,6 @@ class PyPyprecice(PythonPackage):
     version("2.0.0.1", sha256="96eafdf421ec61ad6fcf0ab1d3cf210831a815272984c470b2aea57d4d0c9e0e")
 
     depends_on("precice@develop", when="@develop")
-    depends_on("precice")
     depends_on("precice@2.4.0", when="@2.4.0.1:2.4.0")
     depends_on("precice@2.3.0", when="@2.3.0.1:2.3.1")
     depends_on("precice@2.2.1", when="@2.2.1.1:2.2.1")
