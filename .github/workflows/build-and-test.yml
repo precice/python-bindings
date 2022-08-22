@@ -97,7 +97,7 @@ jobs:
           cd precice-core
           mkdir build && cd build
           cmake .. -DPRECICE_MPICommunication=OFF -DPRECICE_PETScMapping=OFF -DPRECICE_PythonActions=OFF -DBUILD_TESTING=OFF
-          cp src/precice/Version.h ~/precice/
+          cp src/precice/Version.h ../../precice/
       - name: Install dependencies
         run: |
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
