@@ -84,7 +84,7 @@ jobs:
       - name: Install OpenMPI
         run: |
           sudo apt-get -yy update
-          sudo apt-get install -y libopenmpi-dev cmake
+          sudo apt-get install -y libopenmpi-dev cmake libboost-all-dev
           sudo rm -rf /var/lib/apt/lists/*
       - uses: BSFishy/pip-action@v1
         with:
@@ -96,7 +96,7 @@ jobs:
           cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
           cd precice-core
           mkdir build && cd build
-          cmake ..
+          cmake .. -DPRECICE_MPICommunication=OFF -DPRECICE_PETScMapping=OFF -DPRECICE_PythonActions=OFF -DBUILD_TESTING=OFF
           cp src/precice/Version.h ~/precice/
       - name: Install dependencies
         run: |
