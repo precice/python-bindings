@@ -84,7 +84,7 @@ jobs:
       - name: Install OpenMPI
         run: |
           sudo apt-get -yy update
-          sudo apt-get install -y libopenmpi-dev
+          sudo apt-get install -y libopenmpi-dev cmake
           sudo rm -rf /var/lib/apt/lists/*
       - uses: BSFishy/pip-action@v1
         with:
@@ -94,6 +94,10 @@ jobs:
           git clone https://github.com/precice/precice.git precice-core
           mkdir -p precice
           cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
+          cd precice-core
+          mkdir build && cd build
+          cmake ..
+          cp src/precice/Version.h ~/precice/
       - name: Install dependencies
         run: |
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
