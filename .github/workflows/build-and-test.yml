@@ -44,6 +44,8 @@ jobs:
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
+      - name: Check preCICE linkage via pkg-config
+        run: pkg-config --modversion precice
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -98,7 +100,7 @@ jobs:
           mkdir build && cd build
           cmake .. -DPRECICE_MPICommunication=OFF -DPRECICE_PETScMapping=OFF -DPRECICE_PythonActions=OFF -DBUILD_TESTING=OFF
         env:
-          PKG_CONFIG_PATH: "precice-core/build/lib/pkgconfig"
+          PKG_CONFIG_PATH: "precice-core/build"
       - name: Install dependencies
         run: |
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
