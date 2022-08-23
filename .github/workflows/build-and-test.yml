@@ -44,8 +44,6 @@ jobs:
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
-      - name: Check preCICE linkage via pkg-config
-        run: pkg-config --modversion libprecice
       - name: Install dependencies
         run: |
           pip3 install --user toml
@@ -104,6 +102,8 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
+      - name: Check preCICE linkage via pkg-config
+        run: pkg-config --modversion libprecice
       - name: Run setup test
         run: |
           export CFLAGS=-I$GITHUB_WORKSPACE

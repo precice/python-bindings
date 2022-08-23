@@ -147,7 +147,7 @@ setup(
     author_email='info@precice.org',
     license='LGPL-3.0',
     python_requires='>=3',
-    install_requires=['numpy', 'mpi4py', 'pkgconfig'],
+    install_requires=['numpy', 'mpi4py'],
     # mpi4py is only needed, if preCICE was compiled with MPI
     # see https://github.com/precice/python-bindings/issues/8
     packages=['precice'],
