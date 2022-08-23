@@ -71,7 +71,7 @@ def get_extensions(is_test):
                                      "cyprecice" + ".pyx")]
 
     link_args.append(pkgconfig.libs('libprecice'))
-    compile_args.append(pkconfig.cflags('libprecice'))
+    compile_args.append(pkgconfig.cflags('libprecice'))
 
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
