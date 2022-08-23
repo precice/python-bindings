@@ -19,7 +19,7 @@ jobs:
       - name: Install & upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip
+          apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
@@ -41,7 +41,7 @@ jobs:
       - name: Install & upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip
+          apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies

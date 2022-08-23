@@ -70,10 +70,10 @@ def get_extensions(is_test):
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
                                      "cyprecice" + ".pyx")]
 
-    if not is_test:
-        link_args.append(pkgconfig.libs('precice'))
+    link_args.append(pkgconfig.libs('libprecice'))
+    compile_args.append(pkconfig.cflags('libprecice'))
+
     if is_test:
-        link_args.append(pkgconfig.libs('precice'))
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
                                              "SolverInterface.cpp"))
 
