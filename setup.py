@@ -73,6 +73,7 @@ def get_extensions(is_test):
     if not is_test:
         link_args.append(pkgconfig.libs('libprecice'))
     if is_test:
+        link_args.append(pkgconfig.libs('libprecice'))  # Mocked preCICE needs to find generated headers
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
                                              "SolverInterface.cpp"))
 
