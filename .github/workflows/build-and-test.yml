@@ -45,7 +45,7 @@ jobs:
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Check preCICE linkage via pkg-config
-        run: pkg-config --modversion precice
+        run: pkg-config --modversion libprecice
       - name: Install dependencies
         run: |
           pip3 install --user toml
