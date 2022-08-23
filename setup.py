@@ -52,6 +52,7 @@ from Cython.Distutils.extension import Extension
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
 import numpy
+import pkgconfig
 
 
 # name of Interfacing API
@@ -70,8 +71,9 @@ def get_extensions(is_test):
                                      "cyprecice" + ".pyx")]
 
     if not is_test:
-        link_args.append("-lprecice")
+        link_args.append(pkgconfig.libs('precice'))
     if is_test:
+        link_args.append(pkgconfig.libs('precice'))
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
                                              "SolverInterface.cpp"))
 
@@ -145,7 +147,7 @@ setup(
     author_email='info@precice.org',
     license='LGPL-3.0',
     python_requires='>=3',
-    install_requires=['numpy', 'mpi4py'],
+    install_requires=['numpy', 'mpi4py', 'pkgconfig'],
     # mpi4py is only needed, if preCICE was compiled with MPI
     # see https://github.com/precice/python-bindings/issues/8
     packages=['precice'],
