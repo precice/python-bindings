@@ -97,15 +97,13 @@ jobs:
           cd precice-core
           mkdir build && cd build
           cmake .. -DPRECICE_MPICommunication=OFF -DPRECICE_PETScMapping=OFF -DPRECICE_PythonActions=OFF -DBUILD_TESTING=OFF
-        env:
-          PKG_CONFIG_PATH: "precice-core/build"
       - name: Install dependencies
         run: |
           echo "$PKG_CONFIG_PATH"
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Check preCICE linkage via pkg-config
-        run: pkg-config --modversion libprecice
       - name: Run setup test
+        env:
+          PKG_CONFIG_PATH: "precice-core/build"
         run: |
           export CFLAGS=-I$GITHUB_WORKSPACE
           python3 setup.py test
