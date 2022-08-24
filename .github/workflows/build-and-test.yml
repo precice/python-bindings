@@ -101,6 +101,7 @@ jobs:
           PKG_CONFIG_PATH: "precice-core/build"
       - name: Install dependencies
         run: |
+          echo "$PKG_CONFIG_PATH"
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Check preCICE linkage via pkg-config
         run: pkg-config --modversion libprecice
