@@ -27,7 +27,9 @@ jobs:
       - name: Try to build py-pyprecice with spack and test it
         run: |
           . /opt/spack/share/spack/setup-env.sh 
-          spack env activate ci && spack arch && spack find && spack dev-build pyprecice.test.py-pyprecice@develop target=x86_64
-          spack install pyprecice.test.py-pyprecice
-          spack load precice py-pyprecice py-numpy py-mpi4py py-cython openssh openmpi && export PYTHONPATH=${PWD}/build/$(ls build | grep lib.):${PYTHONPATH} 
+          spack env activate ci && spack arch
+          spack dev-build pyprecice.test.py-pyprecice@develop target=x86_64
+          spack find
+          spack load precice py-numpy py-mpi4py py-cython openssh openmpi py-pyprecice
+          export PYTHONPATH=${PWD}/build/$(ls build | grep lib.):${PYTHONPATH} 
           BINDINGS_VERSION=$(python3 -c "import precice; print(precice.__version__)") && echo "Installed version of bindings is ${BINDINGS_VERSION}"
