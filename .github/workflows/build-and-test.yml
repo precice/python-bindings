@@ -104,6 +104,7 @@ jobs:
       - name: Run setup test
         env:
           PKG_CONFIG_PATH: "precice-core/build"
+          PKG_CONFIG_SYSTEM_INCLUDE_PATH: 1
         run: |
           pkg-config --modversion libprecice
           export CFLAGS=-I$GITHUB_WORKSPACE
