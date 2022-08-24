@@ -105,6 +105,7 @@ jobs:
         env:
           PKG_CONFIG_PATH: "precice-core/build"
         run: |
+          pkg-config --modversion libprecice
           export CFLAGS=-I$GITHUB_WORKSPACE
           python3 setup.py test
         
