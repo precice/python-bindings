@@ -17,7 +17,7 @@ jobs:
       - name: Install Dependencies
         run: |
           apt-get -qq update
-          apt-get -qq install software-properties-common python3-dev python3-pip git apt-utils
+          apt-get -qq install software-properties-common python3-dev python3-pip git apt-utils pkg-config
           rm -rf /var/lib/apt/lists/*
       - name: Install bindings
         run:  pip3 install --user .
