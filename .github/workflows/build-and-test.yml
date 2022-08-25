@@ -34,7 +34,7 @@ jobs:
   setup_install:
     name: Run setup install
     runs-on: ubuntu-latest
-    container: precice/precice:2.4.0
+    container: precice/precice
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
