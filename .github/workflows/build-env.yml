@@ -24,5 +24,5 @@ jobs:
         with:
           push: true
           context: .
-          file: spack/ci-spack-pyprecice-deps-2004.dockerfile
-          tags: precice/ci-spack-pyprecice-deps-2004
+          file: spack/ci-spack-pyprecice-deps-2204.dockerfile
+          tags: precice/ci-spack-pyprecice-deps-2204
