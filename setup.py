@@ -73,7 +73,7 @@ def get_extensions(is_test):
     compile_args += pkgconfig.cflags('libprecice').split()
 
     if not is_test:
-        link_args.append(pkgconfig.libs('libprecice'))
+        link_args += pkgconfig.libs('libprecice').split()
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
                                              "SolverInterface.cpp"))

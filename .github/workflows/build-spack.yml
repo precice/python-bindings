@@ -28,8 +28,8 @@ jobs:
         run: |
           . /opt/spack/share/spack/setup-env.sh 
           spack env activate ci && spack arch
-          spack develop pyprecice.test.py-pyprecice@develop target=x86_64
-          spack install
-          spack find
+          spack remove py-pyprecice
+          spack add pyprecice.test.py-pyprecice@develop && spack develop pyprecice.test.py-pyprecice@develop
+          spack install && spack find
           spack load py-pyprecice
           BINDINGS_VERSION=$(python3 -c "import precice; print(precice.__version__)") && echo "Installed version of bindings is ${BINDINGS_VERSION}"
