@@ -26,8 +26,6 @@ jobs:
           cp -r spack/repo/packages/py-pyprecice/ /py-pyprecice-repo/packages/
       - name: Try to build py-pyprecice with spack and test it
         run: |
-          apt-get -yy update
-          apt-get install -y lsb-release
           . /opt/spack/share/spack/setup-env.sh 
           spack env activate ci && spack arch
           spack develop pyprecice.test.py-pyprecice@develop target=x86_64

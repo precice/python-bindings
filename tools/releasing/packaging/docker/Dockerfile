@@ -12,7 +12,8 @@ RUN apt-get -qq update && apt-get -qq install \
     git \
     sudo \
     python3-dev \
-    python3-pip && \
+    python3-pip \
+    pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
 ## Needed, because precice/precice:latest does not create a user? See also https://github.com/precice/precice/pull/1090
