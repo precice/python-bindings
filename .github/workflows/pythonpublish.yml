@@ -24,6 +24,7 @@ jobs:
           cython
           packaging
           numpy
+          pkgconfig
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
