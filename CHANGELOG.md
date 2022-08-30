@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+## 2.5.0.0
+
+* Bindings now use pkgconfig to determine flags and link to preCICE. https://github.com/precice/python-bindings/pull/149
+
 ## 2.4.0.0
 
 * Move solverdummy into examples/ folder and remove MeshName from its input arguments. https://github.com/precice/python-bindings/pull/141
