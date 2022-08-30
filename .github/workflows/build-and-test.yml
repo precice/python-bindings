@@ -19,7 +19,7 @@ jobs:
       - name: Install & upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip
+          apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
@@ -38,10 +38,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install & upgrade pip3
+      - name: Install pip3, pkgconfig and upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip
+          apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
@@ -61,10 +61,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install & upgrade pip3
+      - name: Install pip3, pkgconfig and upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip
+          apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
@@ -80,22 +80,30 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install & upgrade pip3 and install OpenMPI
+      - uses: actions/setup-python@v1
+      - name: Install OpenMPI, CMake, Boost library, Eigen and pkg-config
         run: |
           sudo apt-get -yy update
-          sudo apt-get install -y python3-pip libopenmpi-dev
+          sudo apt-get install -y libopenmpi-dev cmake libboost-all-dev libeigen3-dev pkg-config
           sudo rm -rf /var/lib/apt/lists/*
-          pip3 install --upgrade --user pip
+      - uses: BSFishy/pip-action@v1
+        with:
+          packages: toml
       - name: Checkout precice and make required files discoverable
         run: |
           git clone https://github.com/precice/precice.git precice-core
           mkdir -p precice
           cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
+          cd precice-core
+          mkdir build && cd build
+          cmake .. -DPRECICE_MPICommunication=OFF -DPRECICE_PETScMapping=OFF -DPRECICE_PythonActions=OFF -DBUILD_TESTING=OFF
       - name: Install dependencies
         run: |
-          pip3 install --user toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup test
+        env:
+          PKG_CONFIG_PATH: "precice-core/build"
+          PKG_CONFIG_SYSTEM_INCLUDE_PATH: 1
         run: |
           export CFLAGS=-I$GITHUB_WORKSPACE
           python3 setup.py test
@@ -108,10 +116,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install & upgrade pip3
+      - name: Install pip3, pkgconfig and upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip
+          apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
@@ -127,10 +135,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Install & upgrade pip3
+      - name: Install pip3, pkgconfig and upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip
+          apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install

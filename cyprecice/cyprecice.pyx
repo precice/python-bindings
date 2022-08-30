@@ -1207,7 +1207,7 @@ cdef class Interface:
         >>> vertex_id = 5
         >>> value = interface.read_scalar_data(data_id, vertex_id)
         """
-        cdef double _value
+        cdef double _value = 0
         self.thisptr.readScalarData (data_id, vertex_id, _value)
         return _value
 

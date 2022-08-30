@@ -14,7 +14,7 @@ jobs:
     name: build_spack
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    container: precice/ci-spack-pyprecice-deps-1804
+    container: precice/ci-spack-pyprecice-deps-2204
     defaults:
       run:
         shell: "bash --login -eo pipefail {0}"
@@ -26,4 +26,10 @@ jobs:
           cp -r spack/repo/packages/py-pyprecice/ /py-pyprecice-repo/packages/
       - name: Try to build py-pyprecice with spack and test it
         run: |
-          . /opt/spack/share/spack/setup-env.sh && spack env activate ci && spack arch && spack find && spack dev-build pyprecice.test.py-pyprecice@develop target=x86_64 && spack load precice py-numpy py-mpi4py py-cython openssh openmpi && export PYTHONPATH=${PWD}/build/$(ls build | grep lib.):${PYTHONPATH} && mkdir runner && cd runner && BINDINGS_VERSION=$(python3 -c "import precice; print(precice.__version__)") && echo "Installed version of bindings is ${BINDINGS_VERSION}"
+          . /opt/spack/share/spack/setup-env.sh 
+          spack env activate ci && spack arch
+          spack remove py-pyprecice
+          spack add pyprecice.test.py-pyprecice@develop && spack develop pyprecice.test.py-pyprecice@develop
+          spack install && spack find
+          spack load py-pyprecice
+          BINDINGS_VERSION=$(python3 -c "import precice; print(precice.__version__)") && echo "Installed version of bindings is ${BINDINGS_VERSION}"
