@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+## 2.5.0.1
+
+* Add pkgconfig as dependency to the pythonpublish workflow https://github.com/precice/python-bindings/commit/200dc2aba160e18a7d1dae44ef3493d546e69eb9
+
+## 2.5.0.0
+
+* Bindings now use pkgconfig to determine flags and link to preCICE. https://github.com/precice/python-bindings/pull/149
+
 ## 2.4.0.0
 
 * Move solverdummy into examples/ folder and remove MeshName from its input arguments. https://github.com/precice/python-bindings/pull/141

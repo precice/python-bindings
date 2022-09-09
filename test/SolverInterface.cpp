@@ -417,6 +417,56 @@ void SolverInterface:: getMeshVerticesAndIDs
     }
 }
 
+bool SolverInterface::isGradientDataRequired(int dataID) const
+{
+  return 0;
+}
+
+void SolverInterface::writeBlockVectorGradientData(
+    int           dataID,
+    int           size,
+    const int    *valueIndices,
+    const double *gradientValues)
+{
+  fake_read_write_buffer.clear();
+  for (int i = 0; i < size * this->getDimensions() * this->getDimensions(); i++) {
+    fake_read_write_buffer.push_back(gradientValues[i]);
+  }
+}
+
+void SolverInterface::writeScalarGradientData(
+    int           dataID,
+    int           valueIndex,
+    const double *gradientValues)
+{
+  fake_read_write_buffer.clear();
+  for (int i = 0; i < this->getDimensions(); i++) {
+    fake_read_write_buffer.push_back(gradientValues[i]);
+  }
+}
+void SolverInterface::writeBlockScalarGradientData(
+    int           dataID,
+    int           size,
+    const int    *valueIndices,
+    const double *gradientValues)
+{
+  fake_read_write_buffer.clear();
+  for (int i = 0; i < size * this->getDimensions(); i++) {
+    fake_read_write_buffer.push_back(gradientValues[i]);
+  }
+}
+
+void SolverInterface::writeVectorGradientData(
+    int           dataID,
+    int           valueIndex,
+    const double *gradientValues)
+{
+  fake_read_write_buffer.clear();
+  for (int i = 0; i < this->getDimensions() * this->getDimensions(); i++) {
+    fake_read_write_buffer.push_back(gradientValues[i]);
+  }
+}
+
 std::string getVersionInformation()
 {
     std::string dummy ("dummy");
