@@ -1033,7 +1033,7 @@ cdef class Interface:
         """
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
-        if relative_read_time == None:
+        if not relative_read_time:
             self.thisptr.readVectorData (data_id, vertex_id, <double*>_value.data)
         else:
             self.thisptr.readVectorData (data_id, vertex_id, relative_read_time, <double*>_value.data)
@@ -1081,7 +1081,7 @@ cdef class Interface:
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
-        if relative_read_time == None:
+        if not relative_read_time:
             self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
         else:
             self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
@@ -1119,7 +1119,7 @@ cdef class Interface:
         >>> value = interface.read_scalar_data(data_id, vertex_id)
         """
         cdef double _value
-        if relative_read_time == None:
+        if not relative_read_time:
             self.thisptr.readScalarData (data_id, vertex_id, _value)
         else:
             self.thisptr.readScalarData (data_id, vertex_id, relative_read_time, _value)
