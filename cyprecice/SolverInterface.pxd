@@ -63,8 +63,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void getMeshVertices (int meshID, int size, const int* ids, double* positions) const
 
-        void getMeshVertexIDsFromPositions (int meshID, int size, double* positions, int* ids) const
-
         int setMeshEdge (int meshID, int firstVertexID, int secondVertexID)
 
         void setMeshTriangle (int meshID, int firstEdgeID, int secondEdgeID, int thirdEdgeID)

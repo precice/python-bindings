@@ -590,69 +590,6 @@ cdef class Interface:
         self.thisptr.getMeshVertices (mesh_id, size, <const int*>_vertex_ids.data, <double*>_positions.data)
         return _positions.reshape((size, self.get_dimensions()))
 
-    def get_mesh_vertex_ids_from_positions (self, mesh_id, positions):
-        """
-        Gets mesh vertex IDs from positions.
-        prefer to reuse the IDs returned from calls to set_mesh_vertex() and set_mesh_vertices().
-
-        Parameters
-        ----------
-        mesh_id : int
-            ID of the mesh to retrieve positions from.
-        positions : array_like
-            The coordinates of the vertices. Coordinates of vertices are stored in a
-            numpy array [N x D] where N = number of vertices and D = dimensions of geometry
-
-        Returns
-        -------
-        vertex_ids : numpy.ndarray
-            IDs of mesh vertices.
-
-        Notes
-        -----
-        Previous calls:
-            count of available elements at positions matches the configured dimension * size
-            count of available elements at ids matches size
-
-        Examples
-        --------
-        Get mesh vertex ids from positions for a 2D (D=2) problem with 5 (N=5) mesh vertices.
-
-        >>> mesh_id = interface.get_mesh_id("MeshOne")
-        >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
-        >>> positions.shape
-        (5, 2)
-        >>> vertex_ids = interface.get_mesh_vertex_ids_from_positions(mesh_id, positions)
-        >>> vertex_ids
-        array([1, 2, 3, 4, 5])
-
-        Get mesh vertex ids from positions for a 3D problem with 5 vertices.
-
-        >>> mesh_id = interface.get_mesh_id("MeshOne")
-        >>> positions = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]])
-        >>> positions.shape
-        (5, 3)
-        >>> vertex_ids = interface.get_mesh_vertex_ids_from_positions(mesh_id, positions)
-        >>> vertex_ids
-        array([1, 2, 3, 4, 5])
-        """
-        check_array_like(positions, "positions", "get_mesh_vertex_ids_from_positions")
-          
-        if not isinstance(positions, np.ndarray):
-            positions = np.asarray(positions)
-
-        if len(positions) > 0:
-            size, dimensions = positions.shape
-            assert dimensions == self.get_dimensions(), "Dimensions of position coordinates in get_mesh_vertex_ids_from_positions does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
-        elif len(positions) == 0:
-            size = positions.shape[0]
-            dimensions = self.get_dimensions()            
-
-        cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
-        cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(int(size), dtype=np.int32)
-        self.thisptr.getMeshVertexIDsFromPositions (mesh_id, size, <const double*>_positions.data, <int*>vertex_ids.data)
-        return vertex_ids
-
     def set_mesh_edge (self, mesh_id, first_vertex_id, second_vertex_id):
         """
         Sets mesh edge from vertex IDs, returns edge ID.

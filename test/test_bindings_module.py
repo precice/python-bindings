@@ -164,52 +164,6 @@ class TestBindings(TestCase):
         vertex_id = solver_interface.set_mesh_vertex(fake_mesh_id, position)
         self.assertTrue(0 == vertex_id)
 
-    def test_get_mesh_vertex_ids_from_positions(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        positions = np.random.rand(n_fake_vertices, fake_dimension)
-        fake_vertex_ids = range(n_fake_vertices)
-        vertex_ids = solver_interface.get_mesh_vertex_ids_from_positions(fake_mesh_id, positions)
-        self.assertTrue(np.array_equal(fake_vertex_ids, vertex_ids))
-
-    def test_get_mesh_vertex_ids_from_positions_list(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        positions = np.random.rand(n_fake_vertices, fake_dimension)
-        positions = list(list(positions[i, j] for j in range(
-            positions.shape[1])) for i in range(positions.shape[0]))
-        fake_vertex_ids = range(n_fake_vertices)
-        vertex_ids = solver_interface.get_mesh_vertex_ids_from_positions(fake_mesh_id, positions)
-        self.assertTrue(np.array_equal(fake_vertex_ids, vertex_ids))
-
-    def test_get_mesh_vertex_ids_from_positions_tuple(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        positions = np.random.rand(n_fake_vertices, fake_dimension)
-        positions = tuple(tuple(positions[i, j] for j in range(
-            positions.shape[1])) for i in range(positions.shape[0]))
-        fake_vertex_ids = range(n_fake_vertices)
-        vertex_ids = solver_interface.get_mesh_vertex_ids_from_positions(fake_mesh_id, positions)
-        self.assertTrue(np.array_equal(fake_vertex_ids, vertex_ids))
-
-    def test_get_mesh_vertex_ids_from_positions_mixed(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        positions = np.random.rand(n_fake_vertices, fake_dimension)
-        positions = list(tuple(positions[i, j] for j in range(
-            positions.shape[1])) for i in range(positions.shape[0]))
-        fake_vertex_ids = range(n_fake_vertices)
-        vertex_ids = solver_interface.get_mesh_vertex_ids_from_positions(fake_mesh_id, positions)
-        self.assertTrue(np.array_equal(fake_vertex_ids, vertex_ids))
-
     def test_get_mesh_vertex_size(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id

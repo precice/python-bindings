@@ -208,17 +208,6 @@ void SolverInterface:: getMeshVertices
   }
 }
 
-void SolverInterface:: getMeshVertexIDsFromPositions
-(
-  int           meshID,
-  int           size,
-  const double* positions,
-  int*          ids ) const
-{
-  assert (size == fake_ids.size());
-  std::copy(fake_ids.begin(), fake_ids.end(), ids);
-}
-
 int SolverInterface:: setMeshEdge
 (
   int meshID,
