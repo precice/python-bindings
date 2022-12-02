@@ -66,14 +66,11 @@ while interface.is_coupling_ongoing():
         interface.mark_action_fulfilled(
             precice.action_write_iteration_checkpoint())
 
-    if interface.is_read_data_available():
-        read_data = interface.read_block_vector_data(read_data_id, vertex_ids)
+    read_data = interface.read_block_vector_data(read_data_id, vertex_ids)
 
     write_data = read_data + 1
 
-    if interface.is_write_data_required(dt):
-        interface.write_block_vector_data(
-            write_data_id, vertex_ids, write_data)
+    interface.write_block_vector_data(write_data_id, vertex_ids, write_data)
 
     print("DUMMY: Advancing in time")
     dt = interface.advance(dt)

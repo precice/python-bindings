@@ -17,8 +17,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         double initialize ()
 
-        void initializeData ()
-
         double advance (double computedTimestepLength)
 
         void finalize()
@@ -28,10 +26,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
         int getDimensions() const
 
         bool isCouplingOngoing() const
-
-        bool isReadDataAvailable() const
-
-        bool isWriteDataRequired (double computedTimestepLength) const
 
         bool isTimeWindowComplete() const
 
@@ -81,10 +75,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         int getDataID (const string& dataName, int meshID) const
 
-        void mapReadDataTo (int toMeshID)
-
-        void mapWriteDataFrom (int fromMeshID)
-
         void writeBlockVectorData (const int dataID, const int size, const int* valueIndices, const double* values)
 
         void writeVectorData (const int dataID, const int valueIndex, const double* value)
@@ -95,11 +85,19 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double* values) const
 
+        void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double dt, double* values) const
+
         void readVectorData (const int dataID, const int valueIndex, double* value) const
+
+        void readVectorData (const int dataID, const int valueIndex, double dt, double* value) const
 
         void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double* values) const
 
+        void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double dt, double* values) const
+
         void readScalarData (const int dataID, const int valueIndex, double& value) const
+
+        void readScalarData (const int dataID, const int valueIndex, double dt, double& value) const
 
         # Gradient related API 
 

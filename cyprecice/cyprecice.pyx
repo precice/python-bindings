@@ -97,7 +97,10 @@ cdef class Interface:
 
     def initialize (self):
         """
-        Fully initializes preCICE.
+        Fully initializes preCICE and initializes coupling data. The starting values for coupling data are zero by
+        default. To provide custom values, first set the data using the Data Access methods before calling this
+        method to finally exchange the data.
+
         This function handles:
             - Parallel communication to the coupling partner/s is setup.
             - Meshes are exchanged between coupling partners and the parallel partitions are created.
@@ -110,32 +113,6 @@ cdef class Interface:
             Maximum length of first timestep to be computed by the solver.
         """
         return self.thisptr.initialize ()
-
-    def initialize_data (self):
-        """
-        Initializes coupling data. The starting values for coupling data are zero by default.
-        To provide custom values, first set the data using the Data Access methods and
-        call this method to finally exchange the data.
-
-        Serial Coupling Scheme: Only the first participant has to call this method, the second participant
-            receives the values on calling initialize().
-
-        Parallel Coupling Scheme:
-            - Values in both directions are exchanged.
-            - Both participants need to call initializeData().
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called successfully.
-            The action WriteInitialData is required
-            advance() has not yet been called.
-            finalize() has not yet been called.
-
-        Tasks completed:
-            Initial coupling data was exchanged.
-        """
-        self.thisptr.initializeData ()
 
 
     def advance (self, double computed_timestep_length):
@@ -220,56 +197,6 @@ cdef class Interface:
            initialize() has been called successfully.
         """
         return self.thisptr.isCouplingOngoing ()
-
-
-    def is_read_data_available (self):
-        """
-        Checks if new data to be read is available. Data is classified to be new, if it has been received
-        while calling initialize() and before calling advance(), or in the last call of advance().
-        This is always true, if a participant does not make use of subcycling, i.e. choosing smaller
-        timesteps than the limits returned in intitialize() and advance().
-
-        It is allowed to read data even if this function returns false. This is not recommended
-        due to performance reasons. Use this function to prevent unnecessary reads.
-
-        Returns
-        -------
-        tag : bool
-            Whether new data is available to be read.
-
-        Notes
-        -----
-        Previous calls:
-           initialize() has been called successfully.
-        """
-        return self.thisptr.isReadDataAvailable ()
-
-
-    def is_write_data_required (self, double computed_timestep_length):
-        """
-        Checks if new data has to be written before calling advance().
-        This is always true, if a participant does not make use of subcycling, i.e. choosing smaller
-        timesteps than the limits returned in intitialize() and advance().
-
-        It is allowed to write data even if this function returns false. This is not recommended
-        due to performance reasons. Use this function to prevent unnecessary writes.
-
-        Parameters
-        ----------
-        computed_timestep_length : double
-            Length of timestep used by the solver.
-
-        Returns
-        -------
-        tag : bool
-            Whether new data has to be written.
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called successfully.
-        """
-        return self.thisptr.isWriteDataRequired (computed_timestep_length)
 
 
     def is_time_window_complete (self):
@@ -637,7 +564,7 @@ cdef class Interface:
         array([1, 2, 3, 4, 5])
         """
         check_array_like(positions, "positions", "get_mesh_vertex_ids_from_positions")
-          
+
         if not isinstance(positions, np.ndarray):
             positions = np.asarray(positions)
 
@@ -646,7 +573,7 @@ cdef class Interface:
             assert dimensions == self.get_dimensions(), "Dimensions of position coordinates in get_mesh_vertex_ids_from_positions does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
         elif len(positions) == 0:
             size = positions.shape[0]
-            dimensions = self.get_dimensions()            
+            dimensions = self.get_dimensions()
 
         cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
         cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(int(size), dtype=np.int32)
@@ -833,41 +760,6 @@ cdef class Interface:
         """
         return self.thisptr.getDataID (convert(data_name), mesh_id)
 
-    def map_read_data_to (self, to_mesh_id):
-        """
-        Computes and maps all read data mapped to the mesh with given ID.
-        This is an explicit request to map read data to the Mesh associated with toMeshID.
-        It also computes the mapping if necessary.
-
-        Parameters
-        ----------
-        to_mesh_id : int
-            ID of mesh to map the read data to.
-
-        Notes
-        -----
-        Previous calls:
-            A mapping to to_mesh_id was configured.
-        """
-        self.thisptr.mapReadDataTo (to_mesh_id)
-
-    def map_write_data_from (self, from_mesh_id):
-        """
-        Computes and maps all write data mapped from the mesh with given ID. This is an explicit request
-        to map write data from the Mesh associated with fromMeshID. It also computes the mapping if necessary.
-
-        Parameters
-        ----------
-        from_mesh_id : int
-            ID from which to map write data.
-
-        Notes
-        -----
-        Previous calls:
-            A mapping from from_mesh_id was configured.
-        """
-        self.thisptr.mapWriteDataFrom (from_mesh_id)
-
     def write_block_vector_data (self, data_id, vertex_ids, values):
         """
         Writes vector data given as block. This function writes values of specified vertices to a dataID.
@@ -966,9 +858,9 @@ cdef class Interface:
         dimensions = len(value)
 
         assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_vector_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
-        
+
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
-        
+
         self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
 
     def write_block_scalar_data (self, data_id, vertex_ids, values):
@@ -1001,7 +893,7 @@ cdef class Interface:
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_data")
         check_array_like(values, "values", "write_block_scalar_data")
-        
+
         if len(values) > 0:
             assert(len(vertex_ids) == len(values))
             size = len(vertex_ids)
@@ -1010,7 +902,7 @@ cdef class Interface:
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
-        
+
         assert _values.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check size of input data provided. Provided size: {}, expected size: {}".format(_values.size, size)
         assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check size of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
         self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
@@ -1044,7 +936,7 @@ cdef class Interface:
         """
         self.thisptr.writeScalarData (data_id, vertex_id, value)
 
-    def read_block_vector_data (self, data_id, vertex_ids):
+    def read_block_vector_data (self, data_id, vertex_ids, relative_read_time=None):
         """
         Reads vector data into a provided block. This function reads values of specified vertices
         from a dataID. Values are read into a block of continuous memory.
@@ -1055,6 +947,8 @@ cdef class Interface:
             ID to read from.
         vertex_ids : array_like
             Indices of the vertices.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
 
         Returns
         -------
@@ -1090,10 +984,13 @@ cdef class Interface:
         size = _vertex_ids.size
         dimensions = self.get_dimensions()
         cdef np.ndarray[np.double_t, ndim=1] _values = np.empty(size * dimensions, dtype=np.double)
-        self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        if relative_read_time == None:
+            self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        else:
+            self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
         return _values.reshape((size, dimensions))
 
-    def read_vector_data (self, data_id, vertex_id):
+    def read_vector_data (self, data_id, vertex_id, relative_read_time=None):
         """
         Reads vector data form a vertex. This function reads a value of a specified vertex
         from a dataID.
@@ -1104,6 +1001,8 @@ cdef class Interface:
             ID to read from.
         vertex_id : int
             Index of the vertex.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
 
         Returns
         -------
@@ -1134,10 +1033,14 @@ cdef class Interface:
         """
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
-        self.thisptr.readVectorData (data_id, vertex_id, <double*>_value.data)
+        if relative_read_time == None:
+            self.thisptr.readVectorData (data_id, vertex_id, <double*>_value.data)
+        else:
+            self.thisptr.readVectorData (data_id, vertex_id, relative_read_time, <double*>_value.data)
+
         return _value
 
-    def read_block_scalar_data (self, data_id, vertex_ids):
+    def read_block_scalar_data (self, data_id, vertex_ids, relative_read_time=None):
         """
         Reads scalar data as a block. This function reads values of specified vertices from a dataID.
         Values are provided as a block of continuous memory.
@@ -1148,6 +1051,8 @@ cdef class Interface:
             ID to read from.
         vertex_ids : array_like
             Indices of the vertices.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
 
         Returns
         -------
@@ -1176,10 +1081,14 @@ cdef class Interface:
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
         size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
-        self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        if relative_read_time == None:
+            self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        else:
+            self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
+
         return _values
 
-    def read_scalar_data (self, data_id, vertex_id):
+    def read_scalar_data (self, data_id, vertex_id, relative_read_time=None):
         """
         Reads scalar data of a vertex. This function needs a value of a specified vertex from a dataID.
 
@@ -1189,6 +1098,8 @@ cdef class Interface:
             ID to read from.
         vertex_id : int
             Index of the vertex.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
 
         Returns
         -------
@@ -1207,8 +1118,12 @@ cdef class Interface:
         >>> vertex_id = 5
         >>> value = interface.read_scalar_data(data_id, vertex_id)
         """
-        cdef double _value = 0
-        self.thisptr.readScalarData (data_id, vertex_id, _value)
+        cdef double _value
+        if relative_read_time == None:
+            self.thisptr.readScalarData (data_id, vertex_id, _value)
+        else:
+            self.thisptr.readScalarData (data_id, vertex_id, relative_read_time, _value)
+
         return _value
 
     def write_block_vector_gradient_data (self, data_id, vertex_ids, gradientValues):
