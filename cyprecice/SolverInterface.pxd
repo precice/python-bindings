@@ -99,15 +99,15 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         # Gradient related API 
 
-        bool requiresGradientDataFor(int dataID) const;
+        bool requiresGradientDataFor(int dataID) const
 
-        void writeBlockVectorGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues);
+        void writeBlockVectorGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues)
 
-        void writeScalarGradientData(int dataID, int valueIndex, const double* gradientValues);
+        void writeScalarGradientData(int dataID, int valueIndex, const double* gradientValues)
 
-        void writeVectorGradientData(int dataID, int valueIndex, const double* gradientValues);
+        void writeVectorGradientData(int dataID, int valueIndex, const double* gradientValues)
 
-        void writeBlockScalarGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues);
+        void writeBlockScalarGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues)
 
         # direct mesh access
 

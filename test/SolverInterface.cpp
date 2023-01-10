@@ -134,9 +134,7 @@ bool SolverInterface::hasToEvaluateFineModel() const
   return 0;
 }
 
-bool SolverInterface:: requiresMeshConnectivityFor
-(
-  int meshID ) const
+bool SolverInterface:: requiresMeshConnectivityFor(int meshID) const
 {
   return 0;
 }
