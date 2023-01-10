@@ -468,6 +468,4 @@ std::string getVersionInformation()
     return dummy;
 }
 
-} // namespace precice, constants
-
 } // namespace precice
