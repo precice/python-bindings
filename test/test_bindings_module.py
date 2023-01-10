@@ -30,11 +30,11 @@ class TestBindings(TestCase):
         # directly in the test, not in test/SolverInterface.hpp
         self.assertEqual(fake_dimension, solver_interface.get_dimensions())
 
-    def test_is_mesh_connectivity_required(self):
+    def test_requires_mesh_connectivity_for(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_bool = 0  # compare to output in test/SolverInterface.cpp
         fake_mesh_id = 0
-        self.assertEqual(fake_bool, solver_interface.is_mesh_connectivity_required(fake_mesh_id))
+        self.assertEqual(fake_bool, solver_interface.requires_mesh_connectivity_for(fake_mesh_id))
 
     def test_get_mesh_id(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
@@ -373,21 +373,6 @@ class TestBindings(TestCase):
         fake_version_info = b"dummy"  # compare to test/SolverInterface.cpp
         self.assertEqual(version_info, fake_version_info)
 
-    def test_action_write_initial_data(self):
-        return_constant = precice.action_write_initial_data()
-        dummy_constant = b"dummy_write_initial_data"  # compare to test/SolverInterface.cpp
-        self.assertEqual(return_constant, dummy_constant)
-
-    def test_action_write_iteration_checkpoint(self):
-        return_constant = precice.action_write_iteration_checkpoint()
-        dummy_constant = b"dummy_write_iteration"  # compare to test/SolverInterface.cpp
-        self.assertEqual(return_constant, dummy_constant)
-
-    def test_action_read_iteration_checkpoint(self):
-        return_constant = precice.action_read_iteration_checkpoint()
-        dummy_constant = b"dummy_read_iteration"  # compare to test/SolverInterface.cpp
-        self.assertEqual(return_constant, dummy_constant)
-
     def test_set_mesh_access_region(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
@@ -410,11 +395,11 @@ class TestBindings(TestCase):
         self.assertTrue(np.array_equal(fake_ids, vertex_ids))
         self.assertTrue(np.array_equal(fake_coordinates, coordinates))
 
-    def test_is_gradient_data_required(self):
+    def test_requires_gradient_data_for(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_bool = 0  # compare to output in test/SolverInterface.cpp
         fake_data_id = 0
-        self.assertEqual(fake_bool, solver_interface.is_gradient_data_required(fake_data_id))
+        self.assertEqual(fake_bool, solver_interface.requires_gradient_data_for(fake_data_id))
 
     def test_write_block_scalar_gradient_data(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)

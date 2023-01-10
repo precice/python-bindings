@@ -246,45 +246,6 @@ cdef class Interface:
         """
         return self.thisptr.hasToEvaluateFineModel ()
 
-    # action methods
-
-    def is_action_required (self, action):
-        """
-        Checks if the provided action is required.
-        Some features of preCICE require a solver to perform specific actions, in order to be
-        in valid state for a coupled simulation. A solver is made eligible to use those features,
-        by querying for the required actions, performing them on demand, and calling markActionfulfilled()
-        to signalize preCICE the correct behavior of the solver.
-
-        Parameters
-        ----------
-        action : preCICE action
-            Name of the action.
-
-        Returns
-        -------
-        tag : bool
-            Returns True if action is required.
-        """
-        return self.thisptr.isActionRequired (action)
-
-
-    def mark_action_fulfilled (self, action):
-        """
-        Indicates preCICE that a required action has been fulfilled by a solver.
-
-        Parameters
-        ----------
-        action : preCICE action
-            Name of the action.
-
-        Notes
-        -----
-        Previous calls:
-            The solver fulfilled the specified action.
-        """
-        self.thisptr.markActionFulfilled (action)
-
     # mesh access
 
     def has_mesh(self, mesh_name):
@@ -605,6 +566,43 @@ cdef class Interface:
         """
         return self.thisptr.setMeshEdge (mesh_id, first_vertex_id, second_vertex_id)
 
+    def set_mesh_edges (self, mesh_id, vertices):
+        """
+        Creates multiple mesh edges
+
+        Parameters
+        ----------
+        mesh_id : int
+            ID of the mesh to add the vertices to.
+        vertices : array_like
+            The IDs of the vertices in a numpy array [N x 2] where
+            N = number of edges and D = dimensions of geometry.
+
+        Examples
+        --------
+        Set mesh edges for a problem with 4 mesh vertices in the form of a square with both diagonals which are fully interconnected.
+
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
+        >>> vertices = np.array([[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]])
+        >>> vertices.shape
+        (6, 2)
+        >>> interface.set_mesh_edges(mesh_id, vertices)
+        """
+        check_array_like(vertices, "vertices", "set_mesh_edges")
+
+        if not isinstance(vertices, np.ndarray):
+            vertices = np.asarray(vertices)
+
+        if len(vertices) > 0:
+            size, n = vertices.shape
+            assert n == 2, "Provided vertices are not of a [N x 2] format, but instead of a [N x {}]".format(n)
+        elif len(vertices) == 0:
+            size = vertices.shape[0]
+            dimensions = self.get_dimensions()
+
+        cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
+        self.thisptr.setMeshEdges (mesh_id, size, <const int*>_vertices.data)
+
     def set_mesh_triangle (self, mesh_id, first_edge_id, second_edge_id, third_edge_id):
         """
         Sets mesh triangle from edge IDs
@@ -627,30 +625,42 @@ cdef class Interface:
         """
         self.thisptr.setMeshTriangle (mesh_id, first_edge_id, second_edge_id, third_edge_id)
 
-    def set_mesh_triangle_with_edges (self, mesh_id, first_vertex_id, second_vertex_id, third_vertex_id):
+    def set_mesh_triangles (self, mesh_id, vertices):
         """
-        Sets mesh triangle from vertex IDs.
-        WARNING: This routine is supposed to be used, when no edge information is available per se.
-        Edges are created on the fly within preCICE. This routine is significantly slower than the one
-        using edge IDs, since it needs to check, whether an edge is created already or not.
+        Creates multiple mesh triangles
 
         Parameters
         ----------
         mesh_id : int
-            ID of the mesh to add the triangle to.
-        first_vertex_id : int
-            ID of the first vertex of the triangle.
-        second_vertex_id : int
-            ID of the second vertex of the triangle.
-        third_vertex_id ID : int
-            ID of the third vertex of the triangle.
+            ID of the mesh to add the vertices to.
+        vertices : array_like
+            The IDs of the vertices in a numpy array [N x 3] where
+            N = number of triangles and D = dimensions of geometry.
 
-        Notes
-        -----
-        Previous calls:
-            edges with first_vertex_id, second_vertex_id, and third_vertex_id were added to the mesh with the ID meshID
+        Examples
+        --------
+        Set mesh triangles for a problem with 4 mesh vertices in the form of a square with both diagonals which are fully interconnected.
+
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
+        >>> vertices = np.array([[1, 2, 3], [1, 3, 4], [1, 2, 4], [1, 3, 4]])
+        >>> vertices.shape
+        (4, 2)
+        >>> interface.set_mesh_triangles(mesh_id, vertices)
         """
-        self.thisptr.setMeshTriangleWithEdges (mesh_id, first_vertex_id, second_vertex_id, third_vertex_id)
+        check_array_like(vertices, "vertices", "set_mesh_triangles")
+
+        if not isinstance(vertices, np.ndarray):
+            vertices = np.asarray(vertices)
+
+        if len(vertices) > 0:
+            size, n = vertices.shape
+            assert n == 3, "Provided vertices are not of a [N x 3] format, but instead of a [N x {}]".format(n)
+        elif len(vertices) == 0:
+            size = vertices.shape[0]
+            dimensions = self.get_dimensions()
+
+        cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
+        self.thisptr.setMeshTriangles (mesh_id, size, <const int*>_vertices.data)
 
     def set_mesh_quad (self, mesh_id, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id):
         """
@@ -678,37 +688,46 @@ cdef class Interface:
         """
         self.thisptr.setMeshQuad (mesh_id, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id)
 
-    def set_mesh_quad_with_edges (self, mesh_id, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
+    def set_mesh_quads (self, mesh_id, vertices):
         """
-        Sets surface mesh quadtriangle from vertex IDs.
-        WARNING: This routine is supposed to be used, when no edge information is available per se. Edges are
-                 created on the fly within preCICE. This routine is significantly slower than the one using
-                 edge IDs, since it needs to check, whether an edge is created already or not.
+        Creates multiple mesh quads
 
         Parameters
         ----------
         mesh_id : int
-            ID of the mesh to add the Quad to.
-        first_vertex_id : int
-            ID of the first vertex of the Quad.
-        second_vertex_id : int
-            ID of the second vertex of the Quad.
-        third_vertex_id : int
-            ID of the third vertex of the Quad.
-        fourth_vertex_id : int
-            ID of the fourth vertex of the Quad.
+            ID of the mesh to add the vertices to.
+        vertices : array_like
+            The IDs of the vertices in a numpy array [N x 4] where
+            N = number of quads and D = dimensions of geometry.
 
-        Notes
-        -----
-        Previous calls:
-            edges with first_vertex_id, second_vertex_id, third_vertex_id, and fourth_vertex_id were added
-            to the mesh with the ID mesh_id
+        Examples
+        --------
+        Set mesh quads for a problem with 4 mesh vertices in the form of a square with both diagonals which are fully interconnected.
+
+        >>> mesh_id = interface.get_mesh_id("MeshOne")
+        >>> vertices = np.array([[1, 2, 3, 4]])
+        >>> vertices.shape
+        (1, 2)
+        >>> interface.set_mesh_quads(mesh_id, vertices)
         """
-        self.thisptr.setMeshQuadWithEdges (mesh_id, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id)
+        check_array_like(vertices, "vertices", "set_mesh_quads")
+
+        if not isinstance(vertices, np.ndarray):
+            vertices = np.asarray(vertices)
+
+        if len(vertices) > 0:
+            size, n = vertices.shape
+            assert n == 4, "Provided vertices are not of a [N x 4] format, but instead of a [N x {}]".format(n)
+        elif len(vertices) == 0:
+            size = vertices.shape[0]
+            dimensions = self.get_dimensions()
+
+        cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
+        self.thisptr.setMeshQuads (mesh_id, size, <const int*>_vertices.data)
 
     # data access
 
-    def is_mesh_connectivity_required (self, mesh_id):
+    def requires_mesh_connectivity_for (self, mesh_id):
         """
         Checks if the given mesh requires connectivity.
 
@@ -722,7 +741,7 @@ cdef class Interface:
         tag : bool
             True if mesh connectivity is required.
         """
-        return self.thisptr.isMeshConnectivityRequired(mesh_id)
+        return self.thisptr.requiresMeshConnectivityFor(mesh_id)
 
     def has_data (self, str data_name, mesh_id):
         """
@@ -1342,7 +1361,7 @@ cdef class Interface:
 
         self.thisptr.writeBlockScalarGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
-    def is_gradient_data_required(self,data_id):
+    def requires_gradient_data_for(self, data_id):
         """
         Checks if the given data set requires gradient data. We check if the data object has been intialized with the gradient flag.
 
@@ -1362,8 +1381,7 @@ cdef class Interface:
         >>> data_id = 1
         >>> interface.is_gradient_data_required(data_id)
         """
-        return self.thisptr.isGradientDataRequired(data_id)
-
+        return self.thisptr.requiresGradientDataFor(data_id)
 
     def set_mesh_access_region (self, mesh_id, bounding_box):
         """
@@ -1458,27 +1476,3 @@ def get_version_information ():
     Current preCICE version information
     """
     return SolverInterface.getVersionInformation()
-
-def action_write_initial_data ():
-    """
-    Returns
-    -------
-    Name of action for writing initial data
-    """
-    return SolverInterface.actionWriteInitialData()
-
-def action_write_iteration_checkpoint ():
-    """
-    Returns
-    -------
-    Name of action for writing iteration checkpoint
-    """
-    return SolverInterface.actionWriteIterationCheckpoint()
-
-def action_read_iteration_checkpoint ():
-    """
-    Returns
-    -------
-    Name of action for reading iteration checkpoint
-    """
-    return SolverInterface.actionReadIterationCheckpoint()

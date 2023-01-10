@@ -33,12 +33,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool hasToEvaluateFineModel () const
 
-        # action methods
-
-        bool isActionRequired (const string& action) const
-
-        void markActionFulfilled (const string& action)
-
         # mesh access
 
         bool hasMesh (const string& meshName ) const
@@ -47,7 +41,7 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         set[int] getMeshIDs ()
 
-        bool isMeshConnectivityRequired (int meshID) const
+        bool requiresMeshConnectivityFor (int meshID) const
 
         int setMeshVertex (int meshID, const double* position)
 
@@ -59,15 +53,17 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void getMeshVertexIDsFromPositions (int meshID, int size, double* positions, int* ids) const
 
-        int setMeshEdge (int meshID, int firstVertexID, int secondVertexID)
+        void setMeshEdge (int meshID, int firstVertexID, int secondVertexID)
+
+        void setMeshEdges (int meshID, int size, const int* vertices)
 
         void setMeshTriangle (int meshID, int firstEdgeID, int secondEdgeID, int thirdEdgeID)
 
-        void setMeshTriangleWithEdges (int meshID, int firstVertexID, int secondVertexID, int thirdVertexID)
+        void setMeshTriangles (int meshID, int size, const int* vertices)
 
         void setMeshQuad (int meshID, int firstEdgeID, int secondEdgeID, int thirdEdgeID, int fourthEdgeID)
 
-        void setMeshQuadWithEdges (int meshID, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
+        void setMeshQuads (int meshID, int size, const int* vertices)
 
         # data access
 
@@ -101,7 +97,7 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         # Gradient related API 
 
-        bool isGradientDataRequired(int dataID) const;
+        bool requiresGradientDataFor(int dataID) const;
 
         void writeBlockVectorGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues);
 
@@ -117,10 +113,5 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void getMeshVerticesAndIDs (const int meshID, const int size, int* ids, double* coordinates) const
 
-cdef extern from "precice/SolverInterface.hpp" namespace "precice":
+cdef extern from "precice/tooling.hpp" namespace "precice":
     string getVersionInformation()
-
-cdef extern from "precice/SolverInterface.hpp"  namespace "precice::constants":
-    const string& actionWriteInitialData()
-    const string& actionWriteIterationCheckpoint()
-    const string& actionReadIterationCheckpoint()

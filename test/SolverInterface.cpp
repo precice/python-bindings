@@ -84,18 +84,6 @@ bool SolverInterface:: isTimeWindowComplete() const
   return 0;
 }
 
-bool SolverInterface:: isActionRequired
-(
-  const std::string& action ) const
-{
-  return 0;
-}
-
-void SolverInterface:: markActionFulfilled
-(
-  const std::string& action )
-{}
-
 bool SolverInterface:: hasMesh
 (
   const std::string& meshName ) const
@@ -146,9 +134,9 @@ bool SolverInterface::hasToEvaluateFineModel() const
   return 0;
 }
 
-bool SolverInterface:: isMeshConnectivityRequired
+bool SolverInterface:: requiresMeshConnectivityFor
 (
-  int           meshID ) const
+  int meshID ) const
 {
   return 0;
 }
@@ -221,7 +209,7 @@ void SolverInterface:: setMeshTriangle
   int thirdEdgeID )
 {}
 
-void SolverInterface:: setMeshTriangleWithEdges
+void SolverInterface:: setMeshTriangles
 (
   int meshID,
   int firstVertexID,
@@ -238,7 +226,7 @@ void SolverInterface:: setMeshQuad
   int fourthEdgeID )
 {}
 
-void SolverInterface:: setMeshQuadWithEdges
+void SolverInterface:: setMeshQuads
 (
   int meshID,
   int firstVertexID,
@@ -417,7 +405,7 @@ void SolverInterface:: getMeshVerticesAndIDs
     }
 }
 
-bool SolverInterface::isGradientDataRequired(int dataID) const
+bool SolverInterface::requiresGradientDataFor(int dataID) const
 {
   return 0;
 }
@@ -470,26 +458,6 @@ void SolverInterface::writeVectorGradientData(
 std::string getVersionInformation()
 {
     std::string dummy ("dummy");
-    return dummy;
-}
-
-namespace constants {
-
-const std::string& actionWriteInitialData()
-{
-    static std::string dummy ("dummy_write_initial_data");
-    return dummy;
-}
-
-const std::string& actionWriteIterationCheckpoint()
-{
-    static std::string dummy ("dummy_write_iteration");
-    return dummy;
-}
-
-const std::string& actionReadIterationCheckpoint()
-{
-    static std::string dummy ("dummy_read_iteration");
     return dummy;
 }
 
