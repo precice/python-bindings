@@ -218,33 +218,23 @@ cdef class Interface:
         """
         return self.thisptr.isTimeWindowComplete ()
 
-
-    def has_to_evaluate_surrogate_model (self):
+    def requires_initial_data (self):
         """
-        Returns whether the solver has to evaluate the surrogate model representation.
-        The solver may still have to evaluate the fine model representation.
-        DEPRECATED: Only necessary for deprecated manifold mapping.
-
-        Returns
-        -------
-            tag : bool
-                Whether the surrogate model has to be evaluated.
+        
         """
-        return self.thisptr.hasToEvaluateSurrogateModel ()
+        return self.thisptr.requiresInitialData ()
 
-
-    def has_to_evaluate_fine_model (self):
+    def requires_reading_checkpoint (self):
         """
-        Checks if the solver has to evaluate the fine model representation.
-        The solver may still have to evaluate the surrogate model representation.
-        DEPRECATED: Only necessary for deprecated manifold mapping.
-
-        Returns
-        -------
-        tag : bool
-            Whether the fine model has to be evaluated.
+        
         """
-        return self.thisptr.hasToEvaluateFineModel ()
+        return self.thisptr.requiresReadingCheckpoint ()
+
+    def requires_writing_checkpoint (self):
+        """
+        
+        """
+        return self.thisptr.requiresWritingCheckpoint ()
 
     # mesh access
 

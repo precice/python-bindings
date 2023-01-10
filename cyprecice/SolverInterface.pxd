@@ -29,9 +29,11 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool isTimeWindowComplete() const
 
-        bool hasToEvaluateSurrogateModel () const
+        bool requiresInitialData()
 
-        bool hasToEvaluateFineModel () const
+        bool requiresReadingCheckpoint()
+
+        bool requiresWritingCheckpoint()
 
         # mesh access
 
@@ -113,5 +115,5 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void getMeshVerticesAndIDs (const int meshID, const int size, int* ids, double* coordinates) const
 
-cdef extern from "precice/tooling.hpp" namespace "precice":
+cdef extern from "precice/Tooling.hpp" namespace "precice":
     string getVersionInformation()
