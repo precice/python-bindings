@@ -207,6 +207,7 @@ int SolverInterface:: setMeshEdge
 void SolverInterface:: setMeshEdges
 (
   int meshID,
+  int size,
   const int* vertices )
 {}
 
@@ -221,6 +222,7 @@ void SolverInterface:: setMeshTriangle
 void SolverInterface:: setMeshTriangles
 (
   int meshID,
+  int size,
   const int* vertices )
 {}
 
@@ -236,6 +238,7 @@ void SolverInterface:: setMeshQuad
 void SolverInterface:: setMeshQuads
 (
   int meshID,
+  int size,
   const int* vertices )
 {}
 
