@@ -84,6 +84,21 @@ bool SolverInterface:: isTimeWindowComplete() const
   return 0;
 }
 
+bool SolverInterface:: requiresInitialData()
+{
+  return 0;
+}
+
+bool SolverInterface:: requiresReadingCheckpoint()
+{
+  return 0;
+}
+
+bool SolverInterface:: requiresWritingCheckpoint()
+{
+  return 0;
+}
+
 bool SolverInterface:: hasMesh
 (
   const std::string& meshName ) const
@@ -122,16 +137,6 @@ int SolverInterface:: getDataID
   {
     return -1;
   }
-}
-
-bool SolverInterface::hasToEvaluateSurrogateModel() const
-{
-  return 0;
-}
-
-bool SolverInterface::hasToEvaluateFineModel() const
-{
-  return 0;
 }
 
 bool SolverInterface:: requiresMeshConnectivityFor(int meshID) const
@@ -199,15 +204,13 @@ int SolverInterface:: setMeshEdge
   return -1;
 }
 
-void SolverInterface:: setMeshTriangle
+void SolverInterface:: setMeshEdges
 (
   int meshID,
-  int firstEdgeID,
-  int secondEdgeID,
-  int thirdEdgeID )
+  const int* vertices )
 {}
 
-void SolverInterface:: setMeshTriangles
+void SolverInterface:: setMeshTriangle
 (
   int meshID,
   int firstVertexID,
@@ -215,22 +218,25 @@ void SolverInterface:: setMeshTriangles
   int thirdVertexID )
 {}
 
-void SolverInterface:: setMeshQuad
+void SolverInterface:: setMeshTriangles
 (
   int meshID,
-  int firstEdgeID,
-  int secondEdgeID,
-  int thirdEdgeID,
-  int fourthEdgeID )
+  const int* vertices )
 {}
 
-void SolverInterface:: setMeshQuads
+void SolverInterface:: setMeshQuad
 (
   int meshID,
   int firstVertexID,
   int secondVertexID,
   int thirdVertexID,
   int fourthVertexID )
+{}
+
+void SolverInterface:: setMeshQuads
+(
+  int meshID,
+  const int* vertices )
 {}
 
 void SolverInterface:: writeBlockVectorData
