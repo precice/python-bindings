@@ -200,9 +200,7 @@ void SolverInterface:: setMeshEdge
   int meshID,
   int firstVertexID,
   int secondVertexID )
-{
-  return -1;
-}
+{}
 
 void SolverInterface:: setMeshEdges
 (
