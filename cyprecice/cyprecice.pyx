@@ -257,7 +257,18 @@ cdef class Interface:
 
     def requires_writing_checkpoint (self):
         """
+        Checks if the participant is required to write an iteration checkpoint.
         
+        If true, the participant is required to write an iteration checkpoint before
+        calling advance().
+        
+        preCICE refuses to proceed if writing a checkpoint is required,
+        but this method isn't called prior to advance().
+
+        Notes
+        -----
+        Previous calls:
+            initialize() has been called
         """
         return self.thisptr.requiresWritingCheckpoint ()
 
