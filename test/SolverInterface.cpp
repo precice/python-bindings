@@ -195,7 +195,7 @@ void SolverInterface:: getMeshVertexIDsFromPositions
   std::copy(fake_ids.begin(), fake_ids.end(), ids);
 }
 
-int SolverInterface:: setMeshEdge
+void SolverInterface:: setMeshEdge
 (
   int meshID,
   int firstVertexID,
