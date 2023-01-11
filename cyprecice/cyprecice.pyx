@@ -220,13 +220,38 @@ cdef class Interface:
 
     def requires_initial_data (self):
         """
-        
+        Checks if the participant is required to provide initial data.
+        If true, then the participant needs to write initial data to defined vertices
+        prior to calling initialize().
+
+        Returns
+        -------
+        tag : bool
+            Returns True if inital data is required.
+
+        Notes
+        -----
+        Previous calls:
+            initialize() has not yet been called
         """
         return self.thisptr.requiresInitialData ()
 
     def requires_reading_checkpoint (self):
         """
+        Checks if the participant is required to read an iteration checkpoint.
         
+        If true, the participant is required to read an iteration checkpoint before
+        calling advance().
+
+        preCICE refuses to proceed if reading a checkpoint is required,
+        but this method isn't called prior to advance().
+
+        Notes
+        -----
+        This function returns false before the first call to advance().
+
+        Previous calls:
+            initialize() has been called
         """
         return self.thisptr.requiresReadingCheckpoint ()
 
@@ -554,7 +579,7 @@ cdef class Interface:
         Previous calls:
             vertices with firstVertexID and secondVertexID were added to the mesh with the ID meshID
         """
-        return self.thisptr.setMeshEdge (mesh_id, first_vertex_id, second_vertex_id)
+        self.thisptr.setMeshEdge (mesh_id, first_vertex_id, second_vertex_id)
 
     def set_mesh_edges (self, mesh_id, vertices):
         """
