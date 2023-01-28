@@ -101,6 +101,8 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void readScalarData (const int dataID, const int valueIndex, double& value) const
 
+        void readScalarData (const int dataID, const int valueIndex, double dt, double& value) const
+
         # direct mesh access
 
         void setMeshAccessRegion (const int meshID, const double* boundingBox) const
