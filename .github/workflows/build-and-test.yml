@@ -34,7 +34,9 @@ jobs:
   setup_install:
     name: Run setup install
     runs-on: ubuntu-latest
-    container: precice/precice
+    - uses: precice/setup-precice-action@testing # needs to be changed to main after merge
+      with:
+        precice-version: 'develop'    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -57,7 +59,9 @@ jobs:
     name: Run setup install --single-version-externally-managed (for spack)
     needs: [setup_install]
     runs-on: ubuntu-latest
-    container: precice/precice
+    - uses: precice/setup-precice-action@testing # needs to be changed to main after merge
+      with:
+        precice-version: 'develop'    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -131,7 +135,9 @@ jobs:
     name: Run solverdummy
     needs: [setup_install, setup_test]
     runs-on: ubuntu-latest
-    container: precice/precice
+    - uses: precice/setup-precice-action@testing # needs to be changed to main after merge
+    with:
+      precice-version: 'develop'    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
