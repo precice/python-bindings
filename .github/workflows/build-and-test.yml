@@ -135,10 +135,10 @@ jobs:
     name: Run solverdummy
     needs: [setup_install, setup_test]
     runs-on: ubuntu-latest
-    - uses: precice/setup-precice-action@testing # needs to be changed to main after merge
-    with:
-      precice-version: 'develop'    
     steps:
+      - uses: precice/setup-precice-action@testing # needs to be changed to main after merge
+        with:
+          precice-version: 'develop'    
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
