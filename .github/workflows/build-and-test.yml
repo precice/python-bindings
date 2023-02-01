@@ -18,8 +18,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
-          apt-get -yy update
-          apt-get install -y python3-pip pkg-config
+          sudo apt-get -yy update
+          sudo apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
@@ -42,8 +42,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
-          apt-get -yy update
-          apt-get install -y python3-pip pkg-config
+          sudo apt-get -yy update
+          sudo apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
@@ -67,8 +67,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
-          apt-get -yy update
-          apt-get install -y python3-pip pkg-config
+          sudo apt-get -yy update
+          sudo apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
@@ -124,8 +124,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
-          apt-get -yy update
-          apt-get install -y python3-pip pkg-config
+          sudo apt-get -yy update
+          sudo apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
@@ -145,8 +145,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
-          apt-get -yy update
-          apt-get install -y python3-pip pkg-config
+          sudo apt-get -yy update
+          sudo apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
