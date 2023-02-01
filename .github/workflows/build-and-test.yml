@@ -20,7 +20,7 @@ jobs:
         run: |
           sudo apt-get -yy update
           sudo apt-get install -y python3-pip pkg-config
-          rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -44,7 +44,7 @@ jobs:
         run: |
           sudo apt-get -yy update
           sudo apt-get install -y python3-pip pkg-config
-          rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -69,7 +69,7 @@ jobs:
         run: |
           sudo apt-get -yy update
           sudo apt-get install -y python3-pip pkg-config
-          rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -126,7 +126,7 @@ jobs:
         run: |
           sudo apt-get -yy update
           sudo apt-get install -y python3-pip pkg-config
-          rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
@@ -147,7 +147,7 @@ jobs:
         run: |
           sudo apt-get -yy update
           sudo apt-get install -y python3-pip pkg-config
-          rm -rf /var/lib/apt/lists/*
+          sudo rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
