@@ -170,31 +170,6 @@ void SolverInterface:: setMeshVertices
   std::copy(fake_ids.begin(), fake_ids.end(), ids);
 }
 
-void SolverInterface:: getMeshVertices
-(
-  int        meshID,
-  int        size,
-  const int* ids,
-  double*    positions ) const
-{
-  for(int i = 0; i < size; i++){
-      positions[fake_dimensions * i] = i;
-      positions[fake_dimensions * i + 1] = i + n_fake_vertices;
-      positions[fake_dimensions * i + 2] = i + 2 * n_fake_vertices;
-  }
-}
-
-void SolverInterface:: getMeshVertexIDsFromPositions
-(
-  int           meshID,
-  int           size,
-  const double* positions,
-  int*          ids ) const
-{
-  assert (size == fake_ids.size());
-  std::copy(fake_ids.begin(), fake_ids.end(), ids);
-}
-
 void SolverInterface:: setMeshEdge
 (
   int meshID,
