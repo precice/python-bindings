@@ -12,8 +12,10 @@ jobs:
     name: Run setup.py phases needed by spack
     needs: [setup_test]
     runs-on: ubuntu-latest
-    container: precice/precice
     steps:
+      - uses: precice/setup-precice-action@testing # needs to be changed to main after merge
+        with:
+          precice-version: 'develop'    
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
