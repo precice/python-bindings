@@ -103,6 +103,18 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void readScalarData (const int dataID, const int valueIndex, double dt, double& value) const
 
+        # Gradient related API 
+
+        bool isGradientDataRequired(int dataID) const;
+
+        void writeBlockVectorGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues);
+
+        void writeScalarGradientData(int dataID, int valueIndex, const double* gradientValues);
+
+        void writeVectorGradientData(int dataID, int valueIndex, const double* gradientValues);
+
+        void writeBlockScalarGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues);
+
         # direct mesh access
 
         void setMeshAccessRegion (const int meshID, const double* boundingBox) const

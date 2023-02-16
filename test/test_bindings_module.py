@@ -409,3 +409,143 @@ class TestBindings(TestCase):
         fake_ids, fake_coordinates = solver_interface.get_mesh_vertices_and_ids(fake_mesh_id)
         self.assertTrue(np.array_equal(fake_ids, vertex_ids))
         self.assertTrue(np.array_equal(fake_coordinates, coordinates))
+
+    def test_is_gradient_data_required(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_bool = 0  # compare to output in test/SolverInterface.cpp
+        fake_data_id = 0
+        self.assertEqual(fake_bool, solver_interface.is_gradient_data_required(fake_data_id))
+
+    def test_write_block_scalar_gradient_data(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = np.array([[1, 2, 3], [6, 7, 8], [9, 10, 11]], dtype=np.double)
+        solver_interface.write_block_scalar_gradient_data(1, np.array([1, 2, 3]), write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(9)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_block_scalar_gradient_data_single_float(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_dimension = 3
+        n_fake_vertices = 4
+        vertex_ids = np.arange(n_fake_vertices)
+        write_data = np.random.rand(n_fake_vertices, fake_dimension)
+        solver_interface.write_block_scalar_gradient_data(1, vertex_ids, write_data)
+        read_data = solver_interface.read_block_vector_data(1, vertex_ids)
+        self.assertTrue(np.array_equal(write_data, read_data))
+
+    def test_write_block_scalar_gradient_data_empty(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = np.array([])
+        solver_interface.write_block_scalar_gradient_data(1, [], write_data)
+        read_data = solver_interface.read_block_scalar_data(1, [])
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_block_scalar_gradient_data_non_contiguous(self):
+        """
+        Tests behaviour of solver interface, if a non contiguous array is passed to the interface.
+
+        Note: Check whether np.ndarray is contiguous via np.ndarray.flags.
+        """
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        dummy_array = np.random.rand(3, 9)
+        write_data = dummy_array[:, 3:6]
+        assert write_data.flags["C_CONTIGUOUS"] is False
+        solver_interface.write_block_scalar_gradient_data(1, np.array([1, 2, 3]), write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(9)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_scalar_gradient_data(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_dimension = 3
+        write_data = np.random.rand(fake_dimension)
+        solver_interface.write_scalar_gradient_data(1, 1, write_data)
+        read_data = solver_interface.read_vector_data(1, 1)
+        self.assertTrue(np.array_equiv(write_data, read_data))
+
+    def test_write_block_vector_gradient_data(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        fake_dimension = 3
+        n_fake_vertices = 4
+        vertex_ids = np.arange(n_fake_vertices)
+        write_data = np.random.rand(n_fake_vertices, fake_dimension * fake_dimension)
+        solver_interface.write_block_vector_gradient_data(1, vertex_ids, write_data)
+        read_data = solver_interface.read_block_vector_data(1, np.array(range(n_fake_vertices * fake_dimension)))
+        self.assertTrue(np.array_equiv(write_data.flatten(), read_data.flatten()))
+
+    def test_write_block_vector_gradient_data_empty(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = np.array([])
+        solver_interface.write_block_vector_gradient_data(1, [], write_data)
+        read_data = solver_interface.read_block_scalar_data(1, [])
+        self.assertTrue(len(read_data) == 0)
+
+    def test_write_block_vector_gradient_data_list(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = [[3.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0], [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 6.0, 5.0]]
+        solver_interface.write_block_vector_gradient_data(1, np.array([1, 2]), write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(18)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_block_vector_gradient_data_tuple(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = ((1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 3.0, 7.0, 8.0), (1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 6.0, 5.0))
+        solver_interface.write_block_vector_gradient_data(1, np.array([1, 2]), write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(18)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_block_vector_gradient_data_mixed(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = [(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 3.0, 7.0, 8.0), (4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 7.0, 6.0, 5.0)]
+        solver_interface.write_block_vector_gradient_data(1, np.array([1, 2]), write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(18)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_block_vector_gradient_data_non_contiguous(self):
+        """
+        Tests behaviour of solver interface, if a non contiguous array is passed to the interface.
+
+        Note: Check whether np.ndarray is contiguous via np.ndarray.flags.
+        """
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        dummy_array = np.random.rand(3, 15)
+        write_data = dummy_array[:, 2:11]
+        assert write_data.flags["C_CONTIGUOUS"] is False
+        vertex_ids = np.arange(3)
+        solver_interface.write_block_vector_gradient_data(1, vertex_ids, write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(27)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_vector_gradient_data(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = np.arange(0, 9, dtype=np.double)
+        solver_interface.write_vector_gradient_data(1, 1, write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(9)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_vector_gradient_data_list(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+        solver_interface.write_vector_gradient_data(1, 1, write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(9)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_vector_gradient_data_tuple(self):
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        write_data = (1.0, 2.0, 3.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0)
+        solver_interface.write_vector_gradient_data(1, 1, write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(9)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
+
+    def test_write_vector_gradient_data_non_contiguous(self):
+        """
+        Tests behaviour of solver interface, if a non contiguous array is passed to the interface.
+
+        Note: Check whether np.ndarray is contiguous via np.ndarray.flags.
+        """
+        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
+        dummy_array = np.random.rand(9, 3)
+        write_data = dummy_array[:, 1]
+        assert write_data.flags["C_CONTIGUOUS"] is False
+        solver_interface.write_vector_gradient_data(1, 1, write_data)
+        read_data = solver_interface.read_block_scalar_data(1, np.array(range(9)))
+        self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
