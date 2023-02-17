@@ -39,7 +39,7 @@ interface = precice.Interface(participant_name, configuration_file_name,
 
 mesh_id = interface.get_mesh_id(mesh_name)
 
-assert (interface.require_mesh_connectivity_for(mesh_id) is False)
+assert (interface.requires_mesh_connectivity_for(mesh_id) is False)
 
 dimensions = interface.get_dimensions()
 
