@@ -10,7 +10,9 @@ jobs:
   run_solverdummies:
     name: Run solverdummies
     runs-on: ubuntu-latest
-    container: precice/precice
+    container:
+      image: benjaminrodenberg/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2      
