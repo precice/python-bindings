@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* Add Waveform API introduced in preCICE v2.4.0.
+
 ## 2.5.0.1
 
 * Add pkgconfig as dependency to the pythonpublish workflow https://github.com/precice/python-bindings/commit/200dc2aba160e18a7d1dae44ef3493d546e69eb9
