@@ -12,7 +12,9 @@ jobs:
     name: Run setup.py phases needed by spack
     needs: [setup_test]
     runs-on: ubuntu-latest
-    container: benjaminrodenberg/precice:develop
+    container:
+      image: benjaminrodenberg/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -34,7 +36,9 @@ jobs:
   setup_install:
     name: Run setup install
     runs-on: ubuntu-latest
-    container: benjaminrodenberg/precice:develop
+    container:
+      image: benjaminrodenberg/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -57,7 +61,9 @@ jobs:
     name: Run setup install --single-version-externally-managed (for spack)
     needs: [setup_install]
     runs-on: ubuntu-latest
-    container: benjaminrodenberg/precice:develop
+    container:
+      image: benjaminrodenberg/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -112,7 +118,9 @@ jobs:
     name: Run pip install
     needs: [setup_test]
     runs-on: ubuntu-latest
-    container: benjaminrodenberg/precice:develop
+    container:
+      image: benjaminrodenberg/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -131,7 +139,9 @@ jobs:
     name: Run solverdummy
     needs: [setup_install, setup_test]
     runs-on: ubuntu-latest
-    container: benjaminrodenberg/precice:develop
+    container:
+      image: benjaminrodenberg/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
