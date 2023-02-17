@@ -996,7 +996,7 @@ cdef class Interface:
         Write block scalar data for a 2D and 3D problem with 5 (N=5) vertices:
         >>> data_id = 1
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = np.array([v1 v2, v3, v4, v5])
+        >>> values = np.array([v1, v2, v3, v4, v5])
         >>> interface.write_block_scalar_data(data_id, vertex_ids, values)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_data")
