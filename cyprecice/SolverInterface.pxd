@@ -95,19 +95,19 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double* values) const
 
-        void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double dt, double* values) const
+        void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double relativeReadTime, double* values) const
 
         void readVectorData (const int dataID, const int valueIndex, double* value) const
 
-        void readVectorData (const int dataID, const int valueIndex, double dt, double* value) const
+        void readVectorData (const int dataID, const int valueIndex, double relativeReadTime, double* value) const
 
         void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double* values) const
 
-        void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double dt, double* values) const
+        void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double relativeReadTime, double* values) const
 
         void readScalarData (const int dataID, const int valueIndex, double& value) const
 
-        void readScalarData (const int dataID, const int valueIndex, double dt, double& value) const
+        void readScalarData (const int dataID, const int valueIndex, double relativeReadTime, double& value) const
 
         # Gradient related API
 

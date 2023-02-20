@@ -338,7 +338,7 @@ void SolverInterface:: readBlockVectorData
   int        dataID,
   int        size,
   const int* valueIndices,
-  double     dt,
+  double     relativeReadTime,
   double*    values ) const
 {
   for(int i = 0; i < size * this->getDimensions(); i++){
@@ -361,7 +361,7 @@ void SolverInterface:: readVectorData
 (
   int     dataID,
   int     valueIndex,
-  double  dt,
+  double  relativeReadTime,
   double* value ) const
 {
   for(int i = 0; i < this->getDimensions(); i++){
@@ -386,7 +386,7 @@ void SolverInterface:: readBlockScalarData
   int        dataID,
   int        size,
   const int* valueIndices,
-  double     dt,
+  double     relativeReadTime,
   double*    values ) const
 {
   for(int i = 0; i < size; i++){
@@ -407,7 +407,7 @@ void SolverInterface:: readScalarData
 (
   int     dataID,
   int     valueIndex,
-  double  dt,
+  double  relativeReadTime,
   double& value ) const
 {
     value = fake_read_write_buffer[0];
