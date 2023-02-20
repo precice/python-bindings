@@ -10,7 +10,9 @@ jobs:
   run_solverdummies:
     name: Run solverdummies
     runs-on: ubuntu-latest
-    container: precice/precice
+    container:
+      image: benjaminrodenberg/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2      
@@ -26,4 +28,4 @@ jobs:
       - name: Run solverdummies
         run: | 
           cd examples/solverdummy/
-          python3 solverdummy.py precice-config.xml SolverOne & python3 solverdummy.py precice-config.xml SolverTwo        
+          python3 solverdummy.py precice-config.xml SolverOne & python3 solverdummy.py precice-config.xml SolverTwo

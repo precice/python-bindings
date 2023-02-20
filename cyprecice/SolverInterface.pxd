@@ -29,15 +29,11 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool isTimeWindowComplete() const
 
-        bool hasToEvaluateSurrogateModel () const
+        bool requiresInitialData()
 
-        bool hasToEvaluateFineModel () const
+        bool requiresReadingCheckpoint()
 
-        # action methods
-
-        bool isActionRequired (const string& action) const
-
-        void markActionFulfilled (const string& action)
+        bool requiresWritingCheckpoint()
 
         # mesh access
 
@@ -47,7 +43,7 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         set[int] getMeshIDs ()
 
-        bool isMeshConnectivityRequired (int meshID) const
+        bool requiresMeshConnectivityFor (int meshID) const
 
         int setMeshVertex (int meshID, const double* position)
 
@@ -55,19 +51,17 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void setMeshVertices (int meshID, int size, const double* positions, int* ids)
 
-        void getMeshVertices (int meshID, int size, const int* ids, double* positions) const
+        void setMeshEdge (int meshID, int firstVertexID, int secondVertexID)
 
-        void getMeshVertexIDsFromPositions (int meshID, int size, double* positions, int* ids) const
+        void setMeshEdges (int meshID, int size, const int* vertices)
 
-        int setMeshEdge (int meshID, int firstVertexID, int secondVertexID)
+        void setMeshTriangle (int meshID, int firstVertexID, int secondVertexID, int thirdVertexID)
 
-        void setMeshTriangle (int meshID, int firstEdgeID, int secondEdgeID, int thirdEdgeID)
+        void setMeshTriangles (int meshID, int size, const int* vertices)
 
-        void setMeshTriangleWithEdges (int meshID, int firstVertexID, int secondVertexID, int thirdVertexID)
+        void setMeshQuad (int meshID, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
 
-        void setMeshQuad (int meshID, int firstEdgeID, int secondEdgeID, int thirdEdgeID, int fourthEdgeID)
-
-        void setMeshQuadWithEdges (int meshID, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
+        void setMeshQuads (int meshID, int size, const int* vertices)
 
         # data access
 
@@ -101,15 +95,15 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         # Gradient related API 
 
-        bool isGradientDataRequired(int dataID) const;
+        bool requiresGradientDataFor(int dataID) const
 
-        void writeBlockVectorGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues);
+        void writeBlockVectorGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues)
 
-        void writeScalarGradientData(int dataID, int valueIndex, const double* gradientValues);
+        void writeScalarGradientData(int dataID, int valueIndex, const double* gradientValues)
 
-        void writeVectorGradientData(int dataID, int valueIndex, const double* gradientValues);
+        void writeVectorGradientData(int dataID, int valueIndex, const double* gradientValues)
 
-        void writeBlockScalarGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues);
+        void writeBlockScalarGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues)
 
         # direct mesh access
 
@@ -117,10 +111,5 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         void getMeshVerticesAndIDs (const int meshID, const int size, int* ids, double* coordinates) const
 
-cdef extern from "precice/SolverInterface.hpp" namespace "precice":
+cdef extern from "precice/Tooling.hpp" namespace "precice":
     string getVersionInformation()
-
-cdef extern from "precice/SolverInterface.hpp"  namespace "precice::constants":
-    const string& actionWriteInitialData()
-    const string& actionWriteIterationCheckpoint()
-    const string& actionReadIterationCheckpoint()
