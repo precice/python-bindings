@@ -1,13 +1,13 @@
 name: Build and Test
-on: 
+on:
   push:
     branches:
       - "*"
   pull_request:
     branches:
       - "*"
-      
-jobs:  
+
+jobs:
   setup_for_spack:
     name: Run setup.py phases needed by spack
     needs: [setup_test]
@@ -56,7 +56,7 @@ jobs:
         run:  python3 setup.py install --user
       - name: Test install
         run:  python3 -c "import precice"
-        
+
   setup_install_single_version_externally_managed:
     name: Run setup install --single-version-externally-managed (for spack)
     needs: [setup_install]
@@ -79,7 +79,7 @@ jobs:
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup install --single-version-externally-managed
         run:  python3 setup.py install --single-version-externally-managed --root=/
-        
+
   setup_test:
     name: Run setup test
     runs-on: ubuntu-latest
@@ -97,7 +97,7 @@ jobs:
           packages: toml
       - name: Checkout precice and make required files discoverable
         run: |
-          git clone https://github.com/precice/precice.git precice-core
+          git clone --branch develop https://github.com/precice/precice.git precice-core
           mkdir -p precice
           cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
           cd precice-core
@@ -113,7 +113,7 @@ jobs:
         run: |
           export CFLAGS=-I$GITHUB_WORKSPACE
           python3 setup.py test
-        
+
   pip_install:
     name: Run pip install
     needs: [setup_test]
@@ -157,4 +157,4 @@ jobs:
         run: |
           cd examples/solverdummy/
           python3 solverdummy.py precice-config.xml SolverOne MeshOne & python3 solverdummy.py precice-config.xml SolverTwo MeshTwo
-        
+
