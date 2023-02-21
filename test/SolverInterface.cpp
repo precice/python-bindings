@@ -282,7 +282,7 @@ void SolverInterface:: writeBlockVectorData
 {
   fake_read_write_buffer.clear();
   for(int i = 0; i < size * this->getDimensions(); i++){
-      fake_read_write_buffer.push_back(values[i]); 
+      fake_read_write_buffer.push_back(values[i]);
     }
 }
 
@@ -294,7 +294,7 @@ void SolverInterface:: writeVectorData
 {
   fake_read_write_buffer.clear();
   for(int i = 0; i < this->getDimensions(); i++){
-      fake_read_write_buffer.push_back(value[i]); 
+      fake_read_write_buffer.push_back(value[i]);
     }
 }
 
@@ -307,7 +307,7 @@ void SolverInterface:: writeBlockScalarData
 {
   fake_read_write_buffer.clear();
   for(int i = 0; i < size; i++){
-      fake_read_write_buffer.push_back(values[i]); 
+      fake_read_write_buffer.push_back(values[i]);
     }
 }
 
@@ -318,7 +318,7 @@ void SolverInterface:: writeScalarData
   double value )
 {
     fake_read_write_buffer.clear();
-    fake_read_write_buffer.push_back(value); 
+    fake_read_write_buffer.push_back(value);
 }
 
 void SolverInterface:: readBlockVectorData
@@ -333,10 +333,35 @@ void SolverInterface:: readBlockVectorData
     }
 }
 
+void SolverInterface:: readBlockVectorData
+(
+  int        dataID,
+  int        size,
+  const int* valueIndices,
+  double     relativeReadTime,
+  double*    values ) const
+{
+  for(int i = 0; i < size * this->getDimensions(); i++){
+      values[i] = fake_read_write_buffer[i];
+    }
+}
+
 void SolverInterface:: readVectorData
 (
   int     dataID,
   int     valueIndex,
+  double* value ) const
+{
+  for(int i = 0; i < this->getDimensions(); i++){
+      value[i] = fake_read_write_buffer[i];
+    }
+}
+
+void SolverInterface:: readVectorData
+(
+  int     dataID,
+  int     valueIndex,
+  double  relativeReadTime,
   double* value ) const
 {
   for(int i = 0; i < this->getDimensions(); i++){
@@ -356,13 +381,36 @@ void SolverInterface:: readBlockScalarData
     }
 }
 
+void SolverInterface:: readBlockScalarData
+(
+  int        dataID,
+  int        size,
+  const int* valueIndices,
+  double     relativeReadTime,
+  double*    values ) const
+{
+  for(int i = 0; i < size; i++){
+      values[i] = fake_read_write_buffer[i];
+  }
+}
+
 void SolverInterface:: readScalarData
 (
   int     dataID,
   int     valueIndex,
   double& value ) const
 {
-    value = fake_read_write_buffer[0]; 
+    value = fake_read_write_buffer[0];
+}
+
+void SolverInterface:: readScalarData
+(
+  int     dataID,
+  int     valueIndex,
+  double  relativeReadTime,
+  double& value ) const
+{
+    value = fake_read_write_buffer[0];
 }
 
 void SolverInterface:: setMeshAccessRegion
