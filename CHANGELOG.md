@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+## 2.5.0.2
+
 * Add Waveform API introduced in preCICE v2.4.0.
 
 ## 2.5.0.1
