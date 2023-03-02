@@ -113,11 +113,6 @@ int SolverInterface:: getMeshID
   return fake_mesh_id;
 }
 
-std::set<int> SolverInterface:: getMeshIDs() const
-{
-  return std::set<int>();
-}
-
 bool SolverInterface:: hasData
 (
   const std::string& dataName, int meshID ) const

@@ -315,18 +315,6 @@ cdef class Interface:
         return self.thisptr.getMeshID (convert(mesh_name))
 
 
-    def get_mesh_ids (self):
-        """
-        Returns the ID-set of all used meshes by this participant.
-
-        Returns
-        -------
-        id_array : numpy.ndarray
-            Numpy array containing all IDs.
-        """
-        return self.thisptr.getMeshIDs ()
-
-
     def get_mesh_handle(self, mesh_name):
         """
         Returns a handle to a created mesh.
