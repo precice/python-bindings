@@ -315,18 +315,6 @@ cdef class Interface:
         return self.thisptr.getMeshID (convert(mesh_name))
 
 
-    def get_mesh_ids (self):
-        """
-        Returns the ID-set of all used meshes by this participant.
-
-        Returns
-        -------
-        id_array : numpy.ndarray
-            Numpy array containing all IDs.
-        """
-        return self.thisptr.getMeshIDs ()
-
-
     def get_mesh_handle(self, mesh_name):
         """
         Returns a handle to a created mesh.
@@ -919,7 +907,7 @@ cdef class Interface:
         size = _vertex_ids.size
         dimensions = self.get_dimensions()
         cdef np.ndarray[np.double_t, ndim=1] _values = np.empty(size * dimensions, dtype=np.double)
-        if relative_read_time == None:
+        if relative_read_time is None:
             self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
         else:
             self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
@@ -1083,7 +1071,7 @@ cdef class Interface:
             Count of available elements at vertex_ids matches the given size
             Initialize() has been called
             Data with dataID has attribute hasGradient = true
-            
+
         Examples
         --------
         Write block gradient vector data for a 2D problem with 2 vertices:
@@ -1127,7 +1115,7 @@ cdef class Interface:
 
         The 2D-format of gradientValues is (v_dx, v_dy) vector corresponding to the data block v = (v)
         differentiated respectively in x-direction dx and y-direction dy
-   
+
         The 3D-format of gradientValues is (v_dx, v_dy, v_dz) vector
         corresponding to the data block v = (v) differentiated respectively in spatial directions x-direction dx and y-direction dy and z-direction dz
 
@@ -1166,7 +1154,7 @@ cdef class Interface:
         cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
 
         assert _gradientValues.size == self.get_dimensions(), "Vector data provided for vertex {} in write_scalar_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions())
-      
+
         self.thisptr.writeScalarGradientData(data_id, vertex_id, <const double*>_gradientValues.data)
 
     def write_vector_gradient_data (self, data_id, vertex_id, gradientValues):
@@ -1178,7 +1166,7 @@ cdef class Interface:
 
         The 2D-format of \p gradientValues is (vx_dx, vy_dx, vx_dy, vy_dy) vector corresponding to the data block v = (vx, vy)
         differentiated respectively in x-direction dx and y-direction dy
-   
+
         The 3D-format of \p gradientValues is (vx_dx, vy_dx, vz_dx, vx_dy, vy_dy, vz_dy, vx_dz, vy_dz, vz_dz) vector
         corresponding to the data block v = (vx, vy, vz) differentiated respectively in spatial directions x-direction dx and y-direction dy and z-direction dz
 
@@ -1217,7 +1205,7 @@ cdef class Interface:
         cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
 
         assert _gradientValues.size == self.get_dimensions() * self.get_dimensions(), "Dimensions of vector gradient data provided for vertex {} in write_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions() * self.get_dimensions())
-      
+
         self.thisptr.writeVectorGradientData(data_id, vertex_id, <const double*>_gradientValues.data)
 
     def write_block_scalar_gradient_data (self, data_id, vertex_ids, gradientValues):
@@ -1242,7 +1230,7 @@ cdef class Interface:
             Count of available elements at vertex_ids matches the given size
             Initialize() has been called
             Data with dataID has attribute hasGradient = true
-            
+
         Examples
         --------
         Write block gradient scalar data for a 2D problem with 2 vertices:
@@ -1301,11 +1289,11 @@ cdef class Interface:
 
     def set_mesh_access_region (self, mesh_id, bounding_box):
         """
-        This function is required if you don't want to use the mapping schemes in preCICE, but rather 
+        This function is required if you don't want to use the mapping schemes in preCICE, but rather
         want to use your own solver for data mapping. As opposed to the usual preCICE mapping, only a
-        single mesh (from the other participant) is now involved in this situation since an 'own' 
+        single mesh (from the other participant) is now involved in this situation since an 'own'
         mesh defined by the participant itself is not required any more. In order to re-partition the
-        received mesh, the participant needs to define the mesh region it wants read data from and 
+        received mesh, the participant needs to define the mesh region it wants read data from and
         write data to. The mesh region is specified through an axis-aligned bounding box given by the
         lower and upper [min and max] bounding-box limits in each space dimension [x, y, z]. This function is still
         experimental
@@ -1321,25 +1309,25 @@ cdef class Interface:
         -----
         Defining a bounding box for serial runs of the solver (not to be confused with serial coupling
         mode) is valid. However, a warning is raised in case vertices are filtered out completely
-        on the receiving side, since the associated data values of the filtered vertices are filled 
+        on the receiving side, since the associated data values of the filtered vertices are filled
         with zero data.
 
         This function can only be called once per participant and rank and trying to call it more than
         once results in an error.
 
-        If you combine the direct access with a mapping (say you want to read data from a defined 
+        If you combine the direct access with a mapping (say you want to read data from a defined
         mesh, as usual, but you want to directly access and write data on a received mesh without a
         mapping) you may not need this function at all since the region of interest is already defined
-        through the defined mesh used for data reading. This is the case if you define any mapping 
+        through the defined mesh used for data reading. This is the case if you define any mapping
         involving the directly accessed mesh on the receiving participant. (In parallel, only the cases
         read-consistent and write-conservative are relevant, as usual).
 
-        The safety factor scaling (see safety-factor in the configuration file) is not applied to the 
+        The safety factor scaling (see safety-factor in the configuration file) is not applied to the
         defined access region and a specified safety will be ignored in case there is no additional
         mapping involved. However, in case a mapping is in addition to the direct access involved, you
         will receive (and gain access to) vertices inside the defined access region plus vertices inside
-        the safety factor region resulting from the mapping. The default value of the safety factor is 
-        0.5, i.e. the defined access region as computed through the involved provided mesh is by 50% 
+        the safety factor region resulting from the mapping. The default value of the safety factor is
+        0.5, i.e. the defined access region as computed through the involved provided mesh is by 50%
         enlarged.
         """
         warnings.warn("The function set_mesh_access_region is still experimental.")
@@ -1359,7 +1347,7 @@ cdef class Interface:
 
     def get_mesh_vertices_and_ids (self, mesh_id):
         """
-        Iterating over the region of interest defined by bounding boxes and reading the corresponding 
+        Iterating over the region of interest defined by bounding boxes and reading the corresponding
         coordinates omitting the mapping. This function is still experimental.
 
         Parameters
