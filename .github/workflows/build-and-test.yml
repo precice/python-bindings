@@ -19,8 +19,8 @@ jobs:
       - name: Install & upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip pkg-config sudo
-          sudo rm -rf /var/lib/apt/lists/*
+          apt-get install -y python3-pip pkg-config
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -41,8 +41,8 @@ jobs:
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip pkg-config sudo
-          sudo rm -rf /var/lib/apt/lists/*
+          apt-get install -y python3-pip pkg-config
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -64,8 +64,8 @@ jobs:
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip pkg-config sudo
-          sudo rm -rf /var/lib/apt/lists/*
+          apt-get install -y python3-pip pkg-config
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Install dependencies
         run: |
@@ -120,8 +120,8 @@ jobs:
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip pkg-config sudo
-          sudo rm -rf /var/lib/apt/lists/*
+          apt-get install -y python3-pip pkg-config
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
@@ -139,8 +139,8 @@ jobs:
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
           apt-get -yy update
-          apt-get install -y python3-pip pkg-config sudo
-          sudo rm -rf /var/lib/apt/lists/*
+          apt-get install -y python3-pip pkg-config
+          rm -rf /var/lib/apt/lists/*
           pip3 install --upgrade --user pip
       - name: Run pip install
         run:  pip3 install --user .
