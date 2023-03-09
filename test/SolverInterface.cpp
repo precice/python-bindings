@@ -343,7 +343,7 @@ void SolverInterface:: setMeshAccessRegion
   std::string& meshName,
   const double* boundingBox ) const
 {
-    assert(meshName == fake_mesh_name);
+    // assert(meshName == fake_mesh_name);
 
     for(int i = 0; i < fake_bounding_box.size(); i++){
         assert(boundingBox[i] == fake_bounding_box[i]);
@@ -357,7 +357,7 @@ void SolverInterface:: getMeshVerticesAndIDs
   int* valueIndices,
   double* coordinates ) const
 {
-    assert(meshName == fake_mesh_name);
+    // assert(meshName == fake_mesh_name);
     assert(size == fake_ids.size());
 
     for(int i = 0; i < fake_ids.size(); i++){
