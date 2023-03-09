@@ -379,7 +379,8 @@ class TestBindings(TestCase):
         vertex_ids = np.arange(n_fake_vertices)
         write_data = np.random.rand(n_fake_vertices, fake_dimension * fake_dimension)
         solver_interface.write_block_vector_gradient_data("FakeMesh", "FakeData", vertex_ids, write_data)
-        read_data = solver_interface.read_block_vector_data("FakeMesh", "FakeData", np.array(range(n_fake_vertices * fake_dimension)))
+        read_data = solver_interface.read_block_vector_data(
+            "FakeMesh", "FakeData", np.array(range(n_fake_vertices * fake_dimension)))
         self.assertTrue(np.array_equiv(write_data.flatten(), read_data.flatten()))
 
     def test_write_block_vector_gradient_data_empty(self):
