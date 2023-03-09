@@ -323,8 +323,9 @@ class TestBindings(TestCase):
     def test_requires_gradient_data_for(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_bool = 0  # compare to output in test/SolverInterface.cpp
+        fake_mesh_name = "FakeMesh"
         fake_data_name = "FakeName"
-        self.assertEqual(fake_bool, solver_interface.requires_gradient_data_for(fake_data_name))
+        self.assertEqual(fake_bool, solver_interface.requires_gradient_data_for(fake_mesh_name, fake_data_name))
 
     def test_write_block_scalar_gradient_data(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)

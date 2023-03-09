@@ -1261,12 +1261,14 @@ cdef class Interface:
 
         self.thisptr.writeBlockScalarGradientData (mesh_name, data_name, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
-    def requires_gradient_data_for(self, data_name):
+    def requires_gradient_data_for(self, mesh_name, data_name):
         """
         Checks if the given data set requires gradient data. We check if the data object has been intialized with the gradient flag.
 
         Parameters
         ----------
+        mesh_name : str
+            Mesh name to check.
         data_name : str
             Data name to check.
 
@@ -1278,10 +1280,11 @@ cdef class Interface:
         Examples
         --------
         Check if gradient data is required for a data:
+        >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
-        >>> interface.is_gradient_data_required(data_name)
+        >>> interface.is_gradient_data_required(mesh_name, data_name)
         """
-        return self.thisptr.requiresGradientDataFor(data_name)
+        return self.thisptr.requiresGradientDataFor(mesh_name, data_name)
 
     def set_mesh_access_region (self, mesh_name, bounding_box):
         """
