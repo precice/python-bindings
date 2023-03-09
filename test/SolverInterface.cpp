@@ -5,11 +5,10 @@
 
 std::vector<double> fake_read_write_buffer;
 int fake_dimensions;
-int fake_mesh_id;
 std::vector<int> fake_ids;
 int n_fake_vertices;
+std::string fake_mesh_name;
 std::string fake_data_name;
-int fake_data_id;
 std::vector<double> fake_bounding_box;
 std::vector<double> fake_coordinates;
 
@@ -28,8 +27,7 @@ SolverInterface:: SolverInterface
 {
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
-  fake_mesh_id = 0;
-  fake_data_id = 15;
+  fake_mesh_name = "FakeMesh";
   fake_data_name = "FakeData";
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
@@ -49,8 +47,7 @@ SolverInterface::SolverInterface(
 {
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
-  fake_mesh_id = 0;
-  fake_data_id = 15;
+  fake_mesh_name = "FakeMesh";
   fake_data_name = "FakeData";
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
@@ -106,42 +103,21 @@ bool SolverInterface:: hasMesh
   return 0;
 }
 
-int SolverInterface:: getMeshID
-(
-  const std::string& meshName ) const
-{
-  return fake_mesh_id;
-}
-
 bool SolverInterface:: hasData
 (
-  const std::string& dataName, int meshID ) const
+  const std::string& dataName, std::string& meshName ) const
 {
   return 0;
 }
 
-int SolverInterface:: getDataID
-(
-  const std::string& dataName, int meshID ) const
-{
-  if(meshID == fake_mesh_id && dataName == fake_data_name)
-  {
-    return fake_data_id;
-  }
-  else
-  {
-    return -1;
-  }
-}
-
-bool SolverInterface:: requiresMeshConnectivityFor(int meshID) const
+bool SolverInterface:: requiresMeshConnectivityFor(std::string& meshName) const
 {
   return 0;
 }
 
 int SolverInterface:: setMeshVertex
 (
-  int           meshID,
+  std::string& meshName,
   const double* position )
 {
   return 0;
@@ -149,14 +125,14 @@ int SolverInterface:: setMeshVertex
 
 int SolverInterface:: getMeshVertexSize
 (
-  int meshID) const
+  std::string& meshName) const
 {
   return n_fake_vertices;
 }
 
 void SolverInterface:: setMeshVertices
 (
-  int           meshID,
+  std::string& meshName,
   int           size,
   const double* positions,
   int*          ids )
@@ -167,21 +143,21 @@ void SolverInterface:: setMeshVertices
 
 void SolverInterface:: setMeshEdge
 (
-  int meshID,
+  std::string& meshName,
   int firstVertexID,
   int secondVertexID )
 {}
 
 void SolverInterface:: setMeshEdges
 (
-  int meshID,
+  std::string& meshName,
   int size,
   const int* vertices )
 {}
 
 void SolverInterface:: setMeshTriangle
 (
-  int meshID,
+  std::string& meshName,
   int firstVertexID,
   int secondVertexID,
   int thirdVertexID )
@@ -189,14 +165,14 @@ void SolverInterface:: setMeshTriangle
 
 void SolverInterface:: setMeshTriangles
 (
-  int meshID,
+  std::string& meshName,
   int size,
   const int* vertices )
 {}
 
 void SolverInterface:: setMeshQuad
 (
-  int meshID,
+  std::string& meshName,
   int firstVertexID,
   int secondVertexID,
   int thirdVertexID,
@@ -205,14 +181,15 @@ void SolverInterface:: setMeshQuad
 
 void SolverInterface:: setMeshQuads
 (
-  int meshID,
+  std::string& meshName,
   int size,
   const int* vertices )
 {}
 
 void SolverInterface:: writeBlockVectorData
 (
-  int     dataID,
+  std::string& meshName,
+  std::string& dataName,
   int     size,
   const int*    valueIndices,
   const double* values )
@@ -225,7 +202,8 @@ void SolverInterface:: writeBlockVectorData
 
 void SolverInterface:: writeVectorData
 (
-  int           dataID,
+  std::string& meshName,
+  std::string& dataName,
   int           valueIndex,
   const double* value )
 {
@@ -237,7 +215,8 @@ void SolverInterface:: writeVectorData
 
 void SolverInterface:: writeBlockScalarData
 (
-  int           dataID,
+  std::string& meshName,
+  std::string& dataName,
   int           size,
   const int*    valueIndices,
   const double* values )
@@ -250,7 +229,8 @@ void SolverInterface:: writeBlockScalarData
 
 void SolverInterface:: writeScalarData
 (
-  int    dataID,
+  std::string& meshName,
+  std::string& dataName,
   int    valueIndex,
   double value )
 {
@@ -260,7 +240,8 @@ void SolverInterface:: writeScalarData
 
 void SolverInterface:: readBlockVectorData
 (
-  int        dataID,
+  std::string& meshName,
+  std::string& dataName,
   int        size,
   const int* valueIndices,
   double*    values ) const
@@ -272,7 +253,8 @@ void SolverInterface:: readBlockVectorData
 
 void SolverInterface:: readBlockVectorData
 (
-  int        dataID,
+  std::string& meshName,
+  std::string& dataName,
   int        size,
   const int* valueIndices,
   double     relativeReadTime,
@@ -285,7 +267,8 @@ void SolverInterface:: readBlockVectorData
 
 void SolverInterface:: readVectorData
 (
-  int     dataID,
+  std::string& meshName,
+  std::string& dataName,
   int     valueIndex,
   double* value ) const
 {
@@ -296,7 +279,8 @@ void SolverInterface:: readVectorData
 
 void SolverInterface:: readVectorData
 (
-  int     dataID,
+  std::string& meshName,
+  std::string& dataName,
   int     valueIndex,
   double  relativeReadTime,
   double* value ) const
@@ -308,7 +292,8 @@ void SolverInterface:: readVectorData
 
 void SolverInterface:: readBlockScalarData
 (
-  int        dataID,
+  std::string& meshName,
+  std::string& dataName,
   int        size,
   const int* valueIndices,
   double*    values ) const
@@ -320,7 +305,8 @@ void SolverInterface:: readBlockScalarData
 
 void SolverInterface:: readBlockScalarData
 (
-  int        dataID,
+  std::string& meshName,
+  std::string& dataName,
   int        size,
   const int* valueIndices,
   double     relativeReadTime,
@@ -333,7 +319,8 @@ void SolverInterface:: readBlockScalarData
 
 void SolverInterface:: readScalarData
 (
-  int     dataID,
+  std::string& meshName,
+  std::string& dataName,
   int     valueIndex,
   double& value ) const
 {
@@ -342,7 +329,8 @@ void SolverInterface:: readScalarData
 
 void SolverInterface:: readScalarData
 (
-  int     dataID,
+  std::string& meshName,
+  std::string& dataName,
   int     valueIndex,
   double  relativeReadTime,
   double& value ) const
@@ -352,10 +340,10 @@ void SolverInterface:: readScalarData
 
 void SolverInterface:: setMeshAccessRegion
 (
-  const int meshID,
+  std::string& meshName,
   const double* boundingBox ) const
 {
-    assert(meshID == fake_mesh_id);
+    assert(meshName == fake_mesh_name);
 
     for(int i = 0; i < fake_bounding_box.size(); i++){
         assert(boundingBox[i] == fake_bounding_box[i]);
@@ -364,12 +352,12 @@ void SolverInterface:: setMeshAccessRegion
 
 void SolverInterface:: getMeshVerticesAndIDs
 (
-  const int meshID,
+  std::string& meshName,
   const int size,
   int* valueIndices,
   double* coordinates ) const
 {
-    assert(meshID == fake_mesh_id);
+    assert(meshName == fake_mesh_name);
     assert(size == fake_ids.size());
 
     for(int i = 0; i < fake_ids.size(); i++){
@@ -380,13 +368,14 @@ void SolverInterface:: getMeshVerticesAndIDs
     }
 }
 
-bool SolverInterface::requiresGradientDataFor(int dataID) const
+bool SolverInterface::requiresGradientDataFor(std::string& dataName) const
 {
   return 0;
 }
 
 void SolverInterface::writeBlockVectorGradientData(
-    int           dataID,
+    std::string& meshName,
+    std::string& dataName,
     int           size,
     const int    *valueIndices,
     const double *gradientValues)
@@ -398,7 +387,8 @@ void SolverInterface::writeBlockVectorGradientData(
 }
 
 void SolverInterface::writeScalarGradientData(
-    int           dataID,
+    std::string& meshName,
+    std::string& dataName,
     int           valueIndex,
     const double *gradientValues)
 {
@@ -408,7 +398,8 @@ void SolverInterface::writeScalarGradientData(
   }
 }
 void SolverInterface::writeBlockScalarGradientData(
-    int           dataID,
+    std::string& meshName,
+    std::string& dataName,
     int           size,
     const int    *valueIndices,
     const double *gradientValues)
@@ -420,7 +411,8 @@ void SolverInterface::writeBlockScalarGradientData(
 }
 
 void SolverInterface::writeVectorGradientData(
-    int           dataID,
+    std::string& meshName,
+    std::string& dataName,
     int           valueIndex,
     const double *gradientValues)
 {

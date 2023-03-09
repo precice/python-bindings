@@ -291,30 +291,6 @@ cdef class Interface:
         return self.thisptr.hasMesh (convert(mesh_name))
 
 
-    def get_mesh_id (self, mesh_name):
-        """
-        Returns the ID belonging to the mesh with given name.
-
-        Parameters
-        ----------
-        mesh_name : string
-            Name of the mesh.
-
-        Returns
-        -------
-        id : int
-            ID of the corresponding mesh.
-
-        Example
-        -------
-        >>> mesh_id = interface.get_mesh_id("MeshOne")
-        >>> mesh_id
-        0
-
-        """
-        return self.thisptr.getMeshID (convert(mesh_name))
-
-
     def get_mesh_handle(self, mesh_name):
         """
         Returns a handle to a created mesh.
@@ -333,14 +309,14 @@ cdef class Interface:
         raise Exception("The API method get_mesh_handle is not yet available for the Python bindings.")
 
 
-    def set_mesh_vertex(self, mesh_id, position):
+    def set_mesh_vertex(self, mesh_name, position):
         """
         Creates a mesh vertex
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh to add the vertex to.
+        mesh_name : str
+            Name of the mesh to add the vertex to.
         position : array_like
             The coordinates of the vertex.
 
@@ -363,33 +339,33 @@ cdef class Interface:
             dimensions = self.get_dimensions()
 
         cdef np.ndarray[double, ndim=1] _position = np.ascontiguousarray(position, dtype=np.double)
-        vertex_id = self.thisptr.setMeshVertex(mesh_id, <const double*>_position.data)
+        vertex_id = self.thisptr.setMeshVertex(mesh_name, <const double*>_position.data)
         return vertex_id
 
-    def get_mesh_vertex_size (self, mesh_id):
+    def get_mesh_vertex_size (self, mesh_name):
         """
         Returns the number of vertices of a mesh
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh.
+        mesh_name : str
+            Name of the mesh.
 
         Returns
         -------
         sum : int
             Number of vertices of the mesh.
         """
-        return self.thisptr.getMeshVertexSize(mesh_id)
+        return self.thisptr.getMeshVertexSize(mesh_name)
 
-    def set_mesh_vertices (self, mesh_id, positions):
+    def set_mesh_vertices (self, mesh_name, positions):
         """
         Creates multiple mesh vertices
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh to add the vertices to.
+        mesh_name : str
+            Name of the mesh to add the vertices to.
         positions : array_like
             The coordinates of the vertices in a numpy array [N x D] where
             N = number of vertices and D = dimensions of geometry.
@@ -410,21 +386,21 @@ cdef class Interface:
         --------
         Set mesh vertices for a 2D problem with 5 mesh vertices.
 
-        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
         >>> positions.shape
         (5, 2)
-        >>> vertex_ids = interface.set_mesh_vertices(mesh_id, positions)
+        >>> mesh_name = "MeshOne"
+        >>> vertex_ids = interface.set_mesh_vertices(mesh_name, positions)
         >>> vertex_ids.shape
         (5,)
 
         Set mesh vertices for a 3D problem with 5 mesh vertices.
 
-        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> positions = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]])
         >>> positions.shape
         (5, 3)
-        >>> vertex_ids = interface.set_mesh_vertices(mesh_id, positions)
+        >>> mesh_name = "MeshOne"
+        >>> vertex_ids = interface.set_mesh_vertices(mesh_name, positions)
         >>> vertex_ids.shape
         (5,)
         """
@@ -442,17 +418,17 @@ cdef class Interface:
 
         cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
         cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(size, dtype=np.int32)
-        self.thisptr.setMeshVertices (mesh_id, size, <const double*>_positions.data, <int*>vertex_ids.data)
+        self.thisptr.setMeshVertices (mesh_name, size, <const double*>_positions.data, <int*>vertex_ids.data)
         return vertex_ids
 
-    def set_mesh_edge (self, mesh_id, first_vertex_id, second_vertex_id):
+    def set_mesh_edge (self, mesh_name, first_vertex_id, second_vertex_id):
         """
         Sets mesh edge from vertex IDs, returns edge ID.
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh to add the edge to.
+        mesh_name : str
+            Name of the mesh to add the edge to.
         firstVertexID : int
             ID of the first vertex of the edge.
         secondVertexID : int
@@ -466,18 +442,18 @@ cdef class Interface:
         Notes
         -----
         Previous calls:
-            vertices with firstVertexID and secondVertexID were added to the mesh with the ID meshID
+            vertices with firstVertexID and secondVertexID were added to the mesh with name mesh_name
         """
-        self.thisptr.setMeshEdge (mesh_id, first_vertex_id, second_vertex_id)
+        self.thisptr.setMeshEdge (mesh_name, first_vertex_id, second_vertex_id)
 
-    def set_mesh_edges (self, mesh_id, vertices):
+    def set_mesh_edges (self, mesh_name, vertices):
         """
         Creates multiple mesh edges
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh to add the vertices to.
+        mesh_name : str
+            Name of the mesh to add the vertices to.
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 2] where
             N = number of edges and D = dimensions of geometry.
@@ -486,11 +462,10 @@ cdef class Interface:
         --------
         Set mesh edges for a problem with 4 mesh vertices in the form of a square with both diagonals which are fully interconnected.
 
-        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> vertices = np.array([[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]])
         >>> vertices.shape
         (6, 2)
-        >>> interface.set_mesh_edges(mesh_id, vertices)
+        >>> interface.set_mesh_edges(mesh_name, vertices)
         """
         check_array_like(vertices, "vertices", "set_mesh_edges")
 
@@ -505,16 +480,16 @@ cdef class Interface:
             dimensions = self.get_dimensions()
 
         cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
-        self.thisptr.setMeshEdges (mesh_id, size, <const int*>_vertices.data)
+        self.thisptr.setMeshEdges (mesh_name, size, <const int*>_vertices.data)
 
-    def set_mesh_triangle (self, mesh_id, first_edge_id, second_edge_id, third_edge_id):
+    def set_mesh_triangle (self, mesh_name, first_edge_id, second_edge_id, third_edge_id):
         """
         Sets mesh triangle from edge IDs
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh to add the triangle to.
+        mesh_name : str
+            Name of the mesh to add the triangle to.
         first_edge_id : int
             ID of the first edge of the triangle.
         second_edge_id : int
@@ -525,18 +500,18 @@ cdef class Interface:
         Notes
         -----
         Previous calls:
-            edges with first_edge_id, second_edge_id, and third_edge_id were added to the mesh with the ID meshID
+            edges with first_edge_id, second_edge_id, and third_edge_id were added to the mesh with the name mesh_name
         """
-        self.thisptr.setMeshTriangle (mesh_id, first_edge_id, second_edge_id, third_edge_id)
+        self.thisptr.setMeshTriangle (mesh_name, first_edge_id, second_edge_id, third_edge_id)
 
-    def set_mesh_triangles (self, mesh_id, vertices):
+    def set_mesh_triangles (self, mesh_name, vertices):
         """
         Creates multiple mesh triangles
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh to add the vertices to.
+        mesh_name : str
+            Name of the mesh to add the vertices to.
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 3] where
             N = number of triangles and D = dimensions of geometry.
@@ -545,11 +520,10 @@ cdef class Interface:
         --------
         Set mesh triangles for a problem with 4 mesh vertices in the form of a square with both diagonals which are fully interconnected.
 
-        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> vertices = np.array([[1, 2, 3], [1, 3, 4], [1, 2, 4], [1, 3, 4]])
         >>> vertices.shape
         (4, 2)
-        >>> interface.set_mesh_triangles(mesh_id, vertices)
+        >>> interface.set_mesh_triangles(mesh_name, vertices)
         """
         check_array_like(vertices, "vertices", "set_mesh_triangles")
 
@@ -564,17 +538,17 @@ cdef class Interface:
             dimensions = self.get_dimensions()
 
         cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
-        self.thisptr.setMeshTriangles (mesh_id, size, <const int*>_vertices.data)
+        self.thisptr.setMeshTriangles (mesh_name, size, <const int*>_vertices.data)
 
-    def set_mesh_quad (self, mesh_id, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id):
+    def set_mesh_quad (self, mesh_name, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id):
         """
         Sets mesh Quad from edge IDs.
         WARNING: Quads are not fully implemented yet.
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh to add the Quad to.
+        mesh_name : str
+            Name of the mesh to add the Quad to.
         first_edge_id : int
             ID of the first edge of the Quad.
         second_edge_id : int
@@ -588,18 +562,18 @@ cdef class Interface:
         -----
         Previous calls:
             edges with first_edge_id, second_edge_id, third_edge_id, and fourth_edge_id were added
-            to the mesh with the ID mesh_id
+            to the mesh with the name mesh_name
         """
-        self.thisptr.setMeshQuad (mesh_id, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id)
+        self.thisptr.setMeshQuad (mesh_name, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id)
 
-    def set_mesh_quads (self, mesh_id, vertices):
+    def set_mesh_quads (self, mesh_name, vertices):
         """
         Creates multiple mesh quads
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh to add the vertices to.
+        mesh_name : str
+            Name of the mesh to add the vertices to.
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 4] where
             N = number of quads and D = dimensions of geometry.
@@ -608,11 +582,10 @@ cdef class Interface:
         --------
         Set mesh quads for a problem with 4 mesh vertices in the form of a square with both diagonals which are fully interconnected.
 
-        >>> mesh_id = interface.get_mesh_id("MeshOne")
         >>> vertices = np.array([[1, 2, 3, 4]])
         >>> vertices.shape
         (1, 2)
-        >>> interface.set_mesh_quads(mesh_id, vertices)
+        >>> interface.set_mesh_quads(mesh_name, vertices)
         """
         check_array_like(vertices, "vertices", "set_mesh_quads")
 
@@ -627,17 +600,17 @@ cdef class Interface:
             dimensions = self.get_dimensions()
 
         cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
-        self.thisptr.setMeshQuads (mesh_id, size, <const int*>_vertices.data)
+        self.thisptr.setMeshQuads (mesh_name, size, <const int*>_vertices.data)
 
     # data access
 
-    def requires_mesh_connectivity_for (self, mesh_id):
+    def requires_mesh_connectivity_for (self, mesh_name):
         """
         Checks if the given mesh requires connectivity.
 
         Parameters
         ----------
-        mesh_id : int
+        mesh_name : str
             ID of the associated mesh.
 
         Returns
@@ -645,9 +618,9 @@ cdef class Interface:
         tag : bool
             True if mesh connectivity is required.
         """
-        return self.thisptr.requiresMeshConnectivityFor(mesh_id)
+        return self.thisptr.requiresMeshConnectivityFor(mesh_name)
 
-    def has_data (self, str data_name, mesh_id):
+    def has_data (self, str data_name, mesh_name):
         """
         Checks if the data with given name is used by a solver and mesh.
 
@@ -655,35 +628,17 @@ cdef class Interface:
         ----------
         data_name : string
             Name of the data.
-        mesh_id : int
-            ID of the associated mesh.
+        mesh_name : str
+            Name of the associated mesh.
 
         Returns
         -------
         tag : bool
             True if the mesh is already used.
         """
-        return self.thisptr.hasData(convert(data_name), mesh_id)
+        return self.thisptr.hasData(convert(data_name), mesh_name)
 
-    def get_data_id (self, str data_name, mesh_id):
-        """
-        Returns the ID of the data associated with the given name and mesh.
-
-        Parameters
-        ----------
-        data_name : string
-            Name of the data
-        mesh_id : int
-            ID of the associated mesh.
-
-        Returns
-        -------
-        data_id : int
-            ID of the corresponding data.
-        """
-        return self.thisptr.getDataID (convert(data_name), mesh_id)
-
-    def write_block_vector_data (self, data_id, vertex_ids, values):
+    def write_block_vector_data (self, mesh_name, data_name, vertex_ids, values):
         """
         Writes vector data given as block. This function writes values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
@@ -691,8 +646,10 @@ cdef class Interface:
 
         Parameters
         ----------
-        data_id : int
-            Data ID to write to.
+        mesh_name : str
+            name of the mesh to write to.
+        data_name : str
+            Data name to write to.
         vertex_ids : array_like
             Indices of the vertices.
         values : array_like
@@ -708,16 +665,18 @@ cdef class Interface:
         Examples
         --------
         Write block vector data for a 2D problem with 5 vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
         >>> values = np.array([[v1_x, v1_y], [v2_x, v2_y], [v3_x, v3_y], [v4_x, v4_y], [v5_x, v5_y]])
-        >>> interface.write_block_vector_data(data_id, vertex_ids, values)
+        >>> interface.write_block_vector_data(mesh_name, data_name, vertex_ids, values)
 
         Write block vector data for a 3D (D=3) problem with 5 (N=5) vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
         >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
-        >>> interface.write_block_vector_data(data_id, vertex_ids, values)
+        >>> interface.write_block_vector_data(mesh_name, data_name, vertex_ids, values)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_vector_data")
         check_array_like(values, "values", "write_block_vector_data")
@@ -737,9 +696,9 @@ cdef class Interface:
         assert _values.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_values.size, size * self.get_dimensions())
         assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
 
-        self.thisptr.writeBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
+        self.thisptr.writeBlockVectorData (mesh_name, data_name, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
-    def write_vector_data (self, data_id, vertex_id, value):
+    def write_vector_data (self, mesh_name, data_name, vertex_id, value):
         """
         Writes vector data to a vertex. This function writes a value of a specified vertex to a dataID.
         Values are provided as a block of continuous memory.
@@ -748,7 +707,9 @@ cdef class Interface:
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
             ID to write to.
         vertex_id : int
             Index of the vertex.
@@ -764,16 +725,18 @@ cdef class Interface:
         Examples
         --------
         Write vector data for a 2D problem with 5 vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_id = 5
         >>> value = np.array([v5_x, v5_y])
-        >>> interface.write_vector_data(data_id, vertex_id, value)
+        >>> interface.write_vector_data(mesh_name, data_name, vertex_id, value)
 
         Write vector data for a 3D (D=3) problem with 5 (N=5) vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_id = 5
         >>> value = np.array([v5_x, v5_y, v5_z])
-        >>> interface.write_vector_data(data_id, vertex_id, value)
+        >>> interface.write_vector_data(mesh_name, data_name, vertex_id, value)
         """
         check_array_like(value, "value", "write_vector_data")
         assert len(value) > 0, "Input vector data is empty in write_vector_data"
@@ -784,15 +747,17 @@ cdef class Interface:
 
         cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
 
-        self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
+        self.thisptr.writeVectorData (mesh_name, data_name, vertex_id, <const double*>_value.data)
 
-    def write_block_scalar_data (self, data_id, vertex_ids, values):
+    def write_block_scalar_data (self, mesh_name, data_name, vertex_ids, values):
         """
         Writes scalar data given as a block. This function writes values of specified vertices to a dataID.
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
             ID to write to.
         vertex_ids : array_like
             Indices of the vertices.
@@ -809,10 +774,11 @@ cdef class Interface:
         Examples
         --------
         Write block scalar data for a 2D and 3D problem with 5 (N=5) vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
         >>> values = np.array([v1, v2, v3, v4, v5])
-        >>> interface.write_block_scalar_data(data_id, vertex_ids, values)
+        >>> interface.write_block_scalar_data(mesh_name, data_name, vertex_ids, values)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_data")
         check_array_like(values, "values", "write_block_scalar_data")
@@ -828,16 +794,18 @@ cdef class Interface:
 
         assert _values.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check size of input data provided. Provided size: {}, expected size: {}".format(_values.size, size)
         assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check size of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
-        self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
+        self.thisptr.writeBlockScalarData (mesh_name, data_name, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
-    def write_scalar_data (self, data_id, vertex_id, double value):
+    def write_scalar_data (self, mesh_name, data_name, vertex_id, double value):
         """
         Writes scalar data to a vertex
         This function writes a value of a specified vertex to a dataID.
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
             ID to write to.
         vertex_id : int
             Index of the vertex.
@@ -852,21 +820,24 @@ cdef class Interface:
         Examples
         --------
         Write scalar data for a 2D or 3D problem with 5 vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_id = 5
         >>> value = v5
-        >>> interface.write_scalar_data(data_id, vertex_id, value)
+        >>> interface.write_scalar_data(mesh_name, data_name, vertex_id, value)
         """
-        self.thisptr.writeScalarData (data_id, vertex_id, value)
+        self.thisptr.writeScalarData (mesh_name, data_name, vertex_id, value)
 
-    def read_block_vector_data (self, data_id, vertex_ids, relative_read_time=None):
+    def read_block_vector_data (self, mesh_name, data_name, vertex_ids, relative_read_time=None):
         """
         Reads vector data into a provided block. This function reads values of specified vertices
         from a dataID. Values are read into a block of continuous memory.
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
             ID to read from.
         vertex_ids : array_like
             Indices of the vertices.
@@ -888,16 +859,18 @@ cdef class Interface:
         Examples
         --------
         Read block vector data for a 2D problem with 5 vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_block_vector_data(data_id, vertex_ids)
+        >>> values = read_block_vector_data(mesh_name, data_name, vertex_ids)
         >>> values.shape
         >>> (5, 2)
 
         Read block vector data for a 3D system with 5 vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_block_vector_data(data_id, vertex_ids)
+        >>> values = read_block_vector_data(mesh_name, data_name, vertex_ids)
         >>> values.shape
         >>> (5, 3)
         """
@@ -908,19 +881,21 @@ cdef class Interface:
         dimensions = self.get_dimensions()
         cdef np.ndarray[np.double_t, ndim=1] _values = np.empty(size * dimensions, dtype=np.double)
         if relative_read_time is None:
-            self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+            self.thisptr.readBlockVectorData (mesh_name, data_name, size, <const int*>_vertex_ids.data, <double*>_values.data)
         else:
-            self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
+            self.thisptr.readBlockVectorData (mesh_name, data_name, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
         return _values.reshape((size, dimensions))
 
-    def read_vector_data (self, data_id, vertex_id, relative_read_time=None):
+    def read_vector_data (self, mesh_name, data_name, vertex_id, relative_read_time=None):
         """
         Reads vector data form a vertex. This function reads a value of a specified vertex
         from a dataID.
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to read from.
+        data_name : str
             ID to read from.
         vertex_id : int
             Index of the vertex.
@@ -941,36 +916,40 @@ cdef class Interface:
         Examples
         --------
         Read vector data for 2D problem:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_id = 5
-        >>> value = interface.read_vector_data(data_id, vertex_id)
+        >>> value = interface.read_vector_data(mesh_name, data_name, vertex_id)
         >>> value.shape
         (1, 2)
 
-        Read vector data for 2D problem:
-        >>> data_id = 1
+        Read vector data for 3D problem:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_id = 5
-        >>> value = interface.read_vector_data(data_id, vertex_id)
+        >>> value = interface.read_vector_data(mesh_name, data_name, vertex_id)
         >>> value.shape
         (1, 3)
         """
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
         if relative_read_time == None:
-            self.thisptr.readVectorData (data_id, vertex_id, <double*>_value.data)
+            self.thisptr.readVectorData (mesh_name, data_name, vertex_id, <double*>_value.data)
         else:
-            self.thisptr.readVectorData (data_id, vertex_id, relative_read_time, <double*>_value.data)
+            self.thisptr.readVectorData (mesh_name, data_name, vertex_id, relative_read_time, <double*>_value.data)
 
         return _value
 
-    def read_block_scalar_data (self, data_id, vertex_ids, relative_read_time=None):
+    def read_block_scalar_data (self, mesh_name, data_name, vertex_ids, relative_read_time=None):
         """
         Reads scalar data as a block. This function reads values of specified vertices from a dataID.
         Values are provided as a block of continuous memory.
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to read from.
+        data_name : str
             ID to read from.
         vertex_ids : array_like
             Indices of the vertices.
@@ -992,9 +971,10 @@ cdef class Interface:
         Examples
         --------
         Read block scalar data for 2D and 3D problems with 5 vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = interface.read_block_scalar_data(data_id, vertex_ids)
+        >>> values = interface.read_block_scalar_data(mesh_name, data_name, vertex_ids)
         >>> values.size
         >>> 5
 
@@ -1005,19 +985,21 @@ cdef class Interface:
         size = _vertex_ids.size
         cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
         if relative_read_time == None:
-            self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+            self.thisptr.readBlockScalarData (mesh_name, data_name, size, <const int*>_vertex_ids.data, <double*>_values.data)
         else:
-            self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
+            self.thisptr.readBlockScalarData (mesh_name, data_name, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
 
         return _values
 
-    def read_scalar_data (self, data_id, vertex_id, relative_read_time=None):
+    def read_scalar_data (self, mesh_name, data_name, vertex_id, relative_read_time=None):
         """
         Reads scalar data of a vertex. This function needs a value of a specified vertex from a dataID.
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to read to.
+        data_name : str
             ID to read from.
         vertex_id : int
             Index of the vertex.
@@ -1037,19 +1019,20 @@ cdef class Interface:
         Examples
         --------
         Read scalar data for 2D and 3D problems:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_id = 5
-        >>> value = interface.read_scalar_data(data_id, vertex_id)
+        >>> value = interface.read_scalar_data(mesh_name, data_name, vertex_id)
         """
         cdef double _value
         if relative_read_time == None:
-            self.thisptr.readScalarData (data_id, vertex_id, _value)
+            self.thisptr.readScalarData (mesh_name, data_name, vertex_id, _value)
         else:
-            self.thisptr.readScalarData (data_id, vertex_id, relative_read_time, _value)
+            self.thisptr.readScalarData (mesh_name, data_name, vertex_id, relative_read_time, _value)
 
         return _value
 
-    def write_block_vector_gradient_data (self, data_id, vertex_ids, gradientValues):
+    def write_block_vector_gradient_data (self, mesh_name, data_name, vertex_ids, gradientValues):
         """
         Writes vector gradient data given as block. This function writes gradient values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
@@ -1057,8 +1040,10 @@ cdef class Interface:
 
         Parameters
         ----------
-        data_id : int
-            Data ID to write to.
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
+            Data name to write to.
         vertex_ids : array_like
             Indices of the vertices.
         gradientValues : array_like
@@ -1075,16 +1060,18 @@ cdef class Interface:
         Examples
         --------
         Write block gradient vector data for a 2D problem with 2 vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
         >>> gradientValues = np.array([[v1x_dx, v1y_dx, v1x_dy, v1y_dy], [v2x_dx, v2y_dx, v2x_dy, v2y_dy]])
-        >>> interface.write_block_vector_gradient_data(data_id, vertex_ids, gradientValues)
+        >>> interface.write_block_vector_gradient_data(mesh_name, data_name, vertex_ids, gradientValues)
 
         Write block vector data for a 3D (D=3) problem with 2 (N=2) vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
         >>> gradientValues = np.array([[v1x_dx, v1y_dx, v1z_dx, v1x_dy, v1y_dy, v1z_dy, v1x_dz, v1y_dz, v1z_dz], [v2x_dx, v2y_dx, v2z_dx, v2x_dy, v2y_dy, v2z_dy, v2x_dz, v2y_dz, v2z_dz]])
-        >>> interface.write_block_vector_gradient_data(data_id, vertex_ids, gradientValues)
+        >>> interface.write_block_vector_gradient_data(mesh_name, data_name, vertex_ids, gradientValues)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_vector_gradient_data")
         check_array_like(gradientValues, "gradientValues", "write_block_vector_gradient_data")
@@ -1104,9 +1091,9 @@ cdef class Interface:
         assert _gradientValues.size == size * self.get_dimensions() * self.get_dimensions(), "Dimension of vector gradient data provided in write_block_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, size * self.get_dimensions() * self.get_dimensions())
         assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
 
-        self.thisptr.writeBlockVectorGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
+        self.thisptr.writeBlockVectorGradientData (mesh_name, data_name, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
-    def write_scalar_gradient_data (self, data_id, vertex_id, gradientValues):
+    def write_scalar_gradient_data (self, mesh_name, data_name, vertex_id, gradientValues):
         """
         Writes scalar gradient data to a vertex
         This function writes the corresponding gradient matrix value of a specified vertex to a dataID.
@@ -1121,7 +1108,9 @@ cdef class Interface:
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
             ID to write to.
         vertex_id : int
             Index of the vertex.
@@ -1140,12 +1129,12 @@ cdef class Interface:
         Examples
         --------
         Write scalar data for a 2D problem:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_id = 5
         >>> gradientValue = [v5_dx, v5_dy]
-        >>> interface.write_scalar_gradient_data(data_id, vertex_id, gradientValue)
+        >>> interface.write_scalar_gradient_data(mesh_name, data_name, vertex_id, gradientValue)
         """
-
         check_array_like(gradientValues, "gradientValues", "write_scalar_gradient_data")
 
         if not isinstance(gradientValues, np.ndarray):
@@ -1155,9 +1144,9 @@ cdef class Interface:
 
         assert _gradientValues.size == self.get_dimensions(), "Vector data provided for vertex {} in write_scalar_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions())
 
-        self.thisptr.writeScalarGradientData(data_id, vertex_id, <const double*>_gradientValues.data)
+        self.thisptr.writeScalarGradientData(mesh_name, data_name, vertex_id, <const double*>_gradientValues.data)
 
-    def write_vector_gradient_data (self, data_id, vertex_id, gradientValues):
+    def write_vector_gradient_data (self, mesh_name, data_name, vertex_id, gradientValues):
         """
         Writes vector gradient data to a vertex
         This function writes the corresponding gradient matrix value of a specified vertex to a dataID.
@@ -1172,7 +1161,9 @@ cdef class Interface:
 
         Parameters
         ----------
-        data_id : int
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
             ID to write to.
         vertex_id : int
             Index of the vertex.
@@ -1191,10 +1182,11 @@ cdef class Interface:
         Examples
         --------
         Write scalar data for a 2D problem:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_id = 5
         >>> gradientValue = [v5x_dx, v5y_dx, v5x_dy,v5y_dy]
-        >>> interface.write_vector_gradient_data(data_id, vertex_id, gradientValue)
+        >>> interface.write_vector_gradient_data(mesh_name, data_name, vertex_id, gradientValue)
         """
 
         check_array_like(gradientValues, "gradientValues", "write_vector_gradient_data")
@@ -1206,9 +1198,9 @@ cdef class Interface:
 
         assert _gradientValues.size == self.get_dimensions() * self.get_dimensions(), "Dimensions of vector gradient data provided for vertex {} in write_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions() * self.get_dimensions())
 
-        self.thisptr.writeVectorGradientData(data_id, vertex_id, <const double*>_gradientValues.data)
+        self.thisptr.writeVectorGradientData(mesh_name, data_name, vertex_id, <const double*>_gradientValues.data)
 
-    def write_block_scalar_gradient_data (self, data_id, vertex_ids, gradientValues):
+    def write_block_scalar_gradient_data (self, mesh_name, data_name, vertex_ids, gradientValues):
         """
         Writes scalar gradient data given as block. This function writes values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
@@ -1216,8 +1208,10 @@ cdef class Interface:
 
         Parameters
         ----------
-        data_id : int
-            Data ID to write to.
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
+            Data name to write to.
         vertex_ids : array_like
             Indices of the vertices.
         gradientValues : array_like
@@ -1234,16 +1228,18 @@ cdef class Interface:
         Examples
         --------
         Write block gradient scalar data for a 2D problem with 2 vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
         >>> gradientValues = np.array([[v1_dx, v1_dy], [v2_dx, v2_dy]])
-        >>> interface.write_block_scalar_gradient_data(data_id, vertex_ids, gradientValues)
+        >>> interface.write_block_scalar_gradient_data(mesh_name, data_name, vertex_ids, gradientValues)
 
         Write block scalar data for a 3D (D=3) problem with 2 (N=2) vertices:
-        >>> data_id = 1
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
         >>> values = np.array([[v1_dx, v1_dy, v1x_dz], [v2_dx, v2_dy, v2_dz]])
-        >>> interface.write_block_scalar_gradient_data(data_id, vertex_ids, values)
+        >>> interface.write_block_scalar_gradient_data(mesh_name, data_name, vertex_ids, values)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_gradient_data")
         check_array_like(gradientValues, "gradientValues", "write_block_sclar_gradient_data")
@@ -1263,31 +1259,31 @@ cdef class Interface:
         assert _gradientValues.size == size * self.get_dimensions(), "Scalar gradient data is not provided for all vertices in write_block_scalar_gradient_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, size * self.get_dimensions())
         assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
 
-        self.thisptr.writeBlockScalarGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
+        self.thisptr.writeBlockScalarGradientData (mesh_name, data_name, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
-    def requires_gradient_data_for(self, data_id):
+    def requires_gradient_data_for(self, data_name):
         """
         Checks if the given data set requires gradient data. We check if the data object has been intialized with the gradient flag.
 
         Parameters
         ----------
-        data_id : int
-            Data ID to check.
+        data_name : str
+            Data name to check.
 
         Returns
         -------
         bool
-            True if gradient data is required for a dataID.
+            True if gradient data is required for a data.
 
         Examples
         --------
-        Check if gradient data is required for a dataID:
-        >>> data_id = 1
-        >>> interface.is_gradient_data_required(data_id)
+        Check if gradient data is required for a data:
+        >>> data_name = "DataOne"
+        >>> interface.is_gradient_data_required(data_name)
         """
-        return self.thisptr.requiresGradientDataFor(data_id)
+        return self.thisptr.requiresGradientDataFor(data_name)
 
-    def set_mesh_access_region (self, mesh_id, bounding_box):
+    def set_mesh_access_region (self, mesh_name, bounding_box):
         """
         This function is required if you don't want to use the mapping schemes in preCICE, but rather
         want to use your own solver for data mapping. As opposed to the usual preCICE mapping, only a
@@ -1300,8 +1296,8 @@ cdef class Interface:
 
         Parameters
         ----------
-        mesh_id : int
-            ID of the mesh you want to access through the bounding box
+        mesh_name : str
+            Name of the mesh you want to access through the bounding box
         bounding_box : array_like
             Axis aligned bounding box. Example for 3D the format: [x_min, x_max, y_min, y_max, z_min, z_max]
 
@@ -1343,33 +1339,33 @@ cdef class Interface:
 
         cdef np.ndarray[double, ndim=1] _bounding_box = np.ascontiguousarray(bounding_box, dtype=np.double)
 
-        self.thisptr.setMeshAccessRegion(mesh_id, <double*>_bounding_box.data)
+        self.thisptr.setMeshAccessRegion(mesh_name, <double*>_bounding_box.data)
 
-    def get_mesh_vertices_and_ids (self, mesh_id):
+    def get_mesh_vertices_and_ids (self, mesh_name):
         """
         Iterating over the region of interest defined by bounding boxes and reading the corresponding
         coordinates omitting the mapping. This function is still experimental.
 
         Parameters
         ----------
-        mesh_id : int
-            Corresponding mesh ID
+        mesh_name : str
+            Corresponding mesh name
 
         Returns
         -------
         ids : numpy.ndarray
-            Vertex IDs correspdoning to the coordinates
+            Vertex IDs corresponding to the coordinates
         coordinates : numpy.ndarray
             he coordinates associated to the IDs and corresponding data values (dim * size)
         """
         warnings.warn("The function get_mesh_vertices_and_ids is still experimental.")
 
-        size = self.get_mesh_vertex_size(mesh_id)
+        size = self.get_mesh_vertex_size(mesh_name)
         cdef np.ndarray[int, ndim=1] _ids = np.empty(size, dtype=np.int32)
         dimensions = self.get_dimensions()
         cdef np.ndarray[double, ndim=1] _coordinates = np.empty(size*dimensions, dtype=np.double)
 
-        self.thisptr.getMeshVerticesAndIDs(mesh_id, size, <int*>_ids.data, <double*>_coordinates.data)
+        self.thisptr.getMeshVerticesAndIDs(mesh_name, size, <int*>_ids.data, <double*>_coordinates.data)
 
         return _ids, _coordinates.reshape((size, dimensions))
 

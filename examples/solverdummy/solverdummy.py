@@ -37,9 +37,7 @@ solver_process_size = 1
 interface = precice.Interface(participant_name, configuration_file_name,
                               solver_process_index, solver_process_size)
 
-mesh_id = interface.get_mesh_id(mesh_name)
-
-assert (interface.requires_mesh_connectivity_for(mesh_id) is False)
+assert (interface.requires_mesh_connectivity_for(mesh_name) is False)
 
 dimensions = interface.get_dimensions()
 
@@ -53,9 +51,7 @@ for x in range(num_vertices):
         read_data[x, y] = x
         write_data[x, y] = x
 
-vertex_ids = interface.set_mesh_vertices(mesh_id, vertices)
-read_data_id = interface.get_data_id(read_data_name, mesh_id)
-write_data_id = interface.get_data_id(write_data_name, mesh_id)
+vertex_ids = interface.set_mesh_vertices(mesh_name, vertices)
 
 dt = interface.initialize()
 
@@ -63,11 +59,11 @@ while interface.is_coupling_ongoing():
     if interface.requires_writing_checkpoint():
         print("DUMMY: Writing iteration checkpoint")
 
-    read_data = interface.read_block_vector_data(read_data_id, vertex_ids)
+    read_data = interface.read_block_vector_data(mesh_name, read_data_name, vertex_ids)
 
     write_data = read_data + 1
 
-    interface.write_block_vector_data(write_data_id, vertex_ids, write_data)
+    interface.write_block_vector_data(mesh_name, write_data_name, vertex_ids, write_data)
 
     print("DUMMY: Advancing in time")
     dt = interface.advance(dt)
