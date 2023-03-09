@@ -3,7 +3,9 @@ from libcpp.set    cimport set
 from libcpp.string cimport string
 
 cdef extern from "<string_view>" namespace "std":
-    pass
+    cdef cppclass string_view:
+        string_view() except +
+        string_view(const string&) except +  # necessary to cast Python strings to string_view before handing over to C++ API
 
 
 cdef extern from "precice/SolverInterface.hpp" namespace "precice":
