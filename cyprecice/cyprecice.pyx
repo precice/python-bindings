@@ -296,7 +296,7 @@ cdef class Interface:
         """
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        return self.thisptr.hasMesh (string_view(mesh_name_py_bytes))
+        return self.thisptr.hasMesh (<const char*> mesh_name_py_bytes)
 
 
     def get_mesh_handle(self, mesh_name):
@@ -350,7 +350,7 @@ cdef class Interface:
 
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        vertex_id = self.thisptr.setMeshVertex(string_view(mesh_name_py_bytes), <const double*>_position.data)
+        vertex_id = self.thisptr.setMeshVertex(<const char*> mesh_name_py_bytes, <const double*>_position.data)
         return vertex_id
 
     def get_mesh_vertex_size (self, mesh_name):
@@ -369,7 +369,7 @@ cdef class Interface:
         """
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        return self.thisptr.getMeshVertexSize(string_view(mesh_name_py_bytes))
+        return self.thisptr.getMeshVertexSize(<const char*> mesh_name_py_bytes)
 
     def set_mesh_vertices (self, mesh_name, positions):
         """
@@ -433,8 +433,9 @@ cdef class Interface:
         cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(size, dtype=np.int32)
 
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
+        #cdef str mesh_name_str = mesh_name.encode()
 
-        self.thisptr.setMeshVertices (string_view(mesh_name_py_bytes), size, <const double*>_positions.data, <int*>vertex_ids.data)
+        self.thisptr.setMeshVertices (<const char*> mesh_name_py_bytes, size, <const double*>_positions.data, <int*>vertex_ids.data)
         return vertex_ids
 
     def set_mesh_edge (self, mesh_name, first_vertex_id, second_vertex_id):
@@ -462,7 +463,7 @@ cdef class Interface:
         """
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshEdge (string_view(mesh_name_py_bytes), first_vertex_id, second_vertex_id)
+        self.thisptr.setMeshEdge (<const char*> mesh_name_py_bytes, first_vertex_id, second_vertex_id)
 
     def set_mesh_edges (self, mesh_name, vertices):
         """
@@ -501,7 +502,7 @@ cdef class Interface:
 
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshEdges (string_view(mesh_name_py_bytes), size, <const int*>_vertices.data)
+        self.thisptr.setMeshEdges (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
 
     def set_mesh_triangle (self, mesh_name, first_edge_id, second_edge_id, third_edge_id):
         """
@@ -525,7 +526,7 @@ cdef class Interface:
         """
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshTriangle (string_view(mesh_name_py_bytes), first_edge_id, second_edge_id, third_edge_id)
+        self.thisptr.setMeshTriangle (<const char*> mesh_name_py_bytes, first_edge_id, second_edge_id, third_edge_id)
 
     def set_mesh_triangles (self, mesh_name, vertices):
         """
@@ -564,7 +565,7 @@ cdef class Interface:
 
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         
-        self.thisptr.setMeshTriangles (string_view(mesh_name_py_bytes), size, <const int*>_vertices.data)
+        self.thisptr.setMeshTriangles (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
 
     def set_mesh_quad (self, mesh_name, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id):
         """
@@ -592,7 +593,7 @@ cdef class Interface:
         """
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         
-        self.thisptr.setMeshQuad (string_view(mesh_name_py_bytes), first_edge_id, second_edge_id, third_edge_id, fourth_edge_id)
+        self.thisptr.setMeshQuad (<const char*> mesh_name_py_bytes, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id)
 
     def set_mesh_quads (self, mesh_name, vertices):
         """
@@ -631,7 +632,7 @@ cdef class Interface:
 
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshQuads (string_view(mesh_name_py_bytes), size, <const int*>_vertices.data)
+        self.thisptr.setMeshQuads (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
 
     # data access
 
@@ -650,7 +651,7 @@ cdef class Interface:
             True if mesh connectivity is required.
         """
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        return self.thisptr.requiresMeshConnectivityFor(string_view(mesh_name_py_bytes))
+        return self.thisptr.requiresMeshConnectivityFor(<const char*> mesh_name_py_bytes)
 
     def has_data (self, data_name, mesh_name):
         """
@@ -670,7 +671,7 @@ cdef class Interface:
         """
         cdef bytes data_name_py_bytes = data_name.encode()
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        return self.thisptr.hasData(string_view(data_name_py_bytes), string_view(mesh_name_py_bytes))
+        return self.thisptr.hasData(<const char*> data_name_py_bytes, <const char*> mesh_name_py_bytes)
 
     def write_block_vector_data (self, mesh_name, data_name, vertex_ids, values):
         """
@@ -733,7 +734,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeBlockVectorData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), size, <const int*>_vertex_ids.data, <const double*>_values.data)
+        self.thisptr.writeBlockVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
     def write_vector_data (self, mesh_name, data_name, vertex_id, value):
         """
@@ -787,7 +788,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeVectorData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), vertex_id, <const double*>_value.data)
+        self.thisptr.writeVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <const double*>_value.data)
 
     def write_block_scalar_data (self, mesh_name, data_name, vertex_ids, values):
         """
@@ -838,7 +839,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeBlockScalarData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), size, <const int*>_vertex_ids.data, <const double*>_values.data)
+        self.thisptr.writeBlockScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <const double*>_values.data)
 
     def write_scalar_data (self, mesh_name, data_name, vertex_id, double value):
         """
@@ -873,7 +874,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeScalarData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), vertex_id, value)
+        self.thisptr.writeScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, value)
 
     def read_block_vector_data (self, mesh_name, data_name, vertex_ids, relative_read_time=None):
         """
@@ -931,10 +932,13 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
+        #cdef str mesh_name_str = mesh_name.encode()
+        #cdef str data_name_str = data_name.encode()
+
         if relative_read_time is None:
-            self.thisptr.readBlockVectorData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), size, <const int*>_vertex_ids.data, <double*>_values.data)
+            self.thisptr.readBlockVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <double*>_values.data)
         else:
-            self.thisptr.readBlockVectorData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
+            self.thisptr.readBlockVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
         return _values.reshape((size, dimensions))
 
     def read_vector_data (self, mesh_name, data_name, vertex_id, relative_read_time=None):
@@ -989,9 +993,9 @@ cdef class Interface:
         cdef bytes data_name_py_bytes = data_name.encode()
 
         if relative_read_time == None:
-            self.thisptr.readVectorData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), vertex_id, <double*>_value.data)
+            self.thisptr.readVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <double*>_value.data)
         else:
-            self.thisptr.readVectorData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), vertex_id, relative_read_time, <double*>_value.data)
+            self.thisptr.readVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, relative_read_time, <double*>_value.data)
 
         return _value
 
@@ -1044,9 +1048,9 @@ cdef class Interface:
         cdef bytes data_name_py_bytes = data_name.encode()
 
         if relative_read_time == None:
-            self.thisptr.readBlockScalarData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), size, <const int*>_vertex_ids.data, <double*>_values.data)
+            self.thisptr.readBlockScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <double*>_values.data)
         else:
-            self.thisptr.readBlockScalarData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
+            self.thisptr.readBlockScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
 
         return _values
 
@@ -1089,9 +1093,9 @@ cdef class Interface:
         cdef bytes data_name_py_bytes = data_name.encode()
 
         if relative_read_time == None:
-            self.thisptr.readScalarData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), vertex_id, _value)
+            self.thisptr.readScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, _value)
         else:
-            self.thisptr.readScalarData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), vertex_id, relative_read_time, _value)
+            self.thisptr.readScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, relative_read_time, _value)
 
         return _value
 
@@ -1157,7 +1161,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeBlockVectorGradientData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
+        self.thisptr.writeBlockVectorGradientData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
     def write_scalar_gradient_data (self, mesh_name, data_name, vertex_id, gradientValues):
         """
@@ -1213,7 +1217,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeScalarGradientData(string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), vertex_id, <const double*>_gradientValues.data)
+        self.thisptr.writeScalarGradientData(<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <const double*>_gradientValues.data)
 
     def write_vector_gradient_data (self, mesh_name, data_name, vertex_id, gradientValues):
         """
@@ -1270,7 +1274,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeVectorGradientData(string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), vertex_id, <const double*>_gradientValues.data)
+        self.thisptr.writeVectorGradientData(<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <const double*>_gradientValues.data)
 
     def write_block_scalar_gradient_data (self, mesh_name, data_name, vertex_ids, gradientValues):
         """
@@ -1334,7 +1338,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeBlockScalarGradientData (string_view(mesh_name_py_bytes), string_view(data_name_py_bytes), size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
+        self.thisptr.writeBlockScalarGradientData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
     def requires_gradient_data_for(self, mesh_name, data_name):
         """
@@ -1362,7 +1366,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        return self.thisptr.requiresGradientDataFor(string_view(mesh_name_py_bytes), string_view(data_name_py_bytes))
+        return self.thisptr.requiresGradientDataFor(<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes)
 
     def set_mesh_access_region (self, mesh_name, bounding_box):
         """
@@ -1422,7 +1426,7 @@ cdef class Interface:
 
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshAccessRegion(string_view(mesh_name_py_bytes), <double*>_bounding_box.data)
+        self.thisptr.setMeshAccessRegion(<const char*> mesh_name_py_bytes, <double*>_bounding_box.data)
 
     def get_mesh_vertices_and_ids (self, mesh_name):
         """
@@ -1450,7 +1454,7 @@ cdef class Interface:
 
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.getMeshVerticesAndIDs(string_view(mesh_name_py_bytes), size, <int*>_ids.data, <double*>_coordinates.data)
+        self.thisptr.getMeshVerticesAndIDs(<const char*> mesh_name_py_bytes, size, <int*>_ids.data, <double*>_coordinates.data)
 
         return _ids, _coordinates.reshape((size, dimensions))
 
