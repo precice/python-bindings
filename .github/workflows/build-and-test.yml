@@ -13,12 +13,12 @@ jobs:
     needs: [setup_test]
     runs-on: ubuntu-latest
     container: precice/precice:develop
-    options: user --root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
+          su precice
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
@@ -36,12 +36,12 @@ jobs:
     name: Run setup install
     runs-on: ubuntu-latest
     container: precice/precice:develop
-    options: user --root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
+          su precice
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
@@ -60,12 +60,12 @@ jobs:
     needs: [setup_install]
     runs-on: ubuntu-latest
     container: precice/precice:develop
-    options: user --root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
+          su precice
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
@@ -116,12 +116,12 @@ jobs:
     needs: [setup_test]
     runs-on: ubuntu-latest
     container: precice/precice:develop
-    options: user --root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
+          su precice
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
@@ -136,12 +136,12 @@ jobs:
     needs: [setup_install, setup_test]
     runs-on: ubuntu-latest
     container: precice/precice:develop
-    options: user --root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
+          su precice
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
