@@ -44,8 +44,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         bool hasMesh (const char* meshName) const
 
-        int getMeshID (const char* meshName) const
-
         bool requiresMeshConnectivityFor (const char* meshName) const
 
         int setMeshVertex (const char* meshName, const double* position)
@@ -69,8 +67,6 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
         # data access
 
         bool hasData (const char* dataName, const char* meshName) const
-
-        int getDataID (const char* dataName, const char* meshName) const
 
         void writeBlockVectorData (const char* meshName, const char* dataName, const int size, const int* valueIndices, const double* values)
 
