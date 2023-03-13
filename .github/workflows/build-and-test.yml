@@ -86,7 +86,7 @@ jobs:
       - uses: actions/setup-python@v1
       - name: Install OpenMPI, CMake, Boost library, Eigen and pkg-config
         run: |
-          su root
+          su precice
           apt-get -yy update
           apt-get install -y libopenmpi-dev cmake libboost-all-dev libeigen3-dev pkg-config
           rm -rf /var/lib/apt/lists/*
