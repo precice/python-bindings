@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install & upgrade pip3
         run: |
-          su precice
+          su root
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
@@ -41,7 +41,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
-          su precice
+          su root
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
@@ -65,7 +65,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
-          su precice
+          su root
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
@@ -86,6 +86,7 @@ jobs:
       - uses: actions/setup-python@v1
       - name: Install OpenMPI, CMake, Boost library, Eigen and pkg-config
         run: |
+          su root
           apt-get -yy update
           apt-get install -y libopenmpi-dev cmake libboost-all-dev libeigen3-dev pkg-config
           rm -rf /var/lib/apt/lists/*
