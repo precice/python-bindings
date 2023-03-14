@@ -63,10 +63,10 @@ SolverInterface::SolverInterface(
 
 SolverInterface::~SolverInterface() = default;
 
-double SolverInterface:: initialize(){return -1;}
-
-void SolverInterface:: initializeData()
-{}
+double SolverInterface:: initialize()
+{
+  return -1;
+}
 
 double SolverInterface:: advance
 (
@@ -94,13 +94,19 @@ bool SolverInterface:: isTimeWindowComplete() const
 }
 
 bool SolverInterface:: requiresInitialData()
-{}
+{
+  return 0;
+}
 
 bool SolverInterface:: requiresReadingCheckpoint()
-{}
+{
+  return 0;
+}
 
 bool SolverInterface:: requiresWritingCheckpoint()
-{}
+{
+  return 0;
+}
 
 bool SolverInterface:: hasMesh
 (
@@ -398,7 +404,8 @@ void SolverInterface:: readBlockScalarData
 
 void SolverInterface:: readScalarData
 (
-  int     dataID,
+  std::string_view meshName,
+  std::string_view dataName,
   int     valueIndex,
   double& value ) const
 {
@@ -407,7 +414,8 @@ void SolverInterface:: readScalarData
 
 void SolverInterface:: readScalarData
 (
-  int     dataID,
+  std::string_view meshName,
+  std::string_view dataName,
   int     valueIndex,
   double  relativeReadTime,
   double& value ) const
