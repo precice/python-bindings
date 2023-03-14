@@ -41,7 +41,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Install pip3, pkgconfig and upgrade pip3
         run: |
-          su root
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
