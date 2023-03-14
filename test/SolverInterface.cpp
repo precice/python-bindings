@@ -430,7 +430,7 @@ void SolverInterface:: setMeshAccessRegion
 {
     assert(meshID == fake_mesh_id);
 
-    for(int i = 0; i < fake_bounding_box.size(); i++){
+    for(std::size_t i = 0; i < fake_bounding_box.size(); i++){
         assert(boundingBox[i] == fake_bounding_box[i]);
     }
 }
@@ -445,10 +445,10 @@ void SolverInterface:: getMeshVerticesAndIDs
     assert(meshID == fake_mesh_id);
     assert(size == fake_ids.size());
 
-    for(int i = 0; i < fake_ids.size(); i++){
+    for(std::size_t i = 0; i < fake_ids.size(); i++){
         valueIndices[i] = fake_ids[i];
     }
-    for(int i = 0; i < fake_coordinates.size(); i++){
+    for(std::size_t i = 0; i < fake_coordinates.size(); i++){
         coordinates[i] = fake_coordinates[i];
     }
 }
