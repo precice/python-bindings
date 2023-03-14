@@ -52,7 +52,9 @@ jobs:
       - name: Run setup install
         run:  python3 setup.py install --user
       - name: Test install
-        run:  python3 -c "import precice"
+        run: |
+          export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+          python3 -c "import precice"
 
   setup_install_single_version_externally_managed:
     name: Run setup install --single-version-externally-managed (for spack)
