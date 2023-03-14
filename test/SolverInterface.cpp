@@ -2,6 +2,8 @@
 #include <iostream>
 #include <numeric>
 #include <cassert>
+#include <vector>
+#include <string_view>
 
 std::vector<double> fake_read_write_buffer;
 int fake_dimensions;
