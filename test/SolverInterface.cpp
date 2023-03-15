@@ -6,6 +6,7 @@
 #include <vector>
 #include <string_view>
 
+std::string fake_version;
 std::vector<double> fake_read_write_buffer;
 int fake_dimensions;
 int fake_mesh_id;
@@ -29,7 +30,7 @@ SolverInterface:: SolverInterface
   int                solverProcessIndex,
   int                solverProcessSize )
 {
-  std::string fake_version = "dummy";
+  fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
   fake_mesh_id = 0;
@@ -51,7 +52,7 @@ SolverInterface::SolverInterface(
     int                solverProcessSize,
     void *             communicator)
 {
-  std::string fake_version = "dummy";
+  fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
   fake_mesh_id = 0;
