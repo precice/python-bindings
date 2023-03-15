@@ -98,6 +98,7 @@ jobs:
           git clone --branch develop https://github.com/precice/precice.git precice-core
           mkdir -p precice
           cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
+          cp precice-core/src/precice/Tooling.hpp precice/Tooling.hpp
           cd precice-core
           mkdir build && cd build
           cmake .. -DPRECICE_MPICommunication=OFF -DPRECICE_PETScMapping=OFF -DPRECICE_PythonActions=OFF -DBUILD_TESTING=OFF
