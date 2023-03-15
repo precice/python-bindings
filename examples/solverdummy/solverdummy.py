@@ -39,7 +39,7 @@ interface = precice.Interface(participant_name, configuration_file_name,
 
 mesh_id = interface.get_mesh_id(mesh_name)
 
-assert (interface.is_mesh_connectivity_required(mesh_id) is False)
+assert (interface.requires_mesh_connectivity_for(mesh_id) is False)
 
 dimensions = interface.get_dimensions()
 
@@ -60,11 +60,8 @@ write_data_id = interface.get_data_id(write_data_name, mesh_id)
 dt = interface.initialize()
 
 while interface.is_coupling_ongoing():
-    if interface.is_action_required(
-            precice.action_write_iteration_checkpoint()):
+    if interface.requires_writing_checkpoint():
         print("DUMMY: Writing iteration checkpoint")
-        interface.mark_action_fulfilled(
-            precice.action_write_iteration_checkpoint())
 
     read_data = interface.read_block_vector_data(read_data_id, vertex_ids)
 
@@ -75,11 +72,8 @@ while interface.is_coupling_ongoing():
     print("DUMMY: Advancing in time")
     dt = interface.advance(dt)
 
-    if interface.is_action_required(
-            precice.action_read_iteration_checkpoint()):
+    if interface.requires_reading_checkpoint():
         print("DUMMY: Reading iteration checkpoint")
-        interface.mark_action_fulfilled(
-            precice.action_read_iteration_checkpoint())
 
 interface.finalize()
 print("DUMMY: Closing python solver dummy...")

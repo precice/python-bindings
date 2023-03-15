@@ -84,17 +84,20 @@ bool SolverInterface:: isTimeWindowComplete() const
   return 0;
 }
 
-bool SolverInterface:: isActionRequired
-(
-  const std::string& action ) const
+bool SolverInterface:: requiresInitialData()
 {
   return 0;
 }
 
-void SolverInterface:: markActionFulfilled
-(
-  const std::string& action )
-{}
+bool SolverInterface:: requiresReadingCheckpoint()
+{
+  return 0;
+}
+
+bool SolverInterface:: requiresWritingCheckpoint()
+{
+  return 0;
+}
 
 bool SolverInterface:: hasMesh
 (
@@ -108,11 +111,6 @@ int SolverInterface:: getMeshID
   const std::string& meshName ) const
 {
   return fake_mesh_id;
-}
-
-std::set<int> SolverInterface:: getMeshIDs() const
-{
-  return std::set<int>();
 }
 
 bool SolverInterface:: hasData
@@ -136,19 +134,7 @@ int SolverInterface:: getDataID
   }
 }
 
-bool SolverInterface::hasToEvaluateSurrogateModel() const
-{
-  return 0;
-}
-
-bool SolverInterface::hasToEvaluateFineModel() const
-{
-  return 0;
-}
-
-bool SolverInterface:: isMeshConnectivityRequired
-(
-  int           meshID ) const
+bool SolverInterface:: requiresMeshConnectivityFor(int meshID) const
 {
   return 0;
 }
@@ -179,49 +165,21 @@ void SolverInterface:: setMeshVertices
   std::copy(fake_ids.begin(), fake_ids.end(), ids);
 }
 
-void SolverInterface:: getMeshVertices
-(
-  int        meshID,
-  int        size,
-  const int* ids,
-  double*    positions ) const
-{
-  for(int i = 0; i < size; i++){
-      positions[fake_dimensions * i] = i;
-      positions[fake_dimensions * i + 1] = i + n_fake_vertices;
-      positions[fake_dimensions * i + 2] = i + 2 * n_fake_vertices;
-  }
-}
-
-void SolverInterface:: getMeshVertexIDsFromPositions
-(
-  int           meshID,
-  int           size,
-  const double* positions,
-  int*          ids ) const
-{
-  assert (size == fake_ids.size());
-  std::copy(fake_ids.begin(), fake_ids.end(), ids);
-}
-
-int SolverInterface:: setMeshEdge
+void SolverInterface:: setMeshEdge
 (
   int meshID,
   int firstVertexID,
   int secondVertexID )
-{
-  return -1;
-}
-
-void SolverInterface:: setMeshTriangle
-(
-  int meshID,
-  int firstEdgeID,
-  int secondEdgeID,
-  int thirdEdgeID )
 {}
 
-void SolverInterface:: setMeshTriangleWithEdges
+void SolverInterface:: setMeshEdges
+(
+  int meshID,
+  int size,
+  const int* vertices )
+{}
+
+void SolverInterface:: setMeshTriangle
 (
   int meshID,
   int firstVertexID,
@@ -229,22 +187,27 @@ void SolverInterface:: setMeshTriangleWithEdges
   int thirdVertexID )
 {}
 
-void SolverInterface:: setMeshQuad
+void SolverInterface:: setMeshTriangles
 (
   int meshID,
-  int firstEdgeID,
-  int secondEdgeID,
-  int thirdEdgeID,
-  int fourthEdgeID )
+  int size,
+  const int* vertices )
 {}
 
-void SolverInterface:: setMeshQuadWithEdges
+void SolverInterface:: setMeshQuad
 (
   int meshID,
   int firstVertexID,
   int secondVertexID,
   int thirdVertexID,
   int fourthVertexID )
+{}
+
+void SolverInterface:: setMeshQuads
+(
+  int meshID,
+  int size,
+  const int* vertices )
 {}
 
 void SolverInterface:: writeBlockVectorData
@@ -312,7 +275,7 @@ void SolverInterface:: readBlockVectorData
   int        dataID,
   int        size,
   const int* valueIndices,
-  double     dt,
+  double     relativeReadTime,
   double*    values ) const
 {
   for(int i = 0; i < size * this->getDimensions(); i++){
@@ -335,7 +298,7 @@ void SolverInterface:: readVectorData
 (
   int     dataID,
   int     valueIndex,
-  double  dt,
+  double  relativeReadTime,
   double* value ) const
 {
   for(int i = 0; i < this->getDimensions(); i++){
@@ -360,7 +323,7 @@ void SolverInterface:: readBlockScalarData
   int        dataID,
   int        size,
   const int* valueIndices,
-  double     dt,
+  double     relativeReadTime,
   double*    values ) const
 {
   for(int i = 0; i < size; i++){
@@ -381,7 +344,7 @@ void SolverInterface:: readScalarData
 (
   int     dataID,
   int     valueIndex,
-  double  dt,
+  double  relativeReadTime,
   double& value ) const
 {
     value = fake_read_write_buffer[0];
@@ -417,7 +380,7 @@ void SolverInterface:: getMeshVerticesAndIDs
     }
 }
 
-bool SolverInterface::isGradientDataRequired(int dataID) const
+bool SolverInterface::requiresGradientDataFor(int dataID) const
 {
   return 0;
 }
@@ -472,27 +435,5 @@ std::string getVersionInformation()
     std::string dummy ("dummy");
     return dummy;
 }
-
-namespace constants {
-
-const std::string& actionWriteInitialData()
-{
-    static std::string dummy ("dummy_write_initial_data");
-    return dummy;
-}
-
-const std::string& actionWriteIterationCheckpoint()
-{
-    static std::string dummy ("dummy_write_iteration");
-    return dummy;
-}
-
-const std::string& actionReadIterationCheckpoint()
-{
-    static std::string dummy ("dummy_read_iteration");
-    return dummy;
-}
-
-} // namespace precice, constants
 
 } // namespace precice
