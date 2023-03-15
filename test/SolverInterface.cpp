@@ -1,4 +1,5 @@
 #include "precice/SolverInterface.hpp"
+#include "precice/Tooling.hpp"
 #include <iostream>
 #include <numeric>
 #include <cassert>
@@ -451,6 +452,12 @@ void SolverInterface:: getMeshVerticesAndIDs
     for(std::size_t i = 0; i < fake_coordinates.size(); i++){
         coordinates[i] = fake_coordinates[i];
     }
+}
+
+std::string getVersionInformation()
+{
+  std::string version = "v2.x.x":
+  return version;
 }
 
 } // namespace precice
