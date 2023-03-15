@@ -456,7 +456,7 @@ void SolverInterface:: getMeshVerticesAndIDs
 
 std::string getVersionInformation()
 {
-  std::string version = "v2.x.x":
+  std::string version = "v2.x.x";
   return version;
 }
 
