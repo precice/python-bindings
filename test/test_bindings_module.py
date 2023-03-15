@@ -295,7 +295,7 @@ class TestBindings(TestCase):
 
     def test_get_version_information(self):
         version_info = precice.get_version_information()
-        fake_version_info = "dummy"  # compare to test/SolverInterface.cpp
+        fake_version_info = b"dummy"  # compare to test/SolverInterface.cpp
         self.assertEqual(version_info, fake_version_info)
 
     def test_set_mesh_access_region(self):
