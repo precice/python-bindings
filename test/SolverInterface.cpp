@@ -29,6 +29,7 @@ SolverInterface:: SolverInterface
   int                solverProcessIndex,
   int                solverProcessSize )
 {
+  std::string fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
   fake_mesh_id = 0;
@@ -50,6 +51,7 @@ SolverInterface::SolverInterface(
     int                solverProcessSize,
     void *             communicator)
 {
+  std::string fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
   fake_mesh_id = 0;
@@ -456,8 +458,7 @@ void SolverInterface:: getMeshVerticesAndIDs
 
 std::string getVersionInformation()
 {
-  std::string version = "v2.x.x";
-  return version;
+  return fake_version;
 }
 
 } // namespace precice
