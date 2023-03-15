@@ -992,7 +992,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        if relative_read_time == None:
+        if relative_read_time is None:
             self.thisptr.readVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <double*>_value.data)
         else:
             self.thisptr.readVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, relative_read_time, <double*>_value.data)
@@ -1047,7 +1047,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        if relative_read_time == None:
+        if relative_read_time is None:
             self.thisptr.readBlockScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <double*>_values.data)
         else:
             self.thisptr.readBlockScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
@@ -1092,7 +1092,7 @@ cdef class Interface:
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         cdef bytes data_name_py_bytes = data_name.encode()
 
-        if relative_read_time == None:
+        if relative_read_time is None:
             self.thisptr.readScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, _value)
         else:
             self.thisptr.readScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, relative_read_time, _value)
