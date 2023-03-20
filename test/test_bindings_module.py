@@ -30,11 +30,11 @@ class TestBindings(TestCase):
         # directly in the test, not in test/SolverInterface.hpp
         self.assertEqual(fake_dimension, solver_interface.get_dimensions())
 
-    def test_is_mesh_connectivity_required(self):
+    def test_requires_mesh_connectivity_for(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_bool = 0  # compare to output in test/SolverInterface.cpp
         fake_mesh_id = 0
-        self.assertEqual(fake_bool, solver_interface.is_mesh_connectivity_required(fake_mesh_id))
+        self.assertEqual(fake_bool, solver_interface.requires_mesh_connectivity_for(fake_mesh_id))
 
     def test_get_mesh_id(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
@@ -164,71 +164,12 @@ class TestBindings(TestCase):
         vertex_id = solver_interface.set_mesh_vertex(fake_mesh_id, position)
         self.assertTrue(0 == vertex_id)
 
-    def test_get_mesh_vertex_ids_from_positions(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        positions = np.random.rand(n_fake_vertices, fake_dimension)
-        fake_vertex_ids = range(n_fake_vertices)
-        vertex_ids = solver_interface.get_mesh_vertex_ids_from_positions(fake_mesh_id, positions)
-        self.assertTrue(np.array_equal(fake_vertex_ids, vertex_ids))
-
-    def test_get_mesh_vertex_ids_from_positions_list(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        positions = np.random.rand(n_fake_vertices, fake_dimension)
-        positions = list(list(positions[i, j] for j in range(
-            positions.shape[1])) for i in range(positions.shape[0]))
-        fake_vertex_ids = range(n_fake_vertices)
-        vertex_ids = solver_interface.get_mesh_vertex_ids_from_positions(fake_mesh_id, positions)
-        self.assertTrue(np.array_equal(fake_vertex_ids, vertex_ids))
-
-    def test_get_mesh_vertex_ids_from_positions_tuple(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        positions = np.random.rand(n_fake_vertices, fake_dimension)
-        positions = tuple(tuple(positions[i, j] for j in range(
-            positions.shape[1])) for i in range(positions.shape[0]))
-        fake_vertex_ids = range(n_fake_vertices)
-        vertex_ids = solver_interface.get_mesh_vertex_ids_from_positions(fake_mesh_id, positions)
-        self.assertTrue(np.array_equal(fake_vertex_ids, vertex_ids))
-
-    def test_get_mesh_vertex_ids_from_positions_mixed(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        positions = np.random.rand(n_fake_vertices, fake_dimension)
-        positions = list(tuple(positions[i, j] for j in range(
-            positions.shape[1])) for i in range(positions.shape[0]))
-        fake_vertex_ids = range(n_fake_vertices)
-        vertex_ids = solver_interface.get_mesh_vertex_ids_from_positions(fake_mesh_id, positions)
-        self.assertTrue(np.array_equal(fake_vertex_ids, vertex_ids))
-
     def test_get_mesh_vertex_size(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
         n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
         n_vertices = solver_interface.get_mesh_vertex_size(fake_mesh_id)
         self.assertTrue(n_fake_vertices == n_vertices)
-
-    def test_get_mesh_vertices(self):
-        solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
-        fake_mesh_id = 0  # compare to test/SolverInterface.cpp, fake_mesh_id
-        n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
-        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-        fake_vertices = np.zeros((n_fake_vertices, fake_dimension))
-        for i in range(n_fake_vertices):
-            fake_vertices[i, 0] = i
-            fake_vertices[i, 1] = i + n_fake_vertices
-            fake_vertices[i, 2] = i + 2 * n_fake_vertices
-        vertices = solver_interface.get_mesh_vertices(fake_mesh_id, range(n_fake_vertices))
-        self.assertTrue(np.array_equal(fake_vertices, vertices))
 
     def test_read_write_block_scalar_data(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
@@ -261,7 +202,7 @@ class TestBindings(TestCase):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         dummy_array = np.random.rand(3, 3)
         write_data = dummy_array[:, 1]
-        assert(write_data.flags["C_CONTIGUOUS"] is False)
+        assert (write_data.flags["C_CONTIGUOUS"] is False)
         solver_interface.write_block_scalar_data(1, np.array([1, 2, 3]), write_data)
         read_data = solver_interface.read_block_scalar_data(1, np.array([1, 2, 3]))
         self.assertTrue(np.array_equal(write_data, read_data))
@@ -319,7 +260,7 @@ class TestBindings(TestCase):
         size = 6
         dummy_array = np.random.rand(size, 5)
         write_data = dummy_array[:, 1:4]
-        assert(write_data.flags["C_CONTIGUOUS"] is False)
+        assert (write_data.flags["C_CONTIGUOUS"] is False)
         vertex_ids = np.arange(size)
         solver_interface.write_block_vector_data(1, vertex_ids, write_data)
         read_data = solver_interface.read_block_vector_data(1, vertex_ids)
@@ -355,7 +296,7 @@ class TestBindings(TestCase):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         dummy_array = np.random.rand(3, 3)
         write_data = dummy_array[:, 1]
-        assert(write_data.flags["C_CONTIGUOUS"] is False)
+        assert (write_data.flags["C_CONTIGUOUS"] is False)
         solver_interface.write_vector_data(1, 1, write_data)
         read_data = solver_interface.read_vector_data(1, 1)
         self.assertTrue(np.array_equal(write_data, read_data))
@@ -372,21 +313,6 @@ class TestBindings(TestCase):
         version_info = precice.get_version_information()
         fake_version_info = b"dummy"  # compare to test/SolverInterface.cpp
         self.assertEqual(version_info, fake_version_info)
-
-    def test_action_write_initial_data(self):
-        return_constant = precice.action_write_initial_data()
-        dummy_constant = b"dummy_write_initial_data"  # compare to test/SolverInterface.cpp
-        self.assertEqual(return_constant, dummy_constant)
-
-    def test_action_write_iteration_checkpoint(self):
-        return_constant = precice.action_write_iteration_checkpoint()
-        dummy_constant = b"dummy_write_iteration"  # compare to test/SolverInterface.cpp
-        self.assertEqual(return_constant, dummy_constant)
-
-    def test_action_read_iteration_checkpoint(self):
-        return_constant = precice.action_read_iteration_checkpoint()
-        dummy_constant = b"dummy_read_iteration"  # compare to test/SolverInterface.cpp
-        self.assertEqual(return_constant, dummy_constant)
 
     def test_set_mesh_access_region(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
@@ -410,11 +336,11 @@ class TestBindings(TestCase):
         self.assertTrue(np.array_equal(fake_ids, vertex_ids))
         self.assertTrue(np.array_equal(fake_coordinates, coordinates))
 
-    def test_is_gradient_data_required(self):
+    def test_requires_gradient_data_for(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
         fake_bool = 0  # compare to output in test/SolverInterface.cpp
         fake_data_id = 0
-        self.assertEqual(fake_bool, solver_interface.is_gradient_data_required(fake_data_id))
+        self.assertEqual(fake_bool, solver_interface.requires_gradient_data_for(fake_data_id))
 
     def test_write_block_scalar_gradient_data(self):
         solver_interface = precice.Interface("test", "dummy.xml", 0, 1)
