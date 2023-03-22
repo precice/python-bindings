@@ -2,6 +2,11 @@ from libcpp        cimport bool
 from libcpp.set    cimport set
 from libcpp.string cimport string
 
+cdef extern from "<string_view>" namespace "std":
+    cdef cppclass string_view:
+        string_view() except +
+        string_view(const string&) except +  # necessary to cast Python strings to string_view before handing over to C++ API
+
 
 cdef extern from "precice/SolverInterface.hpp" namespace "precice":
     cdef cppclass SolverInterface:
@@ -37,77 +42,73 @@ cdef extern from "precice/SolverInterface.hpp" namespace "precice":
 
         # mesh access
 
-        bool hasMesh (const string& meshName ) const
+        bool hasMesh (const char* meshName) const
 
-        int getMeshID (const string& meshName) const
+        bool requiresMeshConnectivityFor (const char* meshName) const
 
-        bool requiresMeshConnectivityFor (int meshID) const
+        int setMeshVertex (const char* meshName, const double* position)
 
-        int setMeshVertex (int meshID, const double* position)
+        int getMeshVertexSize (const char* meshName) const
 
-        int getMeshVertexSize (int meshID) const
+        void setMeshVertices (const char* meshName, int size, const double* positions, int* ids)
 
-        void setMeshVertices (int meshID, int size, const double* positions, int* ids)
+        void setMeshEdge (const char* meshName, int firstVertexID, int secondVertexID)
 
-        void setMeshEdge (int meshID, int firstVertexID, int secondVertexID)
+        void setMeshEdges (const char* meshName, int size, const int* vertices)
 
-        void setMeshEdges (int meshID, int size, const int* vertices)
+        void setMeshTriangle (const char* meshName, int firstVertexID, int secondVertexID, int thirdVertexID)
 
-        void setMeshTriangle (int meshID, int firstVertexID, int secondVertexID, int thirdVertexID)
+        void setMeshTriangles (const char* meshName, int size, const int* vertices)
 
-        void setMeshTriangles (int meshID, int size, const int* vertices)
+        void setMeshQuad (const char* meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
 
-        void setMeshQuad (int meshID, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
-
-        void setMeshQuads (int meshID, int size, const int* vertices)
+        void setMeshQuads (const char* meshName, int size, const int* vertices)
 
         # data access
 
-        bool hasData (const string& dataName, int meshID) const
+        bool hasData (const char* dataName, const char* meshName) const
 
-        int getDataID (const string& dataName, int meshID) const
+        void writeBlockVectorData (const char* meshName, const char* dataName, const int size, const int* valueIndices, const double* values)
 
-        void writeBlockVectorData (const int dataID, const int size, const int* valueIndices, const double* values)
+        void writeVectorData (const char* meshName, const char* dataName, const int valueIndex, const double* value)
 
-        void writeVectorData (const int dataID, const int valueIndex, const double* value)
+        void writeBlockScalarData (const char* meshName, const char* dataName, const int size, const int* valueIndices, const double* values)
 
-        void writeBlockScalarData (const int dataID, const int size, const int* valueIndices, const double* values)
+        void writeScalarData (const char* meshName, const char* dataName, const int valueIndex, const double value)
 
-        void writeScalarData (const int dataID, const int valueIndex, const double value)
+        void readBlockVectorData (const char* meshName, const char* dataName, const int size, const int* valueIndices, double* values) const
 
-        void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double* values) const
+        void readBlockVectorData (const char* meshName, const char* dataName, const int size, const int* valueIndices, double relativeReadTime, double* values) const
 
-        void readBlockVectorData (const int dataID, const int size, const int* valueIndices, double relativeReadTime, double* values) const
+        void readVectorData (const char* meshName, const char* dataName, const int valueIndex, double* value) const
 
-        void readVectorData (const int dataID, const int valueIndex, double* value) const
+        void readVectorData (const char* meshName, const char* dataName, const int valueIndex, double relativeReadTime, double* value) const
 
-        void readVectorData (const int dataID, const int valueIndex, double relativeReadTime, double* value) const
+        void readBlockScalarData (const char* meshName, const char* dataName, const int size, const int* valueIndices, double* values) const
 
-        void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double* values) const
+        void readBlockScalarData (const char* meshName, const char* dataName, const int size, const int* valueIndices, double relativeReadTime, double* values) const
 
-        void readBlockScalarData (const int dataID, const int size, const int* valueIndices, double relativeReadTime, double* values) const
+        void readScalarData (const char* meshName, const char* dataName, const int valueIndex, double& value) const
 
-        void readScalarData (const int dataID, const int valueIndex, double& value) const
-
-        void readScalarData (const int dataID, const int valueIndex, double relativeReadTime, double& value) const
+        void readScalarData (const char* meshName, const char* dataName, const int valueIndex, double relativeReadTime, double& value) const
 
         # Gradient related API
 
-        bool requiresGradientDataFor(int dataID) const
+        bool requiresGradientDataFor(const char* meshName, const char* dataName) const
 
-        void writeBlockVectorGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues)
+        void writeBlockVectorGradientData(const char* meshName, const char* dataName, int size, const int* valueIndices, const double* gradientValues)
 
-        void writeScalarGradientData(int dataID, int valueIndex, const double* gradientValues)
+        void writeScalarGradientData(const char* meshName, const char* dataName, int valueIndex, const double* gradientValues)
 
-        void writeVectorGradientData(int dataID, int valueIndex, const double* gradientValues)
+        void writeVectorGradientData(const char* meshName, const char* dataName, int valueIndex, const double* gradientValues)
 
-        void writeBlockScalarGradientData(int dataID, int size, const int* valueIndices, const double* gradientValues)
+        void writeBlockScalarGradientData(const char* meshName, const char* dataName, int size, const int* valueIndices, const double* gradientValues)
 
         # direct mesh access
 
-        void setMeshAccessRegion (const int meshID, const double* boundingBox) const
+        void setMeshAccessRegion (const char* meshName, const double* boundingBox) const
 
-        void getMeshVerticesAndIDs (const int meshID, const int size, int* ids, double* coordinates) const
+        void getMeshVerticesAndIDs (const char* meshName, const int size, int* ids, double* coordinates) const
 
 cdef extern from "precice/Tooling.hpp" namespace "precice":
     string getVersionInformation()

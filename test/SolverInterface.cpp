@@ -1,13 +1,17 @@
 #include "precice/SolverInterface.hpp"
+#include "precice/Tooling.hpp"
 #include <iostream>
 #include <numeric>
 #include <cassert>
+#include <vector>
+#include <string_view>
 
+std::string fake_version;
 std::vector<double> fake_read_write_buffer;
 int fake_dimensions;
-int fake_mesh_id;
 std::vector<int> fake_ids;
 int n_fake_vertices;
+std::string fake_mesh_name;
 std::string fake_data_name;
 int fake_data_id;
 std::vector<double> fake_bounding_box;
@@ -21,15 +25,16 @@ class SolverInterfaceImpl{};
 
 SolverInterface:: SolverInterface
 (
-  const std::string& participantName,
-  const std::string& configurationFileName,
+  std::string_view participantName,
+  std::string_view configurationFileName,
   int                solverProcessIndex,
   int                solverProcessSize )
 {
+  fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
-  fake_mesh_id = 0;
   fake_data_id = 15;
+  fake_mesh_name = "FakeMesh";
   fake_data_name = "FakeData";
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
@@ -41,16 +46,17 @@ SolverInterface:: SolverInterface
 }
 
 SolverInterface::SolverInterface(
-    const std::string& participantName,
-    const std::string& configurationFileName,
+    std::string_view participantName,
+    std::string_view configurationFileName,
     int                solverProcessIndex,
     int                solverProcessSize,
     void *             communicator)
 {
+  fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
-  fake_mesh_id = 0;
   fake_data_id = 15;
+  fake_mesh_name = "FakeMesh";
   fake_data_name = "FakeData";
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
@@ -61,18 +67,25 @@ SolverInterface::SolverInterface(
 
 SolverInterface::~SolverInterface() = default;
 
-double SolverInterface:: initialize(){return -1;}
+double SolverInterface:: initialize()
+{
+  return -1;
+}
 
 double SolverInterface:: advance
 (
   double computedTimestepLength )
-{return -1;}
+{
+  return -1;
+}
 
 void SolverInterface:: finalize()
 {}
 
 int SolverInterface:: getDimensions() const
-{return fake_dimensions;}
+{
+  return fake_dimensions;
+}
 
 bool SolverInterface:: isCouplingOngoing() const
 {
@@ -101,47 +114,37 @@ bool SolverInterface:: requiresWritingCheckpoint()
 
 bool SolverInterface:: hasMesh
 (
-  const std::string& meshName ) const
+  std::string_view meshName ) const
 {
   return 0;
 }
 
-int SolverInterface:: getMeshID
+bool SolverInterface:: requiresMeshConnectivityFor
 (
-  const std::string& meshName ) const
+  std::string_view meshName) const
 {
-  return fake_mesh_id;
+  return 0;
+}
+
+bool SolverInterface::requiresGradientDataFor
+(
+  std::string_view meshName,
+  std::string_view dataName) const
+{
+  return 0;
 }
 
 bool SolverInterface:: hasData
 (
-  const std::string& dataName, int meshID ) const
-{
-  return 0;
-}
-
-int SolverInterface:: getDataID
-(
-  const std::string& dataName, int meshID ) const
-{
-  if(meshID == fake_mesh_id && dataName == fake_data_name)
-  {
-    return fake_data_id;
-  }
-  else
-  {
-    return -1;
-  }
-}
-
-bool SolverInterface:: requiresMeshConnectivityFor(int meshID) const
+  std::string_view dataName,
+  std::string_view meshName) const
 {
   return 0;
 }
 
 int SolverInterface:: setMeshVertex
 (
-  int           meshID,
+  std::string_view meshName,
   const double* position )
 {
   return 0;
@@ -149,14 +152,14 @@ int SolverInterface:: setMeshVertex
 
 int SolverInterface:: getMeshVertexSize
 (
-  int meshID) const
+  std::string_view meshName) const
 {
   return n_fake_vertices;
 }
 
 void SolverInterface:: setMeshVertices
 (
-  int           meshID,
+  std::string_view meshName,
   int           size,
   const double* positions,
   int*          ids )
@@ -167,21 +170,20 @@ void SolverInterface:: setMeshVertices
 
 void SolverInterface:: setMeshEdge
 (
-  int meshID,
+  std::string_view meshName,
   int firstVertexID,
   int secondVertexID )
 {}
 
-void SolverInterface:: setMeshEdges
-(
-  int meshID,
-  int size,
-  const int* vertices )
+void SolverInterface::setMeshEdges(
+    std::string_view meshName,
+    int              size,
+    const int *      vertices)
 {}
 
 void SolverInterface:: setMeshTriangle
 (
-  int meshID,
+  std::string_view meshName,
   int firstVertexID,
   int secondVertexID,
   int thirdVertexID )
@@ -189,14 +191,14 @@ void SolverInterface:: setMeshTriangle
 
 void SolverInterface:: setMeshTriangles
 (
-  int meshID,
+  std::string_view meshName,
   int size,
-  const int* vertices )
+  const int * vertices )
 {}
 
 void SolverInterface:: setMeshQuad
 (
-  int meshID,
+  std::string_view meshName,
   int firstVertexID,
   int secondVertexID,
   int thirdVertexID,
@@ -205,14 +207,29 @@ void SolverInterface:: setMeshQuad
 
 void SolverInterface:: setMeshQuads
 (
-  int meshID,
-  int size,
-  const int* vertices )
+  std::string_view meshName,
+  int              size,
+  const int *      vertices)
+{}
+
+void SolverInterface::setMeshTetrahedron(
+    std::string_view meshName,
+    int              firstVertexID,
+    int              secondVertexID,
+    int              thirdVertexID,
+    int              fourthVertexID)
+{}
+
+void SolverInterface::setMeshTetrahedra(
+    std::string_view meshName,
+    int              size,
+    const int *      vertices)
 {}
 
 void SolverInterface:: writeBlockVectorData
 (
-  int     dataID,
+  std::string_view meshName,
+  std::string_view dataName,
   int     size,
   const int*    valueIndices,
   const double* values )
@@ -225,7 +242,8 @@ void SolverInterface:: writeBlockVectorData
 
 void SolverInterface:: writeVectorData
 (
-  int           dataID,
+  std::string_view meshName,
+  std::string_view dataName,
   int           valueIndex,
   const double* value )
 {
@@ -237,7 +255,8 @@ void SolverInterface:: writeVectorData
 
 void SolverInterface:: writeBlockScalarData
 (
-  int           dataID,
+  std::string_view meshName,
+  std::string_view dataName,
   int           size,
   const int*    valueIndices,
   const double* values )
@@ -250,7 +269,8 @@ void SolverInterface:: writeBlockScalarData
 
 void SolverInterface:: writeScalarData
 (
-  int    dataID,
+  std::string_view meshName,
+  std::string_view dataName,
   int    valueIndex,
   double value )
 {
@@ -258,135 +278,9 @@ void SolverInterface:: writeScalarData
     fake_read_write_buffer.push_back(value);
 }
 
-void SolverInterface:: readBlockVectorData
-(
-  int        dataID,
-  int        size,
-  const int* valueIndices,
-  double*    values ) const
-{
-  for(int i = 0; i < size * this->getDimensions(); i++){
-      values[i] = fake_read_write_buffer[i];
-    }
-}
-
-void SolverInterface:: readBlockVectorData
-(
-  int        dataID,
-  int        size,
-  const int* valueIndices,
-  double     relativeReadTime,
-  double*    values ) const
-{
-  for(int i = 0; i < size * this->getDimensions(); i++){
-      values[i] = fake_read_write_buffer[i];
-    }
-}
-
-void SolverInterface:: readVectorData
-(
-  int     dataID,
-  int     valueIndex,
-  double* value ) const
-{
-  for(int i = 0; i < this->getDimensions(); i++){
-      value[i] = fake_read_write_buffer[i];
-    }
-}
-
-void SolverInterface:: readVectorData
-(
-  int     dataID,
-  int     valueIndex,
-  double  relativeReadTime,
-  double* value ) const
-{
-  for(int i = 0; i < this->getDimensions(); i++){
-      value[i] = fake_read_write_buffer[i];
-    }
-}
-
-void SolverInterface:: readBlockScalarData
-(
-  int        dataID,
-  int        size,
-  const int* valueIndices,
-  double*    values ) const
-{
-  for(int i = 0; i < size; i++){
-      values[i] = fake_read_write_buffer[i];
-    }
-}
-
-void SolverInterface:: readBlockScalarData
-(
-  int        dataID,
-  int        size,
-  const int* valueIndices,
-  double     relativeReadTime,
-  double*    values ) const
-{
-  for(int i = 0; i < size; i++){
-      values[i] = fake_read_write_buffer[i];
-  }
-}
-
-void SolverInterface:: readScalarData
-(
-  int     dataID,
-  int     valueIndex,
-  double& value ) const
-{
-    value = fake_read_write_buffer[0];
-}
-
-void SolverInterface:: readScalarData
-(
-  int     dataID,
-  int     valueIndex,
-  double  relativeReadTime,
-  double& value ) const
-{
-    value = fake_read_write_buffer[0];
-}
-
-void SolverInterface:: setMeshAccessRegion
-(
-  const int meshID,
-  const double* boundingBox ) const
-{
-    assert(meshID == fake_mesh_id);
-
-    for(int i = 0; i < fake_bounding_box.size(); i++){
-        assert(boundingBox[i] == fake_bounding_box[i]);
-    }
-}
-
-void SolverInterface:: getMeshVerticesAndIDs
-(
-  const int meshID,
-  const int size,
-  int* valueIndices,
-  double* coordinates ) const
-{
-    assert(meshID == fake_mesh_id);
-    assert(size == fake_ids.size());
-
-    for(int i = 0; i < fake_ids.size(); i++){
-        valueIndices[i] = fake_ids[i];
-    }
-    for(int i = 0; i < fake_coordinates.size(); i++){
-        coordinates[i] = fake_coordinates[i];
-    }
-}
-
-bool SolverInterface::requiresGradientDataFor(int dataID) const
-{
-  return 0;
-}
-
 void SolverInterface::writeBlockVectorGradientData(
-    int           dataID,
+    std::string_view meshName,
+    std::string_view dataName,
     int           size,
     const int    *valueIndices,
     const double *gradientValues)
@@ -398,7 +292,8 @@ void SolverInterface::writeBlockVectorGradientData(
 }
 
 void SolverInterface::writeScalarGradientData(
-    int           dataID,
+    std::string_view meshName,
+    std::string_view dataName,
     int           valueIndex,
     const double *gradientValues)
 {
@@ -408,7 +303,8 @@ void SolverInterface::writeScalarGradientData(
   }
 }
 void SolverInterface::writeBlockScalarGradientData(
-    int           dataID,
+    std::string_view meshName,
+    std::string_view dataName,
     int           size,
     const int    *valueIndices,
     const double *gradientValues)
@@ -420,7 +316,8 @@ void SolverInterface::writeBlockScalarGradientData(
 }
 
 void SolverInterface::writeVectorGradientData(
-    int           dataID,
+    std::string_view meshName,
+    std::string_view dataName,
     int           valueIndex,
     const double *gradientValues)
 {
@@ -430,10 +327,139 @@ void SolverInterface::writeVectorGradientData(
   }
 }
 
+void SolverInterface:: readBlockVectorData
+(
+  std::string_view meshName,
+  std::string_view dataName,
+  int        size,
+  const int* valueIndices,
+  double*    values ) const
+{
+  for(int i = 0; i < size * this->getDimensions(); i++){
+      values[i] = fake_read_write_buffer[i];
+    }
+}
+
+void SolverInterface:: readBlockVectorData
+(
+  std::string_view meshName,
+  std::string_view dataName,
+  int        size,
+  const int* valueIndices,
+  double     relativeReadTime,
+  double*    values ) const
+{
+  for(int i = 0; i < size * this->getDimensions(); i++){
+      values[i] = fake_read_write_buffer[i];
+    }
+}
+
+void SolverInterface:: readVectorData
+(
+  std::string_view meshName,
+  std::string_view dataName,
+  int     valueIndex,
+  double* value ) const
+{
+  for(int i = 0; i < this->getDimensions(); i++){
+      value[i] = fake_read_write_buffer[i];
+    }
+}
+
+void SolverInterface:: readVectorData
+(
+  std::string_view meshName,
+  std::string_view dataName,
+  int     valueIndex,
+  double  relativeReadTime,
+  double* value ) const
+{
+  for(int i = 0; i < this->getDimensions(); i++){
+      value[i] = fake_read_write_buffer[i];
+    }
+}
+
+void SolverInterface:: readBlockScalarData
+(
+  std::string_view meshName,
+  std::string_view dataName,
+  int        size,
+  const int* valueIndices,
+  double*    values ) const
+{
+  for(int i = 0; i < size; i++){
+      values[i] = fake_read_write_buffer[i];
+    }
+}
+
+void SolverInterface:: readBlockScalarData
+(
+  std::string_view meshName,
+  std::string_view dataName,
+  int        size,
+  const int* valueIndices,
+  double     relativeReadTime,
+  double*    values ) const
+{
+  for(int i = 0; i < size; i++){
+      values[i] = fake_read_write_buffer[i];
+  }
+}
+
+void SolverInterface:: readScalarData
+(
+  std::string_view meshName,
+  std::string_view dataName,
+  int     valueIndex,
+  double& value ) const
+{
+    value = fake_read_write_buffer[0];
+}
+
+void SolverInterface:: readScalarData
+(
+  std::string_view meshName,
+  std::string_view dataName,
+  int     valueIndex,
+  double  relativeReadTime,
+  double& value ) const
+{
+    value = fake_read_write_buffer[0];
+}
+
+void SolverInterface:: setMeshAccessRegion
+(
+  std::string_view meshName,
+  const double* boundingBox ) const
+{
+    assert(meshName == fake_mesh_name);
+
+    for(std::size_t i = 0; i < fake_bounding_box.size(); i++){
+        assert(boundingBox[i] == fake_bounding_box[i]);
+    }
+}
+
+void SolverInterface:: getMeshVerticesAndIDs
+(
+  std::string_view meshName,
+  const int size,
+  int* valueIndices,
+  double* coordinates ) const
+{
+    assert(meshName == fake_mesh_name);
+    assert(size == fake_ids.size());
+
+    for(std::size_t i = 0; i < fake_ids.size(); i++){
+        valueIndices[i] = fake_ids[i];
+    }
+    for(std::size_t i = 0; i < fake_coordinates.size(); i++){
+        coordinates[i] = fake_coordinates[i];
+    }
+}
+
 std::string getVersionInformation()
 {
-    std::string dummy ("dummy");
-    return dummy;
+  return fake_version;
 }
 
 } // namespace precice
