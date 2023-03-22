@@ -9,9 +9,9 @@
 std::string fake_version;
 std::vector<double> fake_read_write_buffer;
 int fake_dimensions;
-int fake_mesh_id;
 std::vector<int> fake_ids;
 int n_fake_vertices;
+std::string fake_mesh_name;
 std::string fake_data_name;
 int fake_data_id;
 std::vector<double> fake_bounding_box;
@@ -33,8 +33,8 @@ SolverInterface:: SolverInterface
   fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
-  fake_mesh_id = 0;
   fake_data_id = 15;
+  fake_mesh_name = "FakeMesh";
   fake_data_name = "FakeData";
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
@@ -57,6 +57,7 @@ SolverInterface::SolverInterface(
   fake_dimensions = 3;
   fake_mesh_id = 0;
   fake_data_id = 15;
+  fake_mesh_name = "FakeMesh";
   fake_data_name = "FakeData";
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
@@ -432,7 +433,7 @@ void SolverInterface:: setMeshAccessRegion
   std::string_view meshName,
   const double* boundingBox ) const
 {
-    assert(meshID == fake_mesh_id);
+    assert(meshName == fake_mesh_name);
 
     for(std::size_t i = 0; i < fake_bounding_box.size(); i++){
         assert(boundingBox[i] == fake_bounding_box[i]);
@@ -446,7 +447,7 @@ void SolverInterface:: getMeshVerticesAndIDs
   int* valueIndices,
   double* coordinates ) const
 {
-    assert(meshID == fake_mesh_id);
+    assert(meshName == fake_mesh_name);
     assert(size == fake_ids.size());
 
     for(std::size_t i = 0; i < fake_ids.size(); i++){
