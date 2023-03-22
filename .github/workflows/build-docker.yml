@@ -34,4 +34,4 @@ jobs:
           tags: ${{ env.docker_username }}/python-bindings:${{ env.branch }},${{ env.docker_username }}/python-bindings:latest
           build-args: |
             branch=${{ env.branch }}
-            from=benjaminrodenberg/precice:develop
+            from=precice/precice:develop
