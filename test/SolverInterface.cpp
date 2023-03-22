@@ -55,7 +55,6 @@ SolverInterface::SolverInterface(
   fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_dimensions = 3;
-  fake_mesh_id = 0;
   fake_data_id = 15;
   fake_mesh_name = "FakeMesh";
   fake_data_name = "FakeData";
