@@ -446,9 +446,9 @@ cdef class Interface:
         ----------
         mesh_name : str
             Name of the mesh to add the edge to.
-        firstVertexID : int
+        first_vertex_id : int
             ID of the first vertex of the edge.
-        secondVertexID : int
+        second_vertex_id : int
             ID of the second vertex of the edge.
 
         Returns
@@ -504,7 +504,7 @@ cdef class Interface:
 
         self.thisptr.setMeshEdges (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
 
-    def set_mesh_triangle (self, mesh_name, first_edge_id, second_edge_id, third_edge_id):
+    def set_mesh_triangle (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id):
         """
         Sets mesh triangle from edge IDs
 
@@ -512,21 +512,21 @@ cdef class Interface:
         ----------
         mesh_name : str
             Name of the mesh to add the triangle to.
-        first_edge_id : int
-            ID of the first edge of the triangle.
-        second_edge_id : int
-            ID of the second edge of the triangle.
-        third_edge_id : int
-            ID of the third edge of the triangle.
+        first_vertex_id : int
+            ID of the first vertex of the triangle.
+        second_vertex_id : int
+            ID of the second vertex of the triangle.
+        third_vertex_id : int
+            ID of the third vertex of the triangle.
 
         Notes
         -----
         Previous calls:
-            edges with first_edge_id, second_edge_id, and third_edge_id were added to the mesh with the name mesh_name
+            vertices with first_vertex_id, second_vertex_id, and third_vertex_id were added to the mesh with the name mesh_name
         """
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshTriangle (<const char*> mesh_name_py_bytes, first_edge_id, second_edge_id, third_edge_id)
+        self.thisptr.setMeshTriangle (<const char*> mesh_name_py_bytes, first_vertex_id, second_vertex_id, third_vertex_id)
 
     def set_mesh_triangles (self, mesh_name, vertices):
         """
@@ -567,33 +567,33 @@ cdef class Interface:
         
         self.thisptr.setMeshTriangles (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
 
-    def set_mesh_quad (self, mesh_name, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id):
+    def set_mesh_quad (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
         """
-        Sets mesh Quad from edge IDs.
+        Sets mesh Quad from vertex IDs.
         WARNING: Quads are not fully implemented yet.
 
         Parameters
         ----------
         mesh_name : str
             Name of the mesh to add the Quad to.
-        first_edge_id : int
-            ID of the first edge of the Quad.
-        second_edge_id : int
-            ID of the second edge of the Quad.
-        third_edge_id : int
-            ID of the third edge of the Quad.
-        fourth_edge_id : int
-            ID of the forth edge of the Quad.
+        first_vertex_id : int
+            ID of the first vertex of the quad.
+        second_vertex_id : int
+            ID of the second vertex of the quad.
+        third_vertex_id : int
+            ID of the third vertex of the quad.
+        fourth_vertex_id : int
+            ID of the third vertex of the quad.
 
         Notes
         -----
         Previous calls:
-            edges with first_edge_id, second_edge_id, third_edge_id, and fourth_edge_id were added
+            vertices with first_vertex_id, second_vertex_id, third_vertex_id, and fourth_vertex_id were added
             to the mesh with the name mesh_name
         """
         cdef bytes mesh_name_py_bytes = mesh_name.encode()
         
-        self.thisptr.setMeshQuad (<const char*> mesh_name_py_bytes, first_edge_id, second_edge_id, third_edge_id, fourth_edge_id)
+        self.thisptr.setMeshQuad (<const char*> mesh_name_py_bytes, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id)
 
     def set_mesh_quads (self, mesh_name, vertices):
         """
