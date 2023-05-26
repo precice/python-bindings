@@ -2,11 +2,15 @@ from libcpp        cimport bool
 from libcpp.set    cimport set
 from libcpp.string cimport string
 
-cdef extern from "<string_view>" namespace "std":
+cdef extern from "<string_view>" namespace "precice":
     cdef cppclass string_view:
         string_view() except +
         string_view(const string&) except +  # necessary to cast Python strings to string_view before handing over to C++ API
 
+cdef extern from "<span>" namespace "precice":
+    cdef cppclass span:
+        span() except +
+        span(<double* size>) except +
 
 cdef extern from "precice/Participant.hpp" namespace "precice":
     cdef cppclass Participant:

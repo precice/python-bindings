@@ -18,6 +18,11 @@ cdef extern from "<string_view>" namespace "std":
         string_view() except +
         string_view(const string&) except +  # necessary to cast Python strings to string_view before handing over to C++ API
 
+cdef extern from "<span>" namespace "precice":
+    cdef cppclass span:
+        span() except +
+        span(<double* size>) except +
+
 cdef bytes convert(s):
     """
     source code from http://docs.cython.org/en/latest/src/tutorial/strings.html#general-notes-about-c-strings
@@ -42,7 +47,7 @@ cdef class Interface:
     """
     Main Application Programming Interface of preCICE.
     To adapt a solver to preCICE, follow the following main structure:
-        - Create an object of SolverInterface with Interface()
+        - Create an object of Participant with Interface()
         - Configure the object with Interface::configure()
         - Initialize preCICE with Interface::initialize()
         - Advance to the next (time)step with Interface::advance()
@@ -71,7 +76,7 @@ cdef class Interface:
 
         Returns
         -------
-        SolverInterface : object
+        Participant : object
             Object pointing to the defined coupling interface
 
         Example
@@ -88,9 +93,9 @@ cdef class Interface:
         cdef void* communicator_ptr
         if communicator:
             communicator_ptr = <void*> communicator
-            self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size, communicator_ptr)
+            self.thisptr = new Participant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size, communicator_ptr)
         else:
-            self.thisptr = new SolverInterface.SolverInterface (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
+            self.thisptr = new Participant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
         pass
 
     def __dealloc__ (self):
@@ -171,18 +176,46 @@ cdef class Interface:
 
     # status queries
 
-    def get_dimensions (self):
+    def get_mesh_dimensions (self, mesh_name):
         """
-        Returns the number of spatial dimensions configured. Currently, two and three dimensional problems
+        Returns the number of spatial dimensions of the mesh. Currently, two and three dimensional problems
         can be solved using preCICE. The dimension is specified in the XML configuration.
+
+        Parameters
+        ----------
+        mesh_name : string
+            Name of the mesh.
 
         Returns
         -------
         dimension : int
             The configured dimension.
         """
-        return self.thisptr.getDimensions ()
+        cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
+        return self.thisptr.getmeshDimensions (<const char*> mesh_name_py_bytes)
+
+    def get_data_dimensions (self, mesh_name, data_name):
+        """
+        Returns the number of spatial dimensions of the data living on a particular mesh. Currently, two and three dimensional problems
+        can be solved using preCICE. The dimension is specified in the XML configuration.
+
+        Parameters
+        ----------
+        mesh_name : string
+            Name of the mesh.
+        data_name : string
+            Name of the data.
+
+        Returns
+        -------
+        dimension : int
+            The configured dimension.
+        """
+        cdef bytes mesh_name_py_bytes = mesh_name.encode()
+        cdef bytes data_name_py_bytes = data_name.encode()
+
+        return self.thisptr.getmeshDimensions (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes)
 
     def is_coupling_ongoing (self):
         """
@@ -298,11 +331,9 @@ cdef class Interface:
 
         return self.thisptr.hasMesh (<const char*> mesh_name_py_bytes)
 
-
-    def get_mesh_handle(self, mesh_name):
+    def requires_mesh_connectivity_for (self, mesh_name):
         """
-        Returns a handle to a created mesh.
-        WARNING: This function is not yet available for the Python bindings
+        Checks if the given mesh requires connectivity.
 
         Parameters
         ----------
@@ -311,11 +342,11 @@ cdef class Interface:
 
         Returns
         -------
-        tag : object
-            Handle to the mesh.
+        tag : bool
+            True if mesh connectivity is required.
         """
-        raise Exception("The API method get_mesh_handle is not yet available for the Python bindings.")
-
+        cdef bytes mesh_name_py_bytes = mesh_name.encode()
+        return self.thisptr.requiresMeshConnectivityFor(<const char*> mesh_name_py_bytes)
 
     def set_mesh_vertex(self, mesh_name, position):
         """
@@ -635,23 +666,6 @@ cdef class Interface:
         self.thisptr.setMeshQuads (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
 
     # data access
-
-    def requires_mesh_connectivity_for (self, mesh_name):
-        """
-        Checks if the given mesh requires connectivity.
-
-        Parameters
-        ----------
-        mesh_name : str
-            ID of the associated mesh.
-
-        Returns
-        -------
-        tag : bool
-            True if mesh connectivity is required.
-        """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        return self.thisptr.requiresMeshConnectivityFor(<const char*> mesh_name_py_bytes)
 
     def has_data (self, data_name, mesh_name):
         """
@@ -1464,4 +1478,4 @@ def get_version_information ():
     -------
     Current preCICE version information
     """
-    return SolverInterface.getVersionInformation()
+    return Participant.getVersionInformation()
