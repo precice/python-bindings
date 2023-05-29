@@ -182,8 +182,10 @@ void Participant:: setMeshVertices
   precice::span<const double> positions,
   precice::span<precice::VertexID> ids )
 {
-  assert (ids.size() == fake_ids.size());
-  std::copy(fake_ids.begin(), fake_ids.end(), ids.data());
+  if(ids.size() > 0) {
+    assert (ids.size() == fake_ids.size());
+    std::copy(fake_ids.begin(), fake_ids.end(), ids.data());
+  }
 }
 
 void Participant:: setMeshEdge

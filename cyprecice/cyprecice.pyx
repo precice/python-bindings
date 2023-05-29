@@ -468,7 +468,7 @@ cdef class Participant:
             size, dimensions = positions.shape
             assert dimensions == self.get_mesh_dimensions(mesh_name), "Dimensions of vertex coordinates in set_mesh_vertices does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_mesh_dimensions(mesh_name))
         elif len(positions) == 0:
-            size = positions.shape[0]
+            size = 0
             dimensions = self.get_mesh_dimensions(mesh_name)
 
         cdef vector[double] cpp_positions = positions.flatten()

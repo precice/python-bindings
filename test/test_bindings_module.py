@@ -53,16 +53,15 @@ class TestBindings(TestCase):
         actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
         self.assertTrue(np.array_equal(expected_output, actual_output))
 
-    # TODO: Bug in C++ preCICE library?
-    # def test_set_mesh_vertices_empty(self):
-    #     participant = precice.Participant("test", "dummy.xml", 0, 1)
-    #     fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name
-    #     fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
-    #     n_fake_vertices = 0  # compare to test/SolverInterface.cpp, n_fake_vertices
-    #     positions = np.random.rand(n_fake_vertices, fake_dimension)
-    #     expected_output = np.array(range(n_fake_vertices))
-    #     actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
-    #     self.assertTrue(np.array_equal(expected_output, actual_output))
+    def test_set_mesh_vertices_empty(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name
+        fake_dimension = 3  # compare to test/SolverInterface.cpp, fake_dimensions
+        n_fake_vertices = 0  # compare to test/SolverInterface.cpp, n_fake_vertices
+        positions = np.zeros((n_fake_vertices, fake_dimension))
+        expected_output = np.array(range(n_fake_vertices))
+        actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
+        self.assertTrue(np.array_equal(expected_output, actual_output))
 
     def test_set_mesh_vertices_list(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
@@ -76,15 +75,14 @@ class TestBindings(TestCase):
         actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
         self.assertTrue(np.array_equal(expected_output, actual_output))
 
-    # TODO: Bug in C++ preCICE library?
-    # def test_set_mesh_vertices_empty_list(self):
-    #     participant = precice.Participant("test", "dummy.xml", 0, 1)
-    #     fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name
-    #     positions = []
-    #     n_fake_vertices = 0
-    #     expected_output = np.array(range(n_fake_vertices))
-    #     actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
-    #     self.assertTrue(np.array_equal(expected_output, actual_output))
+    def test_set_mesh_vertices_empty_list(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name
+        positions = []
+        n_fake_vertices = 0
+        expected_output = np.array(range(n_fake_vertices))
+        actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
+        self.assertTrue(np.array_equal(expected_output, actual_output))
 
     def test_set_mesh_vertices_tuple(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
@@ -98,15 +96,14 @@ class TestBindings(TestCase):
         actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
         self.assertTrue(np.array_equal(expected_output, actual_output))
 
-    # TODO: Bug in C++ preCICE library?
-    # def test_set_mesh_vertices_empty_tuple(self):
-    #     participant = precice.Participant("test", "dummy.xml", 0, 1)
-    #     fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name
-    #     positions = ()
-    #     n_fake_vertices = 0
-    #     expected_output = np.array(range(n_fake_vertices))
-    #     actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
-    #     self.assertTrue(np.array_equal(expected_output, actual_output))
+    def test_set_mesh_vertices_empty_tuple(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name
+        positions = ()
+        n_fake_vertices = 0
+        expected_output = np.array(range(n_fake_vertices))
+        actual_output = participant.set_mesh_vertices(fake_mesh_name, positions)
+        self.assertTrue(np.array_equal(expected_output, actual_output))
 
     def test_set_mesh_vertices_mixed(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
