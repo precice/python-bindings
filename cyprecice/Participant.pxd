@@ -1,16 +1,7 @@
 from libcpp        cimport bool
 from libcpp.set    cimport set
 from libcpp.string cimport string
-
-cdef extern from "<string_view>" namespace "precice":
-    cdef cppclass string_view:
-        string_view() except +
-        string_view(const string&) except +  # necessary to cast Python strings to string_view before handing over to C++ API
-
-cdef extern from "<span>" namespace "precice":
-    cdef cppclass span:
-        span() except +
-        span(<double* size>) except +
+from libcpp.vector cimport vector
 
 cdef extern from "precice/Participant.hpp" namespace "precice":
     cdef cppclass Participant:
@@ -24,17 +15,17 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         # steering methods
 
-        double initialize ()
+        void initialize ()
 
-        double advance (double computedTimestepLength)
+        void advance (double computedTimestepLength)
 
         void finalize()
 
         # status queries
 
-        int getMeshDimensions(const char* meshName) const
+        int getMeshDimensions(const string& meshName) const
 
-        int getDataDimensions(const char* meshName, const char* dataName) const
+        int getDataDimensions(const string& meshName, const string& dataName) const
 
         bool isCouplingOngoing() const
 
@@ -50,51 +41,51 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         # mesh access
 
-        bool hasMesh (const char* meshName) const
+        bool hasMesh (const string& meshName) const
 
-        bool requiresMeshConnectivityFor (const char* meshName) const
+        bool requiresMeshConnectivityFor (const string& meshName) const
 
-        int setMeshVertex (const char* meshName, const double* position)
+        int setMeshVertex (const string& meshName, vector[double] position)
 
-        int getMeshVertexSize (const char* meshName) const
+        int getMeshVertexSize (const string& meshName) const
 
-        void setMeshVertices (const char* meshName, const double* positions, int* ids)
+        void setMeshVertices (const string& meshName, vector[double] positions, vector[int]& ids)
 
-        void setMeshEdge (const char* meshName, int firstVertexID, int secondVertexID)
+        void setMeshEdge (const string& meshName, int firstVertexID, int secondVertexID)
 
-        void setMeshEdges (const char* meshName, const int* vertices)
+        void setMeshEdges (const string& meshName, vector[int] vertices)
 
-        void setMeshTriangle (const char* meshName, int firstVertexID, int secondVertexID, int thirdVertexID)
+        void setMeshTriangle (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID)
 
-        void setMeshTriangles (const char* meshName, const int* vertices)
+        void setMeshTriangles (const string& meshName, vector[int] vertices)
 
-        void setMeshQuad (const char* meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
+        void setMeshQuad (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
 
-        void setMeshQuads (const char* meshName, const int* vertices)
+        void setMeshQuads (const string& meshName, vector[int] vertices)
 
-        void setMeshTetrahedron (const char* meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
+        void setMeshTetrahedron (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
 
-        void setMeshTetrahedra (const char* meshName, )
+        void setMeshTetrahedra (const string& meshName, )
 
         # data access
 
-        bool hasData (const char* dataName, const char* meshName) const
+        bool hasData (const string& dataName, const string& meshName) const
 
-        void writeData (const char* meshName, const char* dataName, const int* vertices, const double* values)
+        void writeData (const string& meshName, const string& dataName, vector[int] vertices, vector[double] values)
 
-        void readData (const char* meshName, const char* dataName, const int* vertices, const double relativeReadTime, double* values) const
+        void readData (const string& meshName, const string& dataName, vector[int] vertices, const double relativeReadTime, vector[double]& values) const
 
         # Gradient related API
 
-        bool requiresGradientDataFor(const char* meshName, const char* dataName) const
+        bool requiresGradientDataFor(const string& meshName, const string& dataName) const
 
-        void writeGradientData(const char* meshName, const char* dataName, const int* vertices, const double* gradientValues)
+        void writeGradientData(const string& meshName, const string& dataName, vector[int] vertices, vector[double] gradientValues)
 
         # direct mesh access
 
-        void setMeshAccessRegion (const char* meshName, const double* boundingBox) const
+        void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) const
 
-        void getMeshVerticesAndIDs (const char* meshName, int* ids, double* coordinates) const
+        void getMeshVerticesAndIDs (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
 
 cdef extern from "precice/Tooling.hpp" namespace "precice":
     string getVersionInformation()

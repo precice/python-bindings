@@ -8,11 +8,13 @@
 std::string fake_version;
 std::vector<double> fake_read_write_buffer;
 int fake_mesh_dimensions;
-int fake_data_dimensions;
+int fake_scalar_data_dimensions;
+int fake_vector_data_dimensions;
 std::vector<int> fake_ids;
 int n_fake_vertices;
 std::string fake_mesh_name;
-std::string fake_data_name;
+std::string fake_scalar_data_name;
+std::string fake_vector_data_name;
 int fake_data_id;
 std::vector<double> fake_bounding_box;
 std::vector<double> fake_coordinates;
@@ -33,16 +35,18 @@ Participant:: Participant
   fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_mesh_dimensions = 3;
-  fake_data_dimensions = 3;
+  fake_scalar_data_dimensions = 1;
+  fake_vector_data_dimensions = 3;
   fake_data_id = 15;
   fake_mesh_name = "FakeMesh";
-  fake_data_name = "FakeData";
+  fake_scalar_data_name = "FakeScalarData";
+  fake_vector_data_name = "FakeVectorData";
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
-  fake_bounding_box.resize(fake_dimensions*2);
+  fake_bounding_box.resize(fake_mesh_dimensions*2);
   std::iota(fake_bounding_box.begin(), fake_bounding_box.end(), 0);
-  fake_coordinates.resize(n_fake_vertices*fake_dimensions);
+  fake_coordinates.resize(n_fake_vertices*fake_mesh_dimensions);
   std::iota(fake_coordinates.begin(), fake_coordinates.end(), 0);
 }
 
@@ -56,29 +60,29 @@ Participant::Participant(
   fake_version = "dummy";
   fake_read_write_buffer = std::vector<double>();
   fake_mesh_dimensions = 3;
-  fake_data_dimensions = 3;
+  fake_scalar_data_dimensions = 1;
+  fake_vector_data_dimensions = 3;
   fake_data_id = 15;
   fake_mesh_name = "FakeMesh";
-  fake_data_name = "FakeData";
+  fake_scalar_data_name = "FakeScalarData";
+  fake_vector_data_name = "FakeVectorData";
   n_fake_vertices = 3;
   fake_ids.resize(n_fake_vertices);
   std::iota(fake_ids.begin(), fake_ids.end(), 0);
-  fake_bounding_box.resize(fake_dimensions*2);
+  fake_bounding_box.resize(fake_mesh_dimensions*2);
   std::iota(fake_bounding_box.begin(), fake_bounding_box.end(), 0);
 }
 
 Participant::~Participant() = default;
 
-double Participant:: initialize()
+void Participant:: initialize()
 {
-  return -1;
 }
 
-double Participant:: advance
+void Participant:: advance
 (
   double computedTimestepLength )
 {
-  return -1;
 }
 
 void Participant:: finalize()
@@ -96,7 +100,13 @@ int Participant:: getDataDimensions
   precice::string_view meshName,
   precice::string_view dataName) const
 {
-  return fake_data_dimensions;
+  if (dataName.data() == fake_scalar_data_name) {
+    return fake_scalar_data_dimensions;
+  } else if (dataName.data() == fake_vector_data_name) {
+    return fake_vector_data_dimensions;
+  } else {
+    return -1;
+  }
 }
 
 bool Participant:: isCouplingOngoing() const
@@ -111,7 +121,7 @@ bool Participant:: isTimeWindowComplete() const
 
 double Participant:: getMaxTimeStepSize() const
 {
-  return 0.0;
+  return -1.0;
 }
 
 bool Participant:: requiresInitialData()
@@ -154,7 +164,7 @@ bool Participant:: hasData
 int Participant:: setMeshVertex
 (
   precice::string_view meshName,
-  const double* position )
+  precice::span<const double> position )
 {
   return 0;
 }
@@ -169,11 +179,11 @@ int Participant:: getMeshVertexSize
 void Participant:: setMeshVertices
 (
   precice::string_view meshName,
-  const double* positions,
-  int*          ids )
+  precice::span<const double> positions,
+  precice::span<precice::VertexID> ids )
 {
-  assert (size == fake_ids.size());
-  std::copy(fake_ids.begin(), fake_ids.end(), ids);
+  assert (ids.size() == fake_ids.size());
+  std::copy(fake_ids.begin(), fake_ids.end(), ids.data());
 }
 
 void Participant:: setMeshEdge
@@ -185,7 +195,7 @@ void Participant:: setMeshEdge
 
 void Participant::setMeshEdges(
     precice::string_view meshName,
-    const int *      vertices)
+    precice::span<const precice::VertexID> vertices)
 {}
 
 void Participant:: setMeshTriangle
@@ -199,7 +209,7 @@ void Participant:: setMeshTriangle
 void Participant:: setMeshTriangles
 (
   precice::string_view meshName,
-  const int * vertices )
+  precice::span<const precice::VertexID> vertices )
 {}
 
 void Participant:: setMeshQuad
@@ -214,7 +224,7 @@ void Participant:: setMeshQuad
 void Participant:: setMeshQuads
 (
   precice::string_view meshName,
-  const int *      vertices)
+  precice::span<const precice::VertexID> vertices)
 {}
 
 void Participant::setMeshTetrahedron
@@ -229,29 +239,43 @@ void Participant::setMeshTetrahedron
 void Participant::setMeshTetrahedra
 (
     precice::string_view meshName,
-    const int *      vertices)
+    precice::span<const precice::VertexID> vertices)
 {}
 
 void Participant:: writeData
 (
   precice::string_view meshName,
   precice::string_view dataName,
-  const int*    vertices,
-  double value )
+  precice::span<const precice::VertexID> vertices,
+  precice::span<const double> values)
 {
-    fake_read_write_buffer.clear();
+  fake_read_write_buffer.clear();
+
+  for(const double value: values) {
     fake_read_write_buffer.push_back(value);
+  }
 }
 
 void Participant:: readData
 (
   precice::string_view meshName,
   precice::string_view dataName,
-  const int*     vertices,
+  precice::span<const precice::VertexID> vertices,
   double  relativeReadTime,
-  double& value ) const
+  precice::span<double> values) const
 {
-    value = fake_read_write_buffer[0];
+  if (dataName.data() == fake_scalar_data_name) {
+    for(const int id: vertices) {
+      values[id] = fake_read_write_buffer[id];
+    }
+  } else if (dataName.data() == fake_vector_data_name) {
+    for(const int id: vertices) {
+      for(int d = 0; d < fake_vector_data_dimensions; d++) {
+        const int linearized_id = fake_vector_data_dimensions * id + d;
+        values[linearized_id] = fake_read_write_buffer[linearized_id];
+      }
+    }
+  }
 }
 
 bool Participant::requiresGradientDataFor
@@ -265,19 +289,19 @@ bool Participant::requiresGradientDataFor
 void Participant::writeGradientData(
     precice::string_view meshName,
     precice::string_view dataName,
-    const int    *vertices,
-    const double *gradientValues)
+    precice::span<const precice::VertexID> vertices,
+    precice::span<const double> gradients)
 {
   fake_read_write_buffer.clear();
-  for (int i = 0; i < size * this->getDimensions() * this->getDimensions(); i++) {
-    fake_read_write_buffer.push_back(gradientValues[i]);
+  for (const double gradient: gradients) {
+    fake_read_write_buffer.push_back(gradient);
   }
 }
 
 void Participant:: setMeshAccessRegion
 (
   precice::string_view meshName,
-  const double* boundingBox ) const
+  precice::span<const double> boundingBox ) const
 {
     assert(meshName == fake_mesh_name);
 
@@ -289,11 +313,12 @@ void Participant:: setMeshAccessRegion
 void Participant:: getMeshVerticesAndIDs
 (
   precice::string_view meshName,
-  int* valueIndices,
-  double* coordinates ) const
+  precice::span<int> valueIndices,
+  precice::span<double> coordinates ) const
 {
     assert(meshName == fake_mesh_name);
-    assert(size == fake_ids.size());
+    assert(valueIndices.size() == fake_ids.size());
+    assert(coordinates.size() == fake_coordinates.size());
 
     for(std::size_t i = 0; i < fake_ids.size(); i++){
         valueIndices[i] = fake_ids[i];

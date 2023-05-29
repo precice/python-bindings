@@ -10,18 +10,9 @@ import numpy as np
 from mpi4py import MPI
 import warnings
 from libcpp.string cimport string
+from libcpp.vector cimport vector
 
 from cpython.version cimport PY_MAJOR_VERSION  # important for determining python version in order to properly normalize string input. See http://docs.cython.org/en/latest/src/tutorial/strings.html#general-notes-about-c-strings and https://github.com/precice/precice/issues/68 .
-
-cdef extern from "<string_view>" namespace "std":
-    cdef cppclass string_view:
-        string_view() except +
-        string_view(const string&) except +  # necessary to cast Python strings to string_view before handing over to C++ API
-
-cdef extern from "<span>" namespace "precice":
-    cdef cppclass span:
-        span() except +
-        span(<double* size>) except +
 
 cdef bytes convert(s):
     """
@@ -43,15 +34,14 @@ def check_array_like(argument, argument_name, function_name):
         raise TypeError("{} requires array_like input for {}, but was provided the following input type: {}".format(
             function_name, argument_name, type(argument))) from None
 
-cdef class Interface:
+cdef class Participant:
     """
     Main Application Programming Interface of preCICE.
     To adapt a solver to preCICE, follow the following main structure:
-        - Create an object of Participant with Interface()
-        - Configure the object with Interface::configure()
-        - Initialize preCICE with Interface::initialize()
-        - Advance to the next (time)step with Interface::advance()
-        - Finalize preCICE with Interface::finalize()
+        - Create an object of Participant with Participant()
+        - Initialize preCICE with Participant::initialize()
+        - Advance to the next (time)step with Participant::advance()
+        - Finalize preCICE with Participant::finalize()
         - We use solver, simulation code, and participant as synonyms.
         - The preferred name in the documentation is participant.
     """
@@ -59,7 +49,7 @@ cdef class Interface:
     # fake __init__ needed to display docstring for __cinit__ (see https://stackoverflow.com/a/42733794/5158031)
     def __init__(self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
         """
-        Constructor of Interface class.
+        Constructor of Participant class.
 
         Parameters
         ----------
@@ -77,11 +67,11 @@ cdef class Interface:
         Returns
         -------
         Participant : object
-            Object pointing to the defined coupling interface
+            Object pointing to the defined participant
 
         Example
         -------
-        >>> interface = precice.Interface("SolverOne", "precice-config.xml", 0, 1)
+        >>> participant = precice.Participant("SolverOne", "precice-config.xml", 0, 1)
         preCICE: This is preCICE version X.X.X
         preCICE: Revision info: vX.X.X-X-XXXXXXXXX
         preCICE: Configuring preCICE with configuration: "precice-config.xml"
@@ -93,16 +83,17 @@ cdef class Interface:
         cdef void* communicator_ptr
         if communicator:
             communicator_ptr = <void*> communicator
-            self.thisptr = new Participant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size, communicator_ptr)
+            self.thisptr = new CppParticipant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size, communicator_ptr)
         else:
-            self.thisptr = new Participant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
+            self.thisptr = new CppParticipant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
         pass
 
     def __dealloc__ (self):
         """
-        Destructor of Interface class
+        Destructor of Participant class
         """
         del self.thisptr
+
 
     # steering methods
 
@@ -174,12 +165,12 @@ cdef class Interface:
         """
         self.thisptr.finalize ()
 
+
     # status queries
 
     def get_mesh_dimensions (self, mesh_name):
         """
-        Returns the number of spatial dimensions of the mesh. Currently, two and three dimensional problems
-        can be solved using preCICE. The dimension is specified in the XML configuration.
+        Returns the spatial dimensionality of the given mesh.
 
         Parameters
         ----------
@@ -189,16 +180,14 @@ cdef class Interface:
         Returns
         -------
         dimension : int
-            The configured dimension.
+            The dimensions of the given mesh.
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        return self.thisptr.getmeshDimensions (<const char*> mesh_name_py_bytes)
+        return self.thisptr.getMeshDimensions (convert(mesh_name))
 
     def get_data_dimensions (self, mesh_name, data_name):
         """
-        Returns the number of spatial dimensions of the data living on a particular mesh. Currently, two and three dimensional problems
-        can be solved using preCICE. The dimension is specified in the XML configuration.
+        Returns the spatial dimensionality of the given data on the given mesh.
 
         Parameters
         ----------
@@ -210,12 +199,11 @@ cdef class Interface:
         Returns
         -------
         dimension : int
-            The configured dimension.
+            The dimensions of the given data.
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
 
-        return self.thisptr.getmeshDimensions (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes)
+        return self.thisptr.getDataDimensions (convert(mesh_name), convert(data_name))
+
 
     def is_coupling_ongoing (self):
         """
@@ -257,6 +245,27 @@ cdef class Interface:
         """
         return self.thisptr.isTimeWindowComplete ()
 
+
+    def get_max_time_step_size (self):
+        """
+        Get the maximum allowed time step size of the current window.
+
+        Allows the user to query the maximum allowed time step size in the current window.
+        This should be used to compute the actual time step that the solver uses.
+
+        Returns
+        -------
+            tag : double
+                Maximum size of time step to be computed by solver.
+
+        Notes
+        -----
+        Previous calls:
+            initialize() has been called successfully.
+        """
+        return self.thisptr.getMaxTimeStepSize ()
+
+
     def requires_initial_data (self):
         """
         Checks if the participant is required to provide initial data.
@@ -275,10 +284,11 @@ cdef class Interface:
         """
         return self.thisptr.requiresInitialData ()
 
+
     def requires_reading_checkpoint (self):
         """
         Checks if the participant is required to read an iteration checkpoint.
-        
+
         If true, the participant is required to read an iteration checkpoint before
         calling advance().
 
@@ -294,13 +304,14 @@ cdef class Interface:
         """
         return self.thisptr.requiresReadingCheckpoint ()
 
+
     def requires_writing_checkpoint (self):
         """
         Checks if the participant is required to write an iteration checkpoint.
-        
+
         If true, the participant is required to write an iteration checkpoint before
         calling advance().
-        
+
         preCICE refuses to proceed if writing a checkpoint is required,
         but this method isn't called prior to advance().
 
@@ -310,6 +321,7 @@ cdef class Interface:
             initialize() has been called
         """
         return self.thisptr.requiresWritingCheckpoint ()
+
 
     # mesh access
 
@@ -327,9 +339,8 @@ cdef class Interface:
         tag : bool
             Returns true is the mesh is used.
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
+        return self.thisptr.hasMesh (convert(mesh_name))
 
-        return self.thisptr.hasMesh (<const char*> mesh_name_py_bytes)
 
     def requires_mesh_connectivity_for (self, mesh_name):
         """
@@ -345,8 +356,8 @@ cdef class Interface:
         tag : bool
             True if mesh connectivity is required.
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        return self.thisptr.requiresMeshConnectivityFor(<const char*> mesh_name_py_bytes)
+        return self.thisptr.requiresMeshConnectivityFor(convert(mesh_name))
+
 
     def set_mesh_vertex(self, mesh_name, position):
         """
@@ -373,16 +384,16 @@ cdef class Interface:
 
         if len(position) > 0:
             dimensions = len(position)
-            assert dimensions == self.get_dimensions(), "Dimensions of vertex coordinate in set_mesh_vertex does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
+            assert dimensions == self.get_mesh_dimensions(mesh_name), "Dimensions of vertex coordinate in set_mesh_vertex does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_mesh_dimensions(mesh_name))
         elif len(position) == 0:
-            dimensions = self.get_dimensions()
+            dimensions = self.get_mesh_dimensions(mesh_name)
 
         cdef np.ndarray[double, ndim=1] _position = np.ascontiguousarray(position, dtype=np.double)
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        vertex_id = self.thisptr.setMeshVertex(<const char*> mesh_name_py_bytes, <const double*>_position.data)
+        vertex_id = self.thisptr.setMeshVertex(convert(mesh_name), _position)
         return vertex_id
+
 
     def get_mesh_vertex_size (self, mesh_name):
         """
@@ -398,9 +409,9 @@ cdef class Interface:
         sum : int
             Number of vertices of the mesh.
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        return self.thisptr.getMeshVertexSize(<const char*> mesh_name_py_bytes)
+        return self.thisptr.getMeshVertexSize(convert(mesh_name))
+
 
     def set_mesh_vertices (self, mesh_name, positions):
         """
@@ -434,7 +445,7 @@ cdef class Interface:
         >>> positions.shape
         (5, 2)
         >>> mesh_name = "MeshOne"
-        >>> vertex_ids = interface.set_mesh_vertices(mesh_name, positions)
+        >>> vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
         >>> vertex_ids.shape
         (5,)
 
@@ -444,7 +455,7 @@ cdef class Interface:
         >>> positions.shape
         (5, 3)
         >>> mesh_name = "MeshOne"
-        >>> vertex_ids = interface.set_mesh_vertices(mesh_name, positions)
+        >>> vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
         >>> vertex_ids.shape
         (5,)
         """
@@ -455,19 +466,20 @@ cdef class Interface:
 
         if len(positions) > 0:
             size, dimensions = positions.shape
-            assert dimensions == self.get_dimensions(), "Dimensions of vertex coordinates in set_mesh_vertices does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
+            assert dimensions == self.get_mesh_dimensions(mesh_name), "Dimensions of vertex coordinates in set_mesh_vertices does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_mesh_dimensions(mesh_name))
         elif len(positions) == 0:
             size = positions.shape[0]
-            dimensions = self.get_dimensions()
+            dimensions = self.get_mesh_dimensions(mesh_name)
 
-        cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
-        cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(size, dtype=np.int32)
+        cdef vector[double] cpp_positions = positions.flatten()
+        cdef vector[int] cpp_ids = [-1 for _ in range(size)]
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        #cdef str mesh_name_str = mesh_name.encode()
+        self.thisptr.setMeshVertices (convert(mesh_name), cpp_positions, cpp_ids)
 
-        self.thisptr.setMeshVertices (<const char*> mesh_name_py_bytes, size, <const double*>_positions.data, <int*>vertex_ids.data)
-        return vertex_ids
+        cdef np.ndarray[int, ndim=1] np_ids = np.array(cpp_ids, dtype=np.int32)
+
+        return np_ids
+
 
     def set_mesh_edge (self, mesh_name, first_vertex_id, second_vertex_id):
         """
@@ -492,9 +504,9 @@ cdef class Interface:
         Previous calls:
             vertices with firstVertexID and secondVertexID were added to the mesh with name mesh_name
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshEdge (<const char*> mesh_name_py_bytes, first_vertex_id, second_vertex_id)
+        self.thisptr.setMeshEdge (convert(mesh_name), first_vertex_id, second_vertex_id)
+
 
     def set_mesh_edges (self, mesh_name, vertices):
         """
@@ -515,7 +527,7 @@ cdef class Interface:
         >>> vertices = np.array([[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]])
         >>> vertices.shape
         (6, 2)
-        >>> interface.set_mesh_edges(mesh_name, vertices)
+        >>> participant.set_mesh_edges(mesh_name, vertices)
         """
         check_array_like(vertices, "vertices", "set_mesh_edges")
 
@@ -523,17 +535,16 @@ cdef class Interface:
             vertices = np.asarray(vertices)
 
         if len(vertices) > 0:
-            size, n = vertices.shape
+            _, n = vertices.shape
             assert n == 2, "Provided vertices are not of a [N x 2] format, but instead of a [N x {}]".format(n)
         elif len(vertices) == 0:
-            size = vertices.shape[0]
-            dimensions = self.get_dimensions()
+            dimensions = self.get_mesh_dimensions(mesh_name)
 
         cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshEdges (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
+        self.thisptr.setMeshEdges (convert(mesh_name), _vertices)
+
 
     def set_mesh_triangle (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id):
         """
@@ -555,9 +566,9 @@ cdef class Interface:
         Previous calls:
             vertices with first_vertex_id, second_vertex_id, and third_vertex_id were added to the mesh with the name mesh_name
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshTriangle (<const char*> mesh_name_py_bytes, first_vertex_id, second_vertex_id, third_vertex_id)
+        self.thisptr.setMeshTriangle (convert(mesh_name), first_vertex_id, second_vertex_id, third_vertex_id)
+
 
     def set_mesh_triangles (self, mesh_name, vertices):
         """
@@ -578,7 +589,7 @@ cdef class Interface:
         >>> vertices = np.array([[1, 2, 3], [1, 3, 4], [1, 2, 4], [1, 3, 4]])
         >>> vertices.shape
         (4, 2)
-        >>> interface.set_mesh_triangles(mesh_name, vertices)
+        >>> participant.set_mesh_triangles(mesh_name, vertices)
         """
         check_array_like(vertices, "vertices", "set_mesh_triangles")
 
@@ -586,17 +597,16 @@ cdef class Interface:
             vertices = np.asarray(vertices)
 
         if len(vertices) > 0:
-            size, n = vertices.shape
-            assert n == 3, "Provided vertices are not of a [N x 3] format, but instead of a [N x {}]".format(n)
+            _, n = vertices.shape
+            assert n == self.get_mesh_dimensions(mesh_name), "Provided vertices are not of a [N x {}] format, but instead of a [N x {}]".format(self.get_mesh_dimensions(mesh_name), n)
         elif len(vertices) == 0:
-            size = vertices.shape[0]
-            dimensions = self.get_dimensions()
+            dimensions = self.get_mesh_dimensions(mesh_name)
 
         cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        
-        self.thisptr.setMeshTriangles (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
+
+        self.thisptr.setMeshTriangles (convert(mesh_name), _vertices)
+
 
     def set_mesh_quad (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
         """
@@ -622,9 +632,9 @@ cdef class Interface:
             vertices with first_vertex_id, second_vertex_id, third_vertex_id, and fourth_vertex_id were added
             to the mesh with the name mesh_name
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        
-        self.thisptr.setMeshQuad (<const char*> mesh_name_py_bytes, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id)
+
+        self.thisptr.setMeshQuad (convert(mesh_name), first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id)
+
 
     def set_mesh_quads (self, mesh_name, vertices):
         """
@@ -645,7 +655,7 @@ cdef class Interface:
         >>> vertices = np.array([[1, 2, 3, 4]])
         >>> vertices.shape
         (1, 2)
-        >>> interface.set_mesh_quads(mesh_name, vertices)
+        >>> participant.set_mesh_quads(mesh_name, vertices)
         """
         check_array_like(vertices, "vertices", "set_mesh_quads")
 
@@ -653,17 +663,16 @@ cdef class Interface:
             vertices = np.asarray(vertices)
 
         if len(vertices) > 0:
-            size, n = vertices.shape
+            _, n = vertices.shape
             assert n == 4, "Provided vertices are not of a [N x 4] format, but instead of a [N x {}]".format(n)
         elif len(vertices) == 0:
-            size = vertices.shape[0]
-            dimensions = self.get_dimensions()
+            dimensions = self.get_mesh_dimensions(mesh_name)
 
         cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
 
-        self.thisptr.setMeshQuads (<const char*> mesh_name_py_bytes, size, <const int*>_vertices.data)
+        self.thisptr.setMeshQuads (convert(mesh_name), _vertices)
+
 
     # data access
 
@@ -683,15 +692,14 @@ cdef class Interface:
         tag : bool
             True if the mesh is already used.
         """
-        cdef bytes data_name_py_bytes = data_name.encode()
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        return self.thisptr.hasData(<const char*> data_name_py_bytes, <const char*> mesh_name_py_bytes)
+        return self.thisptr.hasData(convert(data_name), convert(mesh_name))
 
-    def write_block_vector_data (self, mesh_name, data_name, vertex_ids, values):
+
+    def write_data (self, mesh_name, data_name, vertex_ids, values):
         """
-        Writes vector data given as block. This function writes values of specified vertices to a dataID.
-        Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
-        of vertices and D = dimensions of geometry
+        This function writes values of specified vertices to data of a mesh.
+        Values are provided as a block of continuous memory defined by values. Values are stored in a numpy array [N x D] where N = number of vertices and D = dimensions of geometry.
+        The order of the provided data follows the order specified by vertices.
 
         Parameters
         ----------
@@ -713,184 +721,46 @@ cdef class Interface:
 
         Examples
         --------
-        Write block vector data for a 2D problem with 5 vertices:
+        Write vector data for a 2D problem with 5 vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
         >>> values = np.array([[v1_x, v1_y], [v2_x, v2_y], [v3_x, v3_y], [v4_x, v4_y], [v5_x, v5_y]])
-        >>> interface.write_block_vector_data(mesh_name, data_name, vertex_ids, values)
-
-        Write block vector data for a 3D (D=3) problem with 5 (N=5) vertices:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
-        >>> interface.write_block_vector_data(mesh_name, data_name, vertex_ids, values)
-        """
-        check_array_like(vertex_ids, "vertex_ids", "write_block_vector_data")
-        check_array_like(values, "values", "write_block_vector_data")
-
-        if not isinstance(values, np.ndarray):
-            values = np.asarray(values)
-
-        if len(values) > 0:
-            size, dimensions = values.shape
-            assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_block_vector_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
-        if len(values) == 0:
-            size = 0
-
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values.flatten(), dtype=np.double)
-
-        assert _values.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_values.size, size * self.get_dimensions())
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        self.thisptr.writeBlockVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <const double*>_values.data)
-
-    def write_vector_data (self, mesh_name, data_name, vertex_id, value):
-        """
-        Writes vector data to a vertex. This function writes a value of a specified vertex to a dataID.
-        Values are provided as a block of continuous memory.
-        The 2D-format of value is a numpy array of shape 2
-        The 3D-format of value is a numpy array of shape 3
-
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to write to.
-        data_name : str
-            ID to write to.
-        vertex_id : int
-            Index of the vertex.
-        value : array_like
-            Single vector value
-
-        Notes
-        -----
-        Previous calls:
-            count of available elements at value matches the configured dimension
-            initialize() has been called
-
-        Examples
-        --------
-        Write vector data for a 2D problem with 5 vertices:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_id = 5
-        >>> value = np.array([v5_x, v5_y])
-        >>> interface.write_vector_data(mesh_name, data_name, vertex_id, value)
+        >>> participant.write_data(mesh_name, data_name, vertex_ids, values)
 
         Write vector data for a 3D (D=3) problem with 5 (N=5) vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
-        >>> vertex_id = 5
-        >>> value = np.array([v5_x, v5_y, v5_z])
-        >>> interface.write_vector_data(mesh_name, data_name, vertex_id, value)
-        """
-        check_array_like(value, "value", "write_vector_data")
-        assert len(value) > 0, "Input vector data is empty in write_vector_data"
-
-        dimensions = len(value)
-
-        assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_vector_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
-
-        cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        self.thisptr.writeVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <const double*>_value.data)
-
-    def write_block_scalar_data (self, mesh_name, data_name, vertex_ids, values):
-        """
-        Writes scalar data given as a block. This function writes values of specified vertices to a dataID.
-
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to write to.
-        data_name : str
-            ID to write to.
-        vertex_ids : array_like
-            Indices of the vertices.
-        values : array_like
-            Values to be written
-
-        Notes
-        -----
-        Previous calls:
-            count of available elements at values matches the given size
-            count of available elements at vertex_ids matches the given size
-            initialize() has been called
-
-        Examples
-        --------
-        Write block scalar data for a 2D and 3D problem with 5 (N=5) vertices:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = np.array([v1, v2, v3, v4, v5])
-        >>> interface.write_block_scalar_data(mesh_name, data_name, vertex_ids, values)
+        >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
+        >>> participant.write_data(mesh_name, data_name, vertex_ids, values)
         """
-        check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_data")
-        check_array_like(values, "values", "write_block_scalar_data")
+        check_array_like(vertex_ids, "vertex_ids", "write_data")
+        check_array_like(values, "values", "write_data")
 
-        if len(values) > 0:
-            assert(len(vertex_ids) == len(values))
-            size = len(vertex_ids)
+        if not isinstance(values, np.ndarray):
+            values = np.asarray(values)
+
         if len(values) == 0:
             size = 0
+        elif self.get_data_dimensions(mesh_name, data_name) == 1:
+            size = values.flatten().shape[0]
+            dimensions = 1
+        else:
+            assert len(values.shape) == 2, "Vector valued data has to be provided as a numpy array of shape [N x D] where N = number of vertices and D = number of dimensions."
+            size, dimensions = values.shape
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
+            assert dimensions == self.get_data_dimensions(mesh_name, data_name), "Dimensions of vector data in write_data do not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_data_dimensions(mesh_name, data_name))
 
-        assert _values.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check size of input data provided. Provided size: {}, expected size: {}".format(_values.size, size)
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check size of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
+        assert len(vertex_ids) == size, "Vertex IDs are of incorrect length in write_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(vertex_ids.size, size)
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
+        cdef vector[int] cpp_ids = vertex_ids
+        cdef vector[double] cpp_values = values.flatten()
 
-        self.thisptr.writeBlockScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <const double*>_values.data)
+        self.thisptr.writeData (convert(mesh_name), convert(data_name), cpp_ids, cpp_values)
 
-    def write_scalar_data (self, mesh_name, data_name, vertex_id, double value):
-        """
-        Writes scalar data to a vertex
-        This function writes a value of a specified vertex to a dataID.
 
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to write to.
-        data_name : str
-            ID to write to.
-        vertex_id : int
-            Index of the vertex.
-        value : double
-            The value to write.
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called
-
-        Examples
-        --------
-        Write scalar data for a 2D or 3D problem with 5 vertices:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_id = 5
-        >>> value = v5
-        >>> interface.write_scalar_data(mesh_name, data_name, vertex_id, value)
-        """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        self.thisptr.writeScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, value)
-
-    def read_block_vector_data (self, mesh_name, data_name, vertex_ids, relative_read_time=None):
+    def read_data (self, mesh_name, data_name, vertex_ids, relative_read_time):
         """
         Reads vector data into a provided block. This function reads values of specified vertices
         from a dataID. Values are read into a block of continuous memory.
@@ -920,200 +790,50 @@ cdef class Interface:
 
         Examples
         --------
-        Read block vector data for a 2D problem with 5 vertices:
+        Read vector data for a 2D problem with 5 vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_block_vector_data(mesh_name, data_name, vertex_ids)
+        >>> values = read_data(mesh_name, data_name, vertex_ids)
         >>> values.shape
         >>> (5, 2)
 
-        Read block vector data for a 3D system with 5 vertices:
+        Read vector data for a 3D system with 5 vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_block_vector_data(mesh_name, data_name, vertex_ids)
+        >>> values = read_data(mesh_name, data_name, vertex_ids)
         >>> values.shape
         >>> (5, 3)
         """
-        check_array_like(vertex_ids, "vertex_ids", "read_block_vector_data")
+        check_array_like(vertex_ids, "vertex_ids", "read_data")
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        size = _vertex_ids.size
-        dimensions = self.get_dimensions()
-        cdef np.ndarray[np.double_t, ndim=1] _values = np.empty(size * dimensions, dtype=np.double)
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        #cdef str mesh_name_str = mesh_name.encode()
-        #cdef str data_name_str = data_name.encode()
-
-        if relative_read_time is None:
-            self.thisptr.readBlockVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <double*>_values.data)
+        if len(vertex_ids) == 0:
+            size = 0
+            dimensions =  self.get_data_dimensions(mesh_name, data_name)
+        elif self.get_data_dimensions(mesh_name, data_name) == 1:
+            size = len(vertex_ids)
+            dimensions = 1
         else:
-            self.thisptr.readBlockVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
-        return _values.reshape((size, dimensions))
+            size = len(vertex_ids)
+            dimensions =  self.get_data_dimensions(mesh_name, data_name)
 
-    def read_vector_data (self, mesh_name, data_name, vertex_id, relative_read_time=None):
-        """
-        Reads vector data form a vertex. This function reads a value of a specified vertex
-        from a dataID.
+        cdef vector[int] cpp_ids = vertex_ids
+        cdef vector[double] cpp_values = [-1 for _ in range(size * dimensions)]
 
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to read from.
-        data_name : str
-            ID to read from.
-        vertex_id : int
-            Index of the vertex.
-        relative_read_time : double
-            Point in time where data is read relative to the beginning of the current time step
+        self.thisptr.readData (convert(mesh_name), convert(data_name), cpp_ids, relative_read_time, cpp_values)
 
-        Returns
-        -------
-        value : numpy.ndarray
-            Contains the read data.
+        cdef np.ndarray[double, ndim=1] np_values = np.array(cpp_values, dtype=np.double)
 
-        Notes
-        -----
-        Previous calls:
-            count of available elements at value matches the configured dimension
-            initialize() has been called
-
-        Examples
-        --------
-        Read vector data for 2D problem:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_id = 5
-        >>> value = interface.read_vector_data(mesh_name, data_name, vertex_id)
-        >>> value.shape
-        (1, 2)
-
-        Read vector data for 3D problem:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_id = 5
-        >>> value = interface.read_vector_data(mesh_name, data_name, vertex_id)
-        >>> value.shape
-        (1, 3)
-        """
-        dimensions = self.get_dimensions()
-        cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        if relative_read_time is None:
-            self.thisptr.readVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <double*>_value.data)
+        if len(vertex_ids) == 0:
+            return np_values.reshape((size))
+        elif self.get_data_dimensions(mesh_name, data_name) == 1:
+            return np_values.reshape((size))
         else:
-            self.thisptr.readVectorData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, relative_read_time, <double*>_value.data)
+            return np_values.reshape((size, dimensions))
 
-        return _value
 
-    def read_block_scalar_data (self, mesh_name, data_name, vertex_ids, relative_read_time=None):
-        """
-        Reads scalar data as a block. This function reads values of specified vertices from a dataID.
-        Values are provided as a block of continuous memory.
-
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to read from.
-        data_name : str
-            ID to read from.
-        vertex_ids : array_like
-            Indices of the vertices.
-        relative_read_time : double
-            Point in time where data is read relative to the beginning of the current time step
-
-        Returns
-        -------
-            values : numpy.ndarray
-                Contains the read data.
-
-        Notes
-        -----
-        Previous calls:
-            count of available elements at values matches the given size
-            count of available elements at vertex_ids matches the given size
-            initialize() has been called
-
-        Examples
-        --------
-        Read block scalar data for 2D and 3D problems with 5 vertices:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = interface.read_block_scalar_data(mesh_name, data_name, vertex_ids)
-        >>> values.size
-        >>> 5
-
-        """
-        check_array_like(vertex_ids, "vertex_ids", "read_block_scalar_data")
-
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        size = _vertex_ids.size
-        cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        if relative_read_time is None:
-            self.thisptr.readBlockScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <double*>_values.data)
-        else:
-            self.thisptr.readBlockScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
-
-        return _values
-
-    def read_scalar_data (self, mesh_name, data_name, vertex_id, relative_read_time=None):
-        """
-        Reads scalar data of a vertex. This function needs a value of a specified vertex from a dataID.
-
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to read to.
-        data_name : str
-            ID to read from.
-        vertex_id : int
-            Index of the vertex.
-        relative_read_time : double
-            Point in time where data is read relative to the beginning of the current time step
-
-        Returns
-        -------
-        value : double
-            Contains the read value
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called.
-
-        Examples
-        --------
-        Read scalar data for 2D and 3D problems:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_id = 5
-        >>> value = interface.read_scalar_data(mesh_name, data_name, vertex_id)
-        """
-        cdef double _value
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        if relative_read_time is None:
-            self.thisptr.readScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, _value)
-        else:
-            self.thisptr.readScalarData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, relative_read_time, _value)
-
-        return _value
-
-    def write_block_vector_gradient_data (self, mesh_name, data_name, vertex_ids, gradientValues):
+    def write_gradient_data (self, mesh_name, data_name, vertex_ids, gradients):
         """
         Writes vector gradient data given as block. This function writes gradient values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
@@ -1127,7 +847,7 @@ cdef class Interface:
             Data name to write to.
         vertex_ids : array_like
             Indices of the vertices.
-        gradientValues : array_like
+        gradients : array_like
              Gradient values differentiated in the spacial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
 
         Notes
@@ -1140,219 +860,41 @@ cdef class Interface:
 
         Examples
         --------
-        Write block gradient vector data for a 2D problem with 2 vertices:
+        Write gradient vector data for a 2D problem with 2 vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
-        >>> gradientValues = np.array([[v1x_dx, v1y_dx, v1x_dy, v1y_dy], [v2x_dx, v2y_dx, v2x_dy, v2y_dy]])
-        >>> interface.write_block_vector_gradient_data(mesh_name, data_name, vertex_ids, gradientValues)
+        >>> gradients = np.array([[v1x_dx, v1y_dx, v1x_dy, v1y_dy], [v2x_dx, v2y_dx, v2x_dy, v2y_dy]])
+        >>> participant.write_gradient_data(mesh_name, data_name, vertex_ids, gradients)
 
-        Write block vector data for a 3D (D=3) problem with 2 (N=2) vertices:
+        Write vector data for a 3D (D=3) problem with 2 (N=2) vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
-        >>> gradientValues = np.array([[v1x_dx, v1y_dx, v1z_dx, v1x_dy, v1y_dy, v1z_dy, v1x_dz, v1y_dz, v1z_dz], [v2x_dx, v2y_dx, v2z_dx, v2x_dy, v2y_dy, v2z_dy, v2x_dz, v2y_dz, v2z_dz]])
-        >>> interface.write_block_vector_gradient_data(mesh_name, data_name, vertex_ids, gradientValues)
+        >>> gradients = np.array([[v1x_dx, v1y_dx, v1z_dx, v1x_dy, v1y_dy, v1z_dy, v1x_dz, v1y_dz, v1z_dz], [v2x_dx, v2y_dx, v2z_dx, v2x_dy, v2y_dy, v2z_dy, v2x_dz, v2y_dz, v2z_dz]])
+        >>> participant.write_gradient_data(mesh_name, data_name, vertex_ids, gradients)
         """
-        check_array_like(vertex_ids, "vertex_ids", "write_block_vector_gradient_data")
-        check_array_like(gradientValues, "gradientValues", "write_block_vector_gradient_data")
+        check_array_like(vertex_ids, "vertex_ids", "write_gradient_data")
+        check_array_like(gradients, "gradients", "write_gradient_data")
 
-        if not isinstance(gradientValues, np.ndarray):
-            gradientValues = np.asarray(gradientValues)
+        if not isinstance(gradients, np.ndarray):
+            gradients = np.asarray(gradients)
 
-        if len(gradientValues) > 0:
-            size, dimensions = gradientValues.shape
-            assert dimensions == self.get_dimensions() * self.get_dimensions(), "Dimensions of vector data in write_block_vector_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions() *  self.get_dimensions())
-        if len(gradientValues) == 0:
+        if len(gradients) > 0:
+            size, dimensions = gradients.shape
+            assert dimensions == self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name), "Dimensions of vector data in write_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_mesh_dimensions(mesh_name) *  self.get_data_dimensions (mesh_name, data_name))
+        if len(gradients) == 0:
             size = 0
 
         cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
+        cdef np.ndarray[double, ndim=1] _gradients = np.ascontiguousarray(gradients.flatten(), dtype=np.double)
 
-        assert _gradientValues.size == size * self.get_dimensions() * self.get_dimensions(), "Dimension of vector gradient data provided in write_block_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, size * self.get_dimensions() * self.get_dimensions())
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
+        assert _gradients.size == size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name), "Dimension of gradient data provided in write_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradients.size, size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name))
+        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
 
-        self.thisptr.writeBlockVectorGradientData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
+        self.thisptr.writeGradientData (convert(mesh_name), convert(data_name), _vertex_ids, _gradients)
 
-    def write_scalar_gradient_data (self, mesh_name, data_name, vertex_id, gradientValues):
-        """
-        Writes scalar gradient data to a vertex
-        This function writes the corresponding gradient matrix value of a specified vertex to a dataID.
-
-        The gradients need to be provided in the following format:
-
-        The 2D-format of gradientValues is (v_dx, v_dy) vector corresponding to the data block v = (v)
-        differentiated respectively in x-direction dx and y-direction dy
-
-        The 3D-format of gradientValues is (v_dx, v_dy, v_dz) vector
-        corresponding to the data block v = (v) differentiated respectively in spatial directions x-direction dx and y-direction dy and z-direction dz
-
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to write to.
-        data_name : str
-            ID to write to.
-        vertex_id : int
-            Index of the vertex.
-        gradientValue : array_like
-            A vector of the gradient values.
-
-        Notes
-        -----
-        Count of available elements at value matches the configured dimension
-        Vertex with dataID exists and contains data
-        Data with dataID has attribute hasGradient = true
-
-        Previous calls:
-            initialize() has been called
-
-        Examples
-        --------
-        Write scalar data for a 2D problem:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_id = 5
-        >>> gradientValue = [v5_dx, v5_dy]
-        >>> interface.write_scalar_gradient_data(mesh_name, data_name, vertex_id, gradientValue)
-        """
-        check_array_like(gradientValues, "gradientValues", "write_scalar_gradient_data")
-
-        if not isinstance(gradientValues, np.ndarray):
-            gradientValues = np.asarray(gradientValues)
-
-        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
-
-        assert _gradientValues.size == self.get_dimensions(), "Vector data provided for vertex {} in write_scalar_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions())
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        self.thisptr.writeScalarGradientData(<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <const double*>_gradientValues.data)
-
-    def write_vector_gradient_data (self, mesh_name, data_name, vertex_id, gradientValues):
-        """
-        Writes vector gradient data to a vertex
-        This function writes the corresponding gradient matrix value of a specified vertex to a dataID.
-
-        The gradients need to be provided in the following format:
-
-        The 2D-format of \p gradientValues is (vx_dx, vy_dx, vx_dy, vy_dy) vector corresponding to the data block v = (vx, vy)
-        differentiated respectively in x-direction dx and y-direction dy
-
-        The 3D-format of \p gradientValues is (vx_dx, vy_dx, vz_dx, vx_dy, vy_dy, vz_dy, vx_dz, vy_dz, vz_dz) vector
-        corresponding to the data block v = (vx, vy, vz) differentiated respectively in spatial directions x-direction dx and y-direction dy and z-direction dz
-
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to write to.
-        data_name : str
-            ID to write to.
-        vertex_id : int
-            Index of the vertex.
-        gradientValue : array_like
-            A vector of the gradient values.
-
-        Notes
-        -----
-        Count of available elements at value matches the configured dimension
-        Vertex with dataID exists and contains data
-        Data with dataID has attribute hasGradient = true
-
-        Previous calls:
-            initialize() has been called
-
-        Examples
-        --------
-        Write scalar data for a 2D problem:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_id = 5
-        >>> gradientValue = [v5x_dx, v5y_dx, v5x_dy,v5y_dy]
-        >>> interface.write_vector_gradient_data(mesh_name, data_name, vertex_id, gradientValue)
-        """
-
-        check_array_like(gradientValues, "gradientValues", "write_vector_gradient_data")
-
-        if not isinstance(gradientValues, np.ndarray):
-            gradientValues = np.asarray(gradientValues)
-
-        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
-
-        assert _gradientValues.size == self.get_dimensions() * self.get_dimensions(), "Dimensions of vector gradient data provided for vertex {} in write_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions() * self.get_dimensions())
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        self.thisptr.writeVectorGradientData(<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, vertex_id, <const double*>_gradientValues.data)
-
-    def write_block_scalar_gradient_data (self, mesh_name, data_name, vertex_ids, gradientValues):
-        """
-        Writes scalar gradient data given as block. This function writes values of specified vertices to a dataID.
-        Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
-        of vertices and D = dimensions of geometry.
-
-        Parameters
-        ----------
-        mesh_name : str
-            Name of the mesh to write to.
-        data_name : str
-            Data name to write to.
-        vertex_ids : array_like
-            Indices of the vertices.
-        gradientValues : array_like
-             Gradient values differentiated in the spacial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
-
-        Notes
-        -----
-        Previous calls:
-            Count of available elements at values matches the configured dimension
-            Count of available elements at vertex_ids matches the given size
-            Initialize() has been called
-            Data with dataID has attribute hasGradient = true
-
-        Examples
-        --------
-        Write block gradient scalar data for a 2D problem with 2 vertices:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_ids = [1, 2]
-        >>> gradientValues = np.array([[v1_dx, v1_dy], [v2_dx, v2_dy]])
-        >>> interface.write_block_scalar_gradient_data(mesh_name, data_name, vertex_ids, gradientValues)
-
-        Write block scalar data for a 3D (D=3) problem with 2 (N=2) vertices:
-        >>> mesh_name = "MeshOne"
-        >>> data_name = "DataOne"
-        >>> vertex_ids = [1, 2]
-        >>> values = np.array([[v1_dx, v1_dy, v1x_dz], [v2_dx, v2_dy, v2_dz]])
-        >>> interface.write_block_scalar_gradient_data(mesh_name, data_name, vertex_ids, values)
-        """
-        check_array_like(vertex_ids, "vertex_ids", "write_block_scalar_gradient_data")
-        check_array_like(gradientValues, "gradientValues", "write_block_sclar_gradient_data")
-
-        if not isinstance(gradientValues, np.ndarray):
-            gradientValues = np.asarray(gradientValues)
-
-        if len(gradientValues) > 0:
-            size, dimensions = gradientValues.shape
-            assert dimensions == self.get_dimensions() , "Dimensions of scalar gradient data  provided in write_block_scalar_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
-        if len(gradientValues) == 0:
-            size = 0
-
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
-
-        assert _gradientValues.size == size * self.get_dimensions(), "Scalar gradient data is not provided for all vertices in write_block_scalar_gradient_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, size * self.get_dimensions())
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
-
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
-
-        self.thisptr.writeBlockScalarGradientData (<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
 
     def requires_gradient_data_for(self, mesh_name, data_name):
         """
@@ -1375,12 +917,11 @@ cdef class Interface:
         Check if gradient data is required for a data:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
-        >>> interface.is_gradient_data_required(mesh_name, data_name)
+        >>> participant.is_gradient_data_required(mesh_name, data_name)
         """
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
-        cdef bytes data_name_py_bytes = data_name.encode()
 
-        return self.thisptr.requiresGradientDataFor(<const char*> mesh_name_py_bytes, <const char*> data_name_py_bytes)
+        return self.thisptr.requiresGradientDataFor(convert(mesh_name), convert(data_name))
+
 
     def set_mesh_access_region (self, mesh_name, bounding_box):
         """
@@ -1434,13 +975,12 @@ cdef class Interface:
 
         assert len(bounding_box) > 0, "Bounding box cannot be empty."
 
-        assert len(bounding_box) == (self.get_dimensions() * 2), "Dimensions of bounding box in set_mesh_access_region does not match with dimensions in problem definition."
+        assert len(bounding_box) == (self.get_mesh_dimensions(mesh_name) * 2), "Dimensions of bounding box in set_mesh_access_region does not match with dimensions in problem definition."
 
-        cdef np.ndarray[double, ndim=1] _bounding_box = np.ascontiguousarray(bounding_box, dtype=np.double)
+        cdef vector[double] cpp_bounding_box = list(bounding_box)
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
+        self.thisptr.setMeshAccessRegion(convert(mesh_name), cpp_bounding_box)
 
-        self.thisptr.setMeshAccessRegion(<const char*> mesh_name_py_bytes, <double*>_bounding_box.data)
 
     def get_mesh_vertices_and_ids (self, mesh_name):
         """
@@ -1462,15 +1002,17 @@ cdef class Interface:
         warnings.warn("The function get_mesh_vertices_and_ids is still experimental.")
 
         size = self.get_mesh_vertex_size(mesh_name)
-        cdef np.ndarray[int, ndim=1] _ids = np.empty(size, dtype=np.int32)
-        dimensions = self.get_dimensions()
-        cdef np.ndarray[double, ndim=1] _coordinates = np.empty(size*dimensions, dtype=np.double)
+        dimensions = self.get_mesh_dimensions(mesh_name)
 
-        cdef bytes mesh_name_py_bytes = mesh_name.encode()
+        cdef vector[int] cpp_ids = [-1 for _ in range(size)]
+        cdef vector[double] cpp_coordinates = [-1 for _ in range(size * dimensions)]
 
-        self.thisptr.getMeshVerticesAndIDs(<const char*> mesh_name_py_bytes, size, <int*>_ids.data, <double*>_coordinates.data)
+        self.thisptr.getMeshVerticesAndIDs(convert(mesh_name), cpp_ids, cpp_coordinates)
 
-        return _ids, _coordinates.reshape((size, dimensions))
+        cdef np.ndarray[int, ndim=1] np_ids = np.array(cpp_ids, dtype=np.int32)
+        cdef np.ndarray[double, ndim=1] np_coordinates = np.array(cpp_coordinates, dtype=np.double)
+
+        return np_ids, np_coordinates.reshape((size, dimensions))
 
 def get_version_information ():
     """

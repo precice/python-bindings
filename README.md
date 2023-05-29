@@ -94,11 +94,11 @@ $ python3 setup.py install --user
    ```
 
   **Options:**
-  - `--include-dirs=`, default: `''` 
+  - `--include-dirs=`, default: `''`
     Path to the headers of preCICE, point to the sources `$PRECICE_ROOT/src`, or the your custom install prefix `$prefix/include`.
-  
+
   **NOTES:**
-  
+
   - If you have built preCICE using CMake, you can pass the path to the CMake binary directory using `--library-dirs`.
   - It is recommended to use preCICE as a shared library here.
 
@@ -145,7 +145,7 @@ $ python3 -c "import precice"
 
 # Usage
 
-You can find the documentation of the implemented interface in the file `precice.pyx`. For an example of how `pyprecice` can be used please refer to the [1D elastic tube example](https://precice.org/tutorials-elastic-tube-1d.html#python). 
+You can find the documentation of the implemented interface in the file `precice.pyx`. For an example of how `pyprecice` can be used please refer to the [1D elastic tube example](https://precice.org/tutorials-elastic-tube-1d.html#python).
 
 **Note** The python package that is installed is called `pyprecice`. It provides the python module `precice` that can be use in your code via `import precice`, for example.
 
@@ -156,8 +156,8 @@ You can find the documentation of the implemented interface in the file `precice
 The following error shows up during installation, if preCICE is not found:
 
 ```
-  /tmp/pip-install-d_fjyo1h/pyprecice/precice.cpp:643:10: fatal error: precice/SolverInterface.hpp: No such file or directory
-    643 | #include "precice/SolverInterface.hpp"
+  /tmp/pip-install-d_fjyo1h/pyprecice/precice.cpp:643:10: fatal error: precice/Participant.hpp: No such file or directory
+    643 | #include "precice/Participant.hpp"
         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   compilation terminated.
   error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
@@ -187,7 +187,7 @@ Collecting pyprecice
   error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
 
   ----------------------------------------
-  Failed building wheel for pyprecice 
+  Failed building wheel for pyprecice
 ```
 
 Please try to install `python3-dev`. E.g. via `apt install python3-dev`. Please make sure that you use the correct version (e.g. `python3.5-dev` or `python3.6-dev`). You can check your version via `python3 --version`.
@@ -223,7 +223,7 @@ module load mpi.intel/2018_gcc
 module load cmake/3.12.1
 ```
 At the time of this writing `module load boost/1.68.0` is no longer available. Instead
-boost 1.65.1 was installed per the `boost and yaml-cpp` guide above. 
+boost 1.65.1 was installed per the `boost and yaml-cpp` guide above.
 
 In order to have the right python dependencies, a packaged conda environment was transferred to
 SuperMUC. The following dependencies were installed:
@@ -250,7 +250,7 @@ Then, navigate to the python_future bindings script.
 cd /path/to/precice/src/precice/bindings/python_future
 ```
 Append the following to the head of the file to allow Python2 to run Python3 code. Note that
-importing `unicode_literals` from `future` will cause errors in `setuptools` methods as string literals 
+importing `unicode_literals` from `future` will cause errors in `setuptools` methods as string literals
 in code are interpreted as `unicode` with this import.
 ```
 from __future__ import (absolute_import, division,
