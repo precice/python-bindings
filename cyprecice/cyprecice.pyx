@@ -964,10 +964,10 @@ cdef class Participant:
         cdef vector[int] cpp_vertex_ids = vertex_ids
         cdef vector[double] cpp_gradients = gradients.flatten()
 
-        assert cpp_gradients.size() == size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name), "Dimension of gradient data provided in write_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradients.size, size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name))
-        assert cpp_vertex_ids.size() == size, "Vertex IDs are of incorrect length in write_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
+        assert cpp_gradients.size() == size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name), "Dimension of gradient data provided in write_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(cpp_gradients.size(), size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name))
+        assert cpp_vertex_ids.size() == size, "Vertex IDs are of incorrect length in write_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(cpp_vertex_ids.size(), size)
 
-        self.thisptr.writeGradientData (convert(mesh_name), convert(data_name), _vertex_ids, _gradients)
+        self.thisptr.writeGradientData (convert(mesh_name), convert(data_name), cpp_vertex_ids, cpp_gradients)
 
 
     def requires_gradient_data_for(self, mesh_name, data_name):
