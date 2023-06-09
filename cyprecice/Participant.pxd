@@ -35,9 +35,9 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         bool requiresInitialData()
 
-        bool requiresReadingCheckpoint()
-
         bool requiresWritingCheckpoint()
+
+        bool requiresReadingCheckpoint()
 
         # mesh access
 
@@ -65,7 +65,7 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         void setMeshTetrahedron (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
 
-        void setMeshTetrahedra (const string& meshName, )
+        void setMeshTetrahedra (const string& meshName, vector[int] vertices)
 
         # data access
 
@@ -75,17 +75,18 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         void readData (const string& meshName, const string& dataName, vector[int] vertices, const double relativeReadTime, vector[double]& values) const
 
+        # direct access
+
+        void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) const
+
+        void getMeshVerticesAndIDs (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
+
         # Gradient related API
 
         bool requiresGradientDataFor(const string& meshName, const string& dataName) const
 
         void writeGradientData(const string& meshName, const string& dataName, vector[int] vertices, vector[double] gradientValues)
 
-        # direct mesh access
-
-        void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) const
-
-        void getMeshVerticesAndIDs (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
 
 cdef extern from "precice/Tooling.hpp" namespace "precice":
     string getVersionInformation()

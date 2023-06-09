@@ -185,6 +185,7 @@ cdef class Participant:
 
         return self.thisptr.getMeshDimensions (convert(mesh_name))
 
+
     def get_data_dimensions (self, mesh_name, data_name):
         """
         Returns the spatial dimensionality of the given data on the given mesh.
@@ -285,6 +286,24 @@ cdef class Participant:
         return self.thisptr.requiresInitialData ()
 
 
+    def requires_writing_checkpoint (self):
+        """
+        Checks if the participant is required to write an iteration checkpoint.
+
+        If true, the participant is required to write an iteration checkpoint before
+        calling advance().
+
+        preCICE refuses to proceed if writing a checkpoint is required,
+        but this method isn't called prior to advance().
+
+        Notes
+        -----
+        Previous calls:
+            initialize() has been called
+        """
+        return self.thisptr.requiresWritingCheckpoint ()
+
+
     def requires_reading_checkpoint (self):
         """
         Checks if the participant is required to read an iteration checkpoint.
@@ -303,24 +322,6 @@ cdef class Participant:
             initialize() has been called
         """
         return self.thisptr.requiresReadingCheckpoint ()
-
-
-    def requires_writing_checkpoint (self):
-        """
-        Checks if the participant is required to write an iteration checkpoint.
-
-        If true, the participant is required to write an iteration checkpoint before
-        calling advance().
-
-        preCICE refuses to proceed if writing a checkpoint is required,
-        but this method isn't called prior to advance().
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called
-        """
-        return self.thisptr.requiresWritingCheckpoint ()
 
 
     # mesh access
@@ -388,10 +389,10 @@ cdef class Participant:
         elif len(position) == 0:
             dimensions = self.get_mesh_dimensions(mesh_name)
 
-        cdef np.ndarray[double, ndim=1] _position = np.ascontiguousarray(position, dtype=np.double)
+        cdef vector[double] cpp_position = position
 
+        vertex_id = self.thisptr.setMeshVertex(convert(mesh_name), cpp_position)
 
-        vertex_id = self.thisptr.setMeshVertex(convert(mesh_name), _position)
         return vertex_id
 
 
@@ -540,15 +541,14 @@ cdef class Participant:
         elif len(vertices) == 0:
             dimensions = self.get_mesh_dimensions(mesh_name)
 
-        cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
+        cdef vector[int] cpp_vertices = vertices.flatten()
 
-
-        self.thisptr.setMeshEdges (convert(mesh_name), _vertices)
+        self.thisptr.setMeshEdges (convert(mesh_name), cpp_vertices)
 
 
     def set_mesh_triangle (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id):
         """
-        Sets mesh triangle from edge IDs
+        Set a mesh triangle from edge IDs
 
         Parameters
         ----------
@@ -577,7 +577,7 @@ cdef class Participant:
         Parameters
         ----------
         mesh_name : str
-            Name of the mesh to add the vertices to.
+            Name of the mesh to add the triangles to.
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 3] where
             N = number of triangles and D = dimensions of geometry.
@@ -602,21 +602,19 @@ cdef class Participant:
         elif len(vertices) == 0:
             dimensions = self.get_mesh_dimensions(mesh_name)
 
-        cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
+        cdef vector[int] cpp_vertices = vertices.flatten()
 
-
-        self.thisptr.setMeshTriangles (convert(mesh_name), _vertices)
+        self.thisptr.setMeshTriangles (convert(mesh_name), cpp_vertices)
 
 
     def set_mesh_quad (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
         """
-        Sets mesh Quad from vertex IDs.
-        WARNING: Quads are not fully implemented yet.
+        Set a mesh quad from vertex IDs.
 
         Parameters
         ----------
         mesh_name : str
-            Name of the mesh to add the Quad to.
+            Name of the mesh to add the quad to.
         first_vertex_id : int
             ID of the first vertex of the quad.
         second_vertex_id : int
@@ -643,7 +641,7 @@ cdef class Participant:
         Parameters
         ----------
         mesh_name : str
-            Name of the mesh to add the vertices to.
+            Name of the mesh to add the quads to.
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 4] where
             N = number of quads and D = dimensions of geometry.
@@ -668,11 +666,73 @@ cdef class Participant:
         elif len(vertices) == 0:
             dimensions = self.get_mesh_dimensions(mesh_name)
 
-        cdef np.ndarray[double, ndim=1] _vertices = np.ascontiguousarray(vertices.flatten(), dtype=np.int)
+        cdef vector[int] cpp_vertices = vertices.flatten()
+
+        self.thisptr.setMeshQuads (convert(mesh_name), cpp_vertices)
 
 
-        self.thisptr.setMeshQuads (convert(mesh_name), _vertices)
+    def set_mesh_tetrahedron (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
+        """
+        Sets a mesh tetrahedron from vertex IDs.
 
+        Parameters
+        ----------
+        mesh_name : str
+            Name of the mesh to add the tetrahedron to.
+        first_vertex_id : int
+            ID of the first vertex of the tetrahedron.
+        second_vertex_id : int
+            ID of the second vertex of the tetrahedron.
+        third_vertex_id : int
+            ID of the third vertex of the tetrahedron.
+        fourth_vertex_id : int
+            ID of the third vertex of the tetrahedron.
+
+        Notes
+        -----
+        Previous calls:
+            vertices with first_vertex_id, second_vertex_id, third_vertex_id, and fourth_vertex_id were added
+            to the mesh with the name mesh_name
+        """
+
+        self.thisptr.setMeshTetrahedron (convert(mesh_name), first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id)
+
+
+    def set_mesh_tetrahedra (self, mesh_name, vertices):
+        """
+        Creates multiple mesh tetdrahedrons
+
+        Parameters
+        ----------
+        mesh_name : str
+            Name of the mesh to add the tetrahedrons to.
+        vertices : array_like
+            The IDs of the vertices in a numpy array [N x 4] where
+            N = number of quads and D = dimensions of geometry.
+
+        Examples
+        --------
+        Set mesh tetrahedrons for a problem with 4 mesh vertices.
+
+        >>> vertices = np.array([[1, 2, 3, 4]])
+        >>> vertices.shape
+        (1, 2)
+        >>> participant.set_mesh_tetradehra(mesh_name, vertices)
+        """
+        check_array_like(vertices, "vertices", "set_mesh_tetrahedra")
+
+        if not isinstance(vertices, np.ndarray):
+            vertices = np.asarray(vertices)
+
+        if len(vertices) > 0:
+            _, n = vertices.shape
+            assert n == 4, "Provided vertices are not of a [N x 4] format, but instead of a [N x {}]".format(n)
+        elif len(vertices) == 0:
+            dimensions = self.get_mesh_dimensions(mesh_name)
+
+        cdef vector[int] cpp_vertices = vertices.flatten()
+
+        self.thisptr.setMeshTetrahedra (convert(mesh_name), cpp_vertices)
 
     # data access
 
@@ -710,7 +770,7 @@ cdef class Participant:
         vertex_ids : array_like
             Indices of the vertices.
         values : array_like
-            Vector values of data
+            Values of data
 
         Notes
         -----
@@ -721,6 +781,13 @@ cdef class Participant:
 
         Examples
         --------
+        Write scalar data for a 2D problem with 5 vertices:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> values = np.array([v1, v2, v3, v4, v5])
+        >>> participant.write_data(mesh_name, data_name, vertex_ids, values)
+
         Write vector data for a 2D problem with 5 vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
@@ -762,7 +829,7 @@ cdef class Participant:
 
     def read_data (self, mesh_name, data_name, vertex_ids, relative_read_time):
         """
-        Reads vector data into a provided block. This function reads values of specified vertices
+        Reads data into a provided block. This function reads values of specified vertices
         from a dataID. Values are read into a block of continuous memory.
 
         Parameters
@@ -790,6 +857,14 @@ cdef class Participant:
 
         Examples
         --------
+        Read scalar data for a 2D problem with 5 vertices:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> values = read_data(mesh_name, data_name, vertex_ids)
+        >>> values.shape
+        >>> (5, )
+
         Read vector data for a 2D problem with 5 vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
@@ -835,7 +910,7 @@ cdef class Participant:
 
     def write_gradient_data (self, mesh_name, data_name, vertex_ids, gradients):
         """
-        Writes vector gradient data given as block. This function writes gradient values of specified vertices to a dataID.
+        Writes gradient data given as block. This function writes gradient values of specified vertices to a dataID.
         Values are provided as a block of continuous memory. Values are stored in a numpy array [N x D] where N = number
         of vertices and D = number of gradient components.
 
@@ -886,12 +961,11 @@ cdef class Participant:
         if len(gradients) == 0:
             size = 0
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _gradients = np.ascontiguousarray(gradients.flatten(), dtype=np.double)
+        cdef vector[int] cpp_vertex_ids = vertex_ids
+        cdef vector[double] cpp_gradients = gradients.flatten()
 
-        assert _gradients.size == size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name), "Dimension of gradient data provided in write_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradients.size, size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name))
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
-
+        assert cpp_gradients.size() == size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name), "Dimension of gradient data provided in write_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradients.size, size * self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name))
+        assert cpp_vertex_ids.size() == size, "Vertex IDs are of incorrect length in write_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
 
         self.thisptr.writeGradientData (convert(mesh_name), convert(data_name), _vertex_ids, _gradients)
 

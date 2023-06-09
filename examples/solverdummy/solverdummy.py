@@ -35,7 +35,7 @@ solver_process_index = 0
 solver_process_size = 1
 
 participant = precice.Participant(participant_name, configuration_file_name,
-                                solver_process_index, solver_process_size)
+                                  solver_process_index, solver_process_size)
 
 assert (participant.requires_mesh_connectivity_for(mesh_name) is False)
 
