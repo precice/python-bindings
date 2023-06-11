@@ -81,7 +81,7 @@ void Participant:: initialize()
 
 void Participant:: advance
 (
-  double computedTimestepLength )
+  double computedTimestepLength)
 {
 }
 
@@ -153,10 +153,18 @@ bool Participant:: requiresMeshConnectivityFor
   return 0;
 }
 
+bool Participant:: requiresGradientDataFor
+(
+  precice::string_view meshName,
+  precice::string_view dataName) const
+{
+  return 0;
+}
+
 bool Participant:: hasData
 (
-  precice::string_view dataName,
-  precice::string_view meshName) const
+  precice::string_view meshName,
+  precice::string_view dataName) const
 {
   return 0;
 }
@@ -180,7 +188,7 @@ void Participant:: setMeshVertices
 (
   precice::string_view meshName,
   precice::span<const double> positions,
-  precice::span<precice::VertexID> ids )
+  precice::span<precice::VertexID> ids)
 {
   if(ids.size() > 0) {
     assert (ids.size() == fake_ids.size());
@@ -192,7 +200,7 @@ void Participant:: setMeshEdge
 (
   precice::string_view meshName,
   int firstVertexID,
-  int secondVertexID )
+  int secondVertexID)
 {}
 
 void Participant::setMeshEdges(
@@ -280,26 +288,6 @@ void Participant:: readData
   }
 }
 
-bool Participant::requiresGradientDataFor
-(
-  precice::string_view meshName,
-  precice::string_view dataName) const
-{
-  return 0;
-}
-
-void Participant::writeGradientData(
-    precice::string_view meshName,
-    precice::string_view dataName,
-    precice::span<const precice::VertexID> vertices,
-    precice::span<const double> gradients)
-{
-  fake_read_write_buffer.clear();
-  for (const double gradient: gradients) {
-    fake_read_write_buffer.push_back(gradient);
-  }
-}
-
 void Participant:: setMeshAccessRegion
 (
   precice::string_view meshName,
@@ -328,6 +316,18 @@ void Participant:: getMeshVerticesAndIDs
     for(std::size_t i = 0; i < fake_coordinates.size(); i++){
         coordinates[i] = fake_coordinates[i];
     }
+}
+
+void Participant::writeGradientData(
+    precice::string_view meshName,
+    precice::string_view dataName,
+    precice::span<const precice::VertexID> vertices,
+    precice::span<const double> gradients)
+{
+  fake_read_write_buffer.clear();
+  for (const double gradient: gradients) {
+    fake_read_write_buffer.push_back(gradient);
+  }
 }
 
 std::string getVersionInformation()
