@@ -360,12 +360,12 @@ class TestBindings(TestCase):
     def test_write_block_scalar_gradient_data_single_float(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
         fake_dimension = 3
-        n_fake_vertices = 4
+        n_fake_vertices = 1
         vertex_ids = np.arange(n_fake_vertices)
         write_data = np.random.rand(n_fake_vertices, fake_dimension)
         participant.write_gradient_data("FakeMesh", "FakeScalarData", vertex_ids, write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeScalarData", vertex_ids, dt)
+        read_data = participant.read_data("FakeMesh", "FakeScalarData", np.arange(n_fake_vertices * fake_dimension), dt)
         self.assertTrue(np.array_equal(write_data, read_data))
 
     def test_write_block_scalar_gradient_data_empty(self):

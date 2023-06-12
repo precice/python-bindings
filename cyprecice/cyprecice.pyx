@@ -942,7 +942,7 @@ cdef class Participant:
         >>> gradients = np.array([[v1x_dx, v1y_dx, v1x_dy, v1y_dy], [v2x_dx, v2y_dx, v2x_dy, v2y_dy]])
         >>> participant.write_gradient_data(mesh_name, data_name, vertex_ids, gradients)
 
-        Write vector data for a 3D (D=3) problem with 2 (N=2) vertices:
+        Write vector data for a 3D problem with 2 vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
@@ -957,7 +957,7 @@ cdef class Participant:
 
         if len(gradients) > 0:
             size, dimensions = gradients.shape
-            assert dimensions == self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions (mesh_name, data_name), "Dimensions of vector data in write_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_mesh_dimensions(mesh_name) *  self.get_data_dimensions (mesh_name, data_name))
+            assert dimensions == self.get_mesh_dimensions(mesh_name) * self.get_data_dimensions(mesh_name, data_name), "Dimensions of vector data in write_gradient_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_mesh_dimensions(mesh_name) *  self.get_data_dimensions (mesh_name, data_name))
         if len(gradients) == 0:
             size = 0
 
