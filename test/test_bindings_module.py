@@ -366,7 +366,7 @@ class TestBindings(TestCase):
         participant.write_gradient_data("FakeMesh", "FakeScalarData", vertex_ids, write_data)
         dt = 1
         read_data = participant.read_data("FakeMesh", "FakeScalarData", np.arange(n_fake_vertices * fake_dimension), dt)
-        self.assertTrue(np.array_equal(write_data, read_data))
+        self.assertTrue(np.array_equal(write_data.flatten(), read_data))
 
     def test_write_block_scalar_gradient_data_empty(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
@@ -378,8 +378,7 @@ class TestBindings(TestCase):
 
     def test_write_block_scalar_gradient_data_non_contiguous(self):
         """
-        Tests behaviour of solver interface, if a non contiguous array is passed to the interface.
-
+        Tests behavior of solver interface, if a non contiguous array is passed to the interface.
         Note: Check whether np.ndarray is contiguous via np.ndarray.flags.
         """
         participant = precice.Participant("test", "dummy.xml", 0, 1)
@@ -397,7 +396,9 @@ class TestBindings(TestCase):
         write_data = [np.random.rand(fake_dimension)]
         participant.write_gradient_data("FakeMesh", "FakeScalarData", [0], write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeScalarData", [0], dt)
+        # Gradient data is essential vector data, hence the appropriate data name is used here
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", [0], dt)
+        print("DEBUG: write_data: {}, read_data: {}".format(write_data, read_data))
         self.assertTrue(np.array_equiv(write_data, read_data))
 
     def test_write_block_vector_gradient_data(self):
@@ -425,7 +426,7 @@ class TestBindings(TestCase):
         write_data = [[3.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0], [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 6.0, 5.0]]
         participant.write_gradient_data("FakeMesh", "FakeVectorData", np.array([0, 1]), write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(18)), dt)
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(6)), dt)
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
     def test_write_block_vector_gradient_data_tuple(self):
@@ -433,7 +434,7 @@ class TestBindings(TestCase):
         write_data = ((1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 3.0, 7.0, 8.0), (1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 6.0, 5.0))
         participant.write_gradient_data("FakeMesh", "FakeVectorData", np.array([0, 1]), write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(18)), dt)
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(6)), dt)
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
     def test_write_block_vector_gradient_data_mixed(self):
@@ -441,13 +442,12 @@ class TestBindings(TestCase):
         write_data = [(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 3.0, 7.0, 8.0), (4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 7.0, 6.0, 5.0)]
         participant.write_gradient_data("FakeMesh", "FakeVectorData", np.array([0, 1]), write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(18)), dt)
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(6)), dt)
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
     def test_write_block_vector_gradient_data_non_contiguous(self):
         """
-        Tests behaviour of solver interface, if a non contiguous array is passed to the interface.
-
+        Tests behavior of solver interface, if a non contiguous array is passed to the interface.
         Note: Check whether np.ndarray is contiguous via np.ndarray.flags.
         """
         participant = precice.Participant("test", "dummy.xml", 0, 1)
@@ -457,7 +457,7 @@ class TestBindings(TestCase):
         vertex_ids = np.arange(3)
         participant.write_gradient_data("FakeMesh", "FakeVectorData", vertex_ids, write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(27)), dt)
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(9)), dt)
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
     def test_write_vector_gradient_data(self):
@@ -465,7 +465,7 @@ class TestBindings(TestCase):
         write_data = [np.arange(0, 9, dtype=np.double)]
         participant.write_gradient_data("FakeMesh", "FakeVectorData", [0], write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(9)), dt)
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(3)), dt)
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
     def test_write_vector_gradient_data_list(self):
@@ -473,7 +473,7 @@ class TestBindings(TestCase):
         write_data = [[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]]
         participant.write_gradient_data("FakeMesh", "FakeVectorData", [0], write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(9)), dt)
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(3)), dt)
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
     def test_write_vector_gradient_data_tuple(self):
@@ -481,13 +481,12 @@ class TestBindings(TestCase):
         write_data = [(1.0, 2.0, 3.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0)]
         participant.write_gradient_data("FakeMesh", "FakeVectorData", [0], write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(9)), dt)
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(3)), dt)
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
 
     def test_write_vector_gradient_data_non_contiguous(self):
         """
-        Tests behaviour of solver interface, if a non contiguous array is passed to the interface.
-
+        Tests behavior of solver interface, if a non contiguous array is passed to the interface.
         Note: Check whether np.ndarray is contiguous via np.ndarray.flags.
         """
         participant = precice.Participant("test", "dummy.xml", 0, 1)
@@ -497,5 +496,5 @@ class TestBindings(TestCase):
         write_data = [write_data]
         participant.write_gradient_data("FakeMesh", "FakeVectorData", [0], write_data)
         dt = 1
-        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(9)), dt)
+        read_data = participant.read_data("FakeMesh", "FakeVectorData", np.array(range(3)), dt)
         self.assertTrue(np.array_equiv(np.array(write_data).flatten(), read_data.flatten()))
