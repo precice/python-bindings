@@ -506,7 +506,7 @@ cdef class Interface:
 
     def set_mesh_triangle (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id):
         """
-        Sets mesh triangle from edge IDs
+        Set a mesh triangle from edge IDs
 
         Parameters
         ----------
@@ -569,8 +569,7 @@ cdef class Interface:
 
     def set_mesh_quad (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
         """
-        Sets mesh Quad from vertex IDs.
-        WARNING: Quads are not fully implemented yet.
+        Set a mesh Quad from vertex IDs.
 
         Parameters
         ----------
