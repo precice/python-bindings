@@ -165,15 +165,9 @@ You can find the documentation of the implemented interface in the file `precice
 
 The following error shows up during installation, if preCICE is not found:
 
-<<<<<<< HEAD
-```
-  /tmp/pip-install-d_fjyo1h/pyprecice/precice.cpp:643:10: fatal error: precice/Participant.hpp: No such file or directory
-    643 | #include "precice/Participant.hpp"
-=======
 ```bash
   /tmp/pip-install-d_fjyo1h/pyprecice/precice.cpp:643:10: fatal error: precice/SolverInterface.hpp: No such file or directory
     643 | #include "precice/SolverInterface.hpp"
->>>>>>> develop
         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   compilation terminated.
   error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
