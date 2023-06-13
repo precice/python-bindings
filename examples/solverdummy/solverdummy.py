@@ -20,14 +20,14 @@ configuration_file_name = args.configurationFileName
 participant_name = args.participantName
 
 if participant_name == 'SolverOne':
-    write_data_name = 'dataOne'
-    read_data_name = 'dataTwo'
-    mesh_name = 'MeshOne'
+    write_data_name = 'Data-One'
+    read_data_name = 'Data-Two'
+    mesh_name = 'SolverOne-Mesh'
 
 if participant_name == 'SolverTwo':
-    read_data_name = 'dataOne'
-    write_data_name = 'dataTwo'
-    mesh_name = 'MeshTwo'
+    read_data_name = 'Data-One'
+    write_data_name = 'Data-Two'
+    mesh_name = 'SolverTwo-Mesh'
 
 num_vertices = 3  # Number of vertices
 
