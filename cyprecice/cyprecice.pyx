@@ -601,7 +601,7 @@ cdef class Participant:
 
     def set_mesh_quad (self, mesh_name, first_vertex_id, second_vertex_id, third_vertex_id, fourth_vertex_id):
         """
-        Set a mesh quad from vertex IDs.
+        Set a mesh Quad from vertex IDs.
 
         Parameters
         ----------
