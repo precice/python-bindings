@@ -280,6 +280,7 @@ cdef class Participant:
         """
         return self.thisptr.requiresInitialData ()
 
+<<<<<<< HEAD
 
     def requires_writing_checkpoint (self):
         """
@@ -288,6 +289,15 @@ cdef class Participant:
         If true, the participant is required to write an iteration checkpoint before
         calling advance().
 
+=======
+    def requires_writing_checkpoint (self):
+        """
+        Checks if the participant is required to write an iteration checkpoint.
+        
+        If true, the participant is required to write an iteration checkpoint before
+        calling advance().
+        
+>>>>>>> develop
         preCICE refuses to proceed if writing a checkpoint is required,
         but this method isn't called prior to advance().
 
@@ -298,7 +308,10 @@ cdef class Participant:
         """
         return self.thisptr.requiresWritingCheckpoint ()
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
     def requires_reading_checkpoint (self):
         """
         Checks if the participant is required to read an iteration checkpoint.
@@ -318,7 +331,10 @@ cdef class Participant:
         """
         return self.thisptr.requiresReadingCheckpoint ()
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> develop
     # mesh access
 
     def has_mesh(self, mesh_name):
