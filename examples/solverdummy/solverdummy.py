@@ -34,42 +34,46 @@ num_vertices = 3  # Number of vertices
 solver_process_index = 0
 solver_process_size = 1
 
-interface = precice.Interface(participant_name, configuration_file_name,
-                              solver_process_index, solver_process_size)
+participant = precice.Participant(participant_name, configuration_file_name,
+                                  solver_process_index, solver_process_size)
 
-assert (interface.requires_mesh_connectivity_for(mesh_name) is False)
+assert (participant.requires_mesh_connectivity_for(mesh_name) is False)
 
-dimensions = interface.get_dimensions()
-
-vertices = np.zeros((num_vertices, dimensions))
-read_data = np.zeros((num_vertices, dimensions))
-write_data = np.zeros((num_vertices, dimensions))
+vertices = np.zeros((num_vertices, participant.get_mesh_dimensions(mesh_name)))
+read_data = np.zeros((num_vertices, participant.get_data_dimensions(mesh_name, read_data_name)))
+write_data = np.zeros((num_vertices, participant.get_data_dimensions(mesh_name, write_data_name)))
 
 for x in range(num_vertices):
-    for y in range(0, dimensions):
+    for y in range(participant.get_mesh_dimensions(mesh_name)):
         vertices[x, y] = x
+
+    for y in range(participant.get_data_dimensions(mesh_name, read_data_name)):
         read_data[x, y] = x
+
+    for y in range(participant.get_data_dimensions(mesh_name, write_data_name)):
         write_data[x, y] = x
 
-vertex_ids = interface.set_mesh_vertices(mesh_name, vertices)
+vertex_ids = participant.set_mesh_vertices(mesh_name, vertices)
 
-dt = interface.initialize()
+participant.initialize()
 
-while interface.is_coupling_ongoing():
-    if interface.requires_writing_checkpoint():
+while participant.is_coupling_ongoing():
+    if participant.requires_writing_checkpoint():
         print("DUMMY: Writing iteration checkpoint")
 
-    read_data = interface.read_block_vector_data(mesh_name, read_data_name, vertex_ids)
+    dt = participant.get_max_time_step_size()
+    read_data = participant.read_data(mesh_name, read_data_name, vertex_ids, dt)
 
     write_data = read_data + 1
 
-    interface.write_block_vector_data(mesh_name, write_data_name, vertex_ids, write_data)
+    participant.write_data(mesh_name, write_data_name, vertex_ids, write_data)
 
     print("DUMMY: Advancing in time")
-    dt = interface.advance(dt)
+    dt = participant.get_max_time_step_size()
+    participant.advance(dt)
 
-    if interface.requires_reading_checkpoint():
+    if participant.requires_reading_checkpoint():
         print("DUMMY: Reading iteration checkpoint")
 
-interface.finalize()
+participant.finalize()
 print("DUMMY: Closing python solver dummy...")

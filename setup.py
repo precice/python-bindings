@@ -76,7 +76,7 @@ def get_extensions(is_test):
         link_args += pkgconfig.libs('libprecice').split()
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
-                                             "SolverInterface.cpp"))
+                                             "Participant.cpp"))
 
     return [
         Extension(
