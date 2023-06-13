@@ -114,7 +114,7 @@ cdef class Participant:
         max_timestep : double
             Maximum length of first timestep to be computed by the solver.
         """
-        return self.thisptr.initialize ()
+        self.thisptr.initialize ()
 
 
     def advance (self, double computed_timestep_length):
