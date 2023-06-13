@@ -242,6 +242,23 @@ cdef class Interface:
         """
         return self.thisptr.requiresInitialData ()
 
+    def requires_writing_checkpoint (self):
+        """
+        Checks if the participant is required to write an iteration checkpoint.
+        
+        If true, the participant is required to write an iteration checkpoint before
+        calling advance().
+        
+        preCICE refuses to proceed if writing a checkpoint is required,
+        but this method isn't called prior to advance().
+
+        Notes
+        -----
+        Previous calls:
+            initialize() has been called
+        """
+        return self.thisptr.requiresWritingCheckpoint ()
+
     def requires_reading_checkpoint (self):
         """
         Checks if the participant is required to read an iteration checkpoint.
@@ -260,23 +277,6 @@ cdef class Interface:
             initialize() has been called
         """
         return self.thisptr.requiresReadingCheckpoint ()
-
-    def requires_writing_checkpoint (self):
-        """
-        Checks if the participant is required to write an iteration checkpoint.
-        
-        If true, the participant is required to write an iteration checkpoint before
-        calling advance().
-        
-        preCICE refuses to proceed if writing a checkpoint is required,
-        but this method isn't called prior to advance().
-
-        Notes
-        -----
-        Previous calls:
-            initialize() has been called
-        """
-        return self.thisptr.requiresWritingCheckpoint ()
 
     # mesh access
 
