@@ -398,7 +398,6 @@ class TestBindings(TestCase):
         dt = 1
         # Gradient data is essential vector data, hence the appropriate data name is used here
         read_data = participant.read_data("FakeMesh", "FakeVectorData", [0], dt)
-        print("DEBUG: write_data: {}, read_data: {}".format(write_data, read_data))
         self.assertTrue(np.array_equiv(write_data, read_data))
 
     def test_write_block_vector_gradient_data(self):

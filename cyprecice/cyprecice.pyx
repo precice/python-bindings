@@ -126,11 +126,6 @@ cdef class Participant:
         computed_timestep_length : double
             Length of timestep used by the solver.
 
-        Returns
-        -------
-        max_timestep : double
-            Maximum length of next timestep to be computed by solver.
-
         Notes
         -----
         Previous calls:
@@ -147,7 +142,7 @@ cdef class Participant:
             [Second Participant] Configured post processing schemes are applied.
             Meshes with data are exported to files if configured.
         """
-        return self.thisptr.advance (computed_timestep_length)
+        self.thisptr.advance (computed_timestep_length)
 
 
     def finalize (self):
@@ -1094,4 +1089,4 @@ def get_version_information ():
     -------
     Current preCICE version information
     """
-    return Participant.getVersionInformation()
+    return CppParticipant.getVersionInformation()
