@@ -113,7 +113,7 @@ $ python3 setup.py install --user
    $ python3 setup.py install --user
    ```
 
-5. Clean-up _optional_
+5. Clean-up *optional*
 
    ```bash
    $ python3 setup.py clean --all
@@ -135,7 +135,7 @@ $ python3 -c "import precice"
 
 ### Unit tests
 
-1. Clean-up __mandatory__ (because we must not link against the real `precice.so`, but we use a mocked version)
+1. Clean-up **mandatory** (because we must not link against the real `precice.so`, but we use a mocked version)
 
    ```bash
    $ python3 setup.py clean --all
