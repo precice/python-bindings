@@ -24,17 +24,17 @@ class TestBindings(TestCase):
     def test_get_mesh_dimensions(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
         # TODO: it would be nice to be able to mock the output of the interface
-        # directly in the test, not in test/SolverInterface.hpp
-        fake_mesh_dimension = 3  # compare to test/SolverInterface.hpp, fake_mesh_dimension
+        # directly in the test, not in test/Participant.hpp
+        fake_mesh_dimension = 3  # compare to test/Participant.hpp, fake_mesh_dimension
         # TODO: it would be nice to be able to mock the output of the interface
-        # directly in the test, not in test/SolverInterface.hpp
+        # directly in the test, not in test/Participant.hpp
         self.assertEqual(fake_mesh_dimension, participant.get_mesh_dimensions("dummy"))
 
     def test_get_data_dimensions(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
-        fake_scalar_data_dimension = 1  # compare to test/SolverInterface.hpp, fake_scalar_data_dimension
+        fake_scalar_data_dimension = 1  # compare to test/Participant.hpp, fake_scalar_data_dimension
         self.assertEqual(fake_scalar_data_dimension, participant.get_data_dimensions("dummy", "FakeScalarData"))
-        fake_vector_data_dimension = 3  # compare to test/SolverInterface.hpp, fake_vector_data_dimension
+        fake_vector_data_dimension = 3  # compare to test/Participant.hpp, fake_vector_data_dimension
         self.assertEqual(fake_vector_data_dimension, participant.get_data_dimensions("dummy", "FakeVectorData"))
 
     def test_requires_mesh_connectivity_for(self):

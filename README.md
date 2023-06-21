@@ -166,6 +166,20 @@ You can find the documentation of the implemented interface in the file `precice
 The following error shows up during installation, if preCICE is not found:
 
 ```bash
+  /tmp/pip-install-d_fjyo1h/pyprecice/precice.cpp:643:10: fatal error: precice/Participant.hpp: No such file or directory
+    643 | #include "precice/Participant.hpp"
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  compilation terminated.
+  error: command 'x86_64-linux-gnu-gcc' failed with exit status 1
+  ----------------------------------------
+  ERROR: Failed building wheel for pyprecice
+Failed to build pyprecice
+ERROR: Could not build wheels for pyprecice which use PEP 517 and cannot be installed directly
+```
+
+Or, for preCICE v2:
+
+```bash
   /tmp/pip-install-d_fjyo1h/pyprecice/precice.cpp:643:10: fatal error: precice/SolverInterface.hpp: No such file or directory
     643 | #include "precice/SolverInterface.hpp"
         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
