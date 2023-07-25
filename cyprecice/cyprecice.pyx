@@ -460,8 +460,8 @@ cdef class Interface:
         elif len(position) == 0:
             dimensions = self.get_dimensions()
 
-        cdef np.ndarray[double, ndim=1] _position = np.ascontiguousarray(position, dtype=np.double)
-        vertex_id = self.thisptr.setMeshVertex(mesh_id, <const double*>_position.data)
+        cdef np.ndarray[double, ndim=1] position_np = np.ascontiguousarray(position, dtype=np.double)
+        vertex_id = self.thisptr.setMeshVertex(mesh_id, <const double*>position_np.data)
         return vertex_id
 
     def get_mesh_vertex_size (self, mesh_id):
@@ -538,9 +538,9 @@ cdef class Interface:
             size = positions.shape[0]
             dimensions = self.get_dimensions()
 
-        cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
+        cdef np.ndarray[double, ndim=1] positions_np = np.ascontiguousarray(positions.flatten(), dtype=np.double)
         cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(size, dtype=np.int32)
-        self.thisptr.setMeshVertices (mesh_id, size, <const double*>_positions.data, <int*>vertex_ids.data)
+        self.thisptr.setMeshVertices (mesh_id, size, <const double*>positions_np.data, <int*>vertex_ids.data)
         return vertex_ids
 
     def get_mesh_vertices(self, mesh_id, vertex_ids):
@@ -584,11 +584,11 @@ cdef class Interface:
         """
         check_array_like(vertex_ids, "vertex_ids", "get_mesh_vertices")
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        size = _vertex_ids.size
-        cdef np.ndarray[double, ndim=1] _positions = np.empty(size * self.get_dimensions(), dtype=np.double)
-        self.thisptr.getMeshVertices (mesh_id, size, <const int*>_vertex_ids.data, <double*>_positions.data)
-        return _positions.reshape((size, self.get_dimensions()))
+        cdef np.ndarray[int, ndim=1] vertex_ids_np = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        size = vertex_ids_np.size
+        cdef np.ndarray[double, ndim=1] positions_np = np.empty(size * self.get_dimensions(), dtype=np.double)
+        self.thisptr.getMeshVertices (mesh_id, size, <const int*>vertex_ids_np.data, <double*>positions_np.data)
+        return positions_np.reshape((size, self.get_dimensions()))
 
     def get_mesh_vertex_ids_from_positions (self, mesh_id, positions):
         """
@@ -648,9 +648,9 @@ cdef class Interface:
             size = positions.shape[0]
             dimensions = self.get_dimensions()
 
-        cdef np.ndarray[double, ndim=1] _positions = np.ascontiguousarray(positions.flatten(), dtype=np.double)
+        cdef np.ndarray[double, ndim=1] positions_np = np.ascontiguousarray(positions.flatten(), dtype=np.double)
         cdef np.ndarray[int, ndim=1] vertex_ids = np.empty(int(size), dtype=np.int32)
-        self.thisptr.getMeshVertexIDsFromPositions (mesh_id, size, <const double*>_positions.data, <int*>vertex_ids.data)
+        self.thisptr.getMeshVertexIDsFromPositions (mesh_id, size, <const double*>positions_np.data, <int*>vertex_ids.data)
         return vertex_ids
 
     def set_mesh_edge (self, mesh_id, first_vertex_id, second_vertex_id):
@@ -916,13 +916,13 @@ cdef class Interface:
         if len(values) == 0:
             size = 0
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values.flatten(), dtype=np.double)
+        cdef np.ndarray[int, ndim=1] vertex_ids_np = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        cdef np.ndarray[double, ndim=1] values_np = np.ascontiguousarray(values.flatten(), dtype=np.double)
 
-        assert _values.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_values.size, size * self.get_dimensions())
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
+        assert values_np.size == size * self.get_dimensions(), "Vector data is not provided for all vertices in write_block_vector_data. Check length of input data provided. Provided size: {}, expected size: {}".format(values_np.size, size * self.get_dimensions())
+        assert vertex_ids_np.size == size, "Vertex IDs are of incorrect length in write_block_vector_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(vertex_ids_np.size, size)
 
-        self.thisptr.writeBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
+        self.thisptr.writeBlockVectorData (data_id, size, <const int*>vertex_ids_np.data, <const double*>values_np.data)
 
     def write_vector_data (self, data_id, vertex_id, value):
         """
@@ -967,9 +967,9 @@ cdef class Interface:
 
         assert dimensions == self.get_dimensions(), "Dimensions of vector data in write_vector_data does not match with dimensions in problem definition. Provided dimensions: {}, expected dimensions: {}".format(dimensions, self.get_dimensions())
 
-        cdef np.ndarray[np.double_t, ndim=1] _value = np.ascontiguousarray(value, dtype=np.double)
+        cdef np.ndarray[np.double_t, ndim=1] value_np = np.ascontiguousarray(value, dtype=np.double)
 
-        self.thisptr.writeVectorData (data_id, vertex_id, <const double*>_value.data)
+        self.thisptr.writeVectorData (data_id, vertex_id, <const double*>value_np.data)
 
     def write_block_scalar_data (self, data_id, vertex_ids, values):
         """
@@ -1008,12 +1008,12 @@ cdef class Interface:
         if len(values) == 0:
             size = 0
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _values = np.ascontiguousarray(values, dtype=np.double)
+        cdef np.ndarray[int, ndim=1] vertex_ids_np = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        cdef np.ndarray[double, ndim=1] values_np = np.ascontiguousarray(values, dtype=np.double)
 
-        assert _values.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check size of input data provided. Provided size: {}, expected size: {}".format(_values.size, size)
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check size of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
-        self.thisptr.writeBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <const double*>_values.data)
+        assert values_np.size == size, "Scalar data is not provided for all vertices in write_block_scalar_data. Check size of input data provided. Provided size: {}, expected size: {}".format(values_np.size, size)
+        assert vertex_ids_np.size == size, "Vertex IDs are of incorrect length in write_block_scalar_data. Check size of vertex ids input. Provided size: {}, expected size: {}".format(vertex_ids_np.size, size)
+        self.thisptr.writeBlockScalarData (data_id, size, <const int*>vertex_ids_np.data, <const double*>values_np.data)
 
     def write_scalar_data (self, data_id, vertex_id, double value):
         """
@@ -1088,15 +1088,15 @@ cdef class Interface:
         """
         check_array_like(vertex_ids, "vertex_ids", "read_block_vector_data")
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        size = _vertex_ids.size
+        cdef np.ndarray[int, ndim=1] vertex_ids_np = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        size = vertex_ids_np.size
         dimensions = self.get_dimensions()
-        cdef np.ndarray[np.double_t, ndim=1] _values = np.empty(size * dimensions, dtype=np.double)
+        cdef np.ndarray[np.double_t, ndim=1] values_np = np.empty(size * dimensions, dtype=np.double)
         if relative_read_time is None:
-            self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+            self.thisptr.readBlockVectorData (data_id, size, <const int*>vertex_ids_np.data, <double*>values_np.data)
         else:
-            self.thisptr.readBlockVectorData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
-        return _values.reshape((size, dimensions))
+            self.thisptr.readBlockVectorData (data_id, size, <const int*>vertex_ids_np.data, relative_read_time, <double*>values_np.data)
+        return values_np.reshape((size, dimensions))
 
     def read_vector_data (self, data_id, vertex_id, relative_read_time=None):
         """
@@ -1140,12 +1140,12 @@ cdef class Interface:
         (1, 3)
         """
         dimensions = self.get_dimensions()
-        cdef np.ndarray[double, ndim=1] _value = np.empty(dimensions, dtype=np.double)
+        cdef np.ndarray[double, ndim=1] value_np = np.empty(dimensions, dtype=np.double)
         if relative_read_time == None:
-            self.thisptr.readVectorData (data_id, vertex_id, <double*>_value.data)
+            self.thisptr.readVectorData (data_id, vertex_id, <double*>value_np.data)
         else:
-            self.thisptr.readVectorData (data_id, vertex_id, relative_read_time, <double*>_value.data)
-        return _value
+            self.thisptr.readVectorData (data_id, vertex_id, relative_read_time, <double*>value_np.data)
+        return value_np
 
     def read_block_scalar_data (self, data_id, vertex_ids, relative_read_time=None):
         """
@@ -1185,15 +1185,15 @@ cdef class Interface:
         """
         check_array_like(vertex_ids, "vertex_ids", "read_block_scalar_data")
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        size = _vertex_ids.size
-        cdef np.ndarray[double, ndim=1] _values = np.empty(size, dtype=np.double)
+        cdef np.ndarray[int, ndim=1] vertex_ids_np = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        size = vertex_ids_np.size
+        cdef np.ndarray[double, ndim=1] values_np = np.empty(size, dtype=np.double)
         if relative_read_time == None:
-            self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, <double*>_values.data)
+            self.thisptr.readBlockScalarData (data_id, size, <const int*>vertex_ids_np.data, <double*>values_np.data)
         else:
-            self.thisptr.readBlockScalarData (data_id, size, <const int*>_vertex_ids.data, relative_read_time, <double*>_values.data)
+            self.thisptr.readBlockScalarData (data_id, size, <const int*>vertex_ids_np.data, relative_read_time, <double*>values_np.data)
 
-        return _values
+        return values_np
 
     def read_scalar_data (self, data_id, vertex_id, relative_read_time=None):
         """
@@ -1225,13 +1225,13 @@ cdef class Interface:
         >>> vertex_id = 5
         >>> value = interface.read_scalar_data(data_id, vertex_id)
         """
-        cdef double _value
+        cdef double value_np
         if relative_read_time == None:
-            self.thisptr.readScalarData (data_id, vertex_id, _value)
+            self.thisptr.readScalarData (data_id, vertex_id, value_np)
         else:
-            self.thisptr.readScalarData (data_id, vertex_id, relative_read_time, _value)
+            self.thisptr.readScalarData (data_id, vertex_id, relative_read_time, value_np)
 
-        return _value
+        return value_np
 
     def write_block_vector_gradient_data (self, data_id, vertex_ids, gradientValues):
         """
@@ -1282,13 +1282,13 @@ cdef class Interface:
         if len(gradientValues) == 0:
             size = 0
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
+        cdef np.ndarray[int, ndim=1] vertex_ids_np = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        cdef np.ndarray[double, ndim=1] gradientValues_np = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
 
-        assert _gradientValues.size == size * self.get_dimensions() * self.get_dimensions(), "Dimension of vector gradient data provided in write_block_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, size * self.get_dimensions() * self.get_dimensions())
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_vector_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
+        assert gradientValues_np.size == size * self.get_dimensions() * self.get_dimensions(), "Dimension of vector gradient data provided in write_block_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(gradientValues_np.size, size * self.get_dimensions() * self.get_dimensions())
+        assert vertex_ids_np.size == size, "Vertex IDs are of incorrect length in write_block_vector_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(vertex_ids_np.size, size)
 
-        self.thisptr.writeBlockVectorGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
+        self.thisptr.writeBlockVectorGradientData (data_id, size, <const int*>vertex_ids_np.data, <const double*>gradientValues_np.data)
 
     def write_scalar_gradient_data (self, data_id, vertex_id, gradientValues):
         """
@@ -1335,11 +1335,11 @@ cdef class Interface:
         if not isinstance(gradientValues, np.ndarray):
             gradientValues = np.asarray(gradientValues)
 
-        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
+        cdef np.ndarray[double, ndim=1] gradientValues_np = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
 
-        assert _gradientValues.size == self.get_dimensions(), "Vector data provided for vertex {} in write_scalar_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions())
+        assert gradientValues_np.size == self.get_dimensions(), "Vector data provided for vertex {} in write_scalar_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(gradientValues_np.size, self.get_dimensions())
 
-        self.thisptr.writeScalarGradientData(data_id, vertex_id, <const double*>_gradientValues.data)
+        self.thisptr.writeScalarGradientData(data_id, vertex_id, <const double*>gradientValues_np.data)
 
     def write_vector_gradient_data (self, data_id, vertex_id, gradientValues):
         """
@@ -1386,11 +1386,11 @@ cdef class Interface:
         if not isinstance(gradientValues, np.ndarray):
             gradientValues = np.asarray(gradientValues)
 
-        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
+        cdef np.ndarray[double, ndim=1] gradientValues_np = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
 
-        assert _gradientValues.size == self.get_dimensions() * self.get_dimensions(), "Dimensions of vector gradient data provided for vertex {} in write_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, self.get_dimensions() * self.get_dimensions())
+        assert gradientValues_np.size == self.get_dimensions() * self.get_dimensions(), "Dimensions of vector gradient data provided for vertex {} in write_vector_gradient_data does not match problem definition. Check length of input data provided. Provided size: {}, expected size: {}".format(gradientValues_np.size, self.get_dimensions() * self.get_dimensions())
 
-        self.thisptr.writeVectorGradientData(data_id, vertex_id, <const double*>_gradientValues.data)
+        self.thisptr.writeVectorGradientData(data_id, vertex_id, <const double*>gradientValues_np.data)
 
     def write_block_scalar_gradient_data (self, data_id, vertex_ids, gradientValues):
         """
@@ -1441,13 +1441,13 @@ cdef class Interface:
         if len(gradientValues) == 0:
             size = 0
 
-        cdef np.ndarray[int, ndim=1] _vertex_ids = np.ascontiguousarray(vertex_ids, dtype=np.int32)
-        cdef np.ndarray[double, ndim=1] _gradientValues = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
+        cdef np.ndarray[int, ndim=1] vertex_ids_np = np.ascontiguousarray(vertex_ids, dtype=np.int32)
+        cdef np.ndarray[double, ndim=1] gradientValues_np = np.ascontiguousarray(gradientValues.flatten(), dtype=np.double)
 
-        assert _gradientValues.size == size * self.get_dimensions(), "Scalar gradient data is not provided for all vertices in write_block_scalar_gradient_data. Check length of input data provided. Provided size: {}, expected size: {}".format(_gradientValues.size, size * self.get_dimensions())
-        assert _vertex_ids.size == size, "Vertex IDs are of incorrect length in write_block_scalar_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(_vertex_ids.size, size)
+        assert gradientValues_np.size == size * self.get_dimensions(), "Scalar gradient data is not provided for all vertices in write_block_scalar_gradient_data. Check length of input data provided. Provided size: {}, expected size: {}".format(gradientValues_np.size, size * self.get_dimensions())
+        assert vertex_ids_np.size == size, "Vertex IDs are of incorrect length in write_block_scalar_gradient_data. Check length of vertex ids input. Provided size: {}, expected size: {}".format(vertex_ids_np.size, size)
 
-        self.thisptr.writeBlockScalarGradientData (data_id, size, <const int*>_vertex_ids.data, <const double*>_gradientValues.data)
+        self.thisptr.writeBlockScalarGradientData (data_id, size, <const int*>vertex_ids_np.data, <const double*>gradientValues_np.data)
 
     def is_gradient_data_required(self,data_id):
         """
@@ -1526,9 +1526,9 @@ cdef class Interface:
 
         assert len(bounding_box) == (self.get_dimensions() * 2), "Dimensions of bounding box in set_mesh_access_region does not match with dimensions in problem definition."
 
-        cdef np.ndarray[double, ndim=1] _bounding_box = np.ascontiguousarray(bounding_box, dtype=np.double)
+        cdef np.ndarray[double, ndim=1] bounding_box_np = np.ascontiguousarray(bounding_box, dtype=np.double)
 
-        self.thisptr.setMeshAccessRegion(mesh_id, <double*>_bounding_box.data)
+        self.thisptr.setMeshAccessRegion(mesh_id, <double*>bounding_box_np.data)
 
     def get_mesh_vertices_and_ids (self, mesh_id):
         """
@@ -1550,13 +1550,13 @@ cdef class Interface:
         warnings.warn("The function get_mesh_vertices_and_ids is still experimental.")
 
         size = self.get_mesh_vertex_size(mesh_id)
-        cdef np.ndarray[int, ndim=1] _ids = np.empty(size, dtype=np.int32)
+        cdef np.ndarray[int, ndim=1] ids_np = np.empty(size, dtype=np.int32)
         dimensions = self.get_dimensions()
-        cdef np.ndarray[double, ndim=1] _coordinates = np.empty(size*dimensions, dtype=np.double)
+        cdef np.ndarray[double, ndim=1] coordinates_np = np.empty(size*dimensions, dtype=np.double)
 
-        self.thisptr.getMeshVerticesAndIDs(mesh_id, size, <int*>_ids.data, <double*>_coordinates.data)
+        self.thisptr.getMeshVerticesAndIDs(mesh_id, size, <int*>ids_np.data, <double*>coordinates_np.data)
 
-        return _ids, _coordinates.reshape((size, dimensions))
+        return ids_np, coordinates_np.reshape((size, dimensions))
 
 def get_version_information ():
     """
