@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+## 2.5.0.3
+
+* Stop using `_` before variables names which are defined using `cdef`. Necessary for compatibility with [Cython v3.0.0](https://cython.readthedocs.io/en/latest/src/userguide/migrating_to_cy30.html#)
+
 ## 2.5.0.2
 
 * Add Waveform API introduced in preCICE v2.4.0.
