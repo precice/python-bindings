@@ -11,6 +11,5 @@ def SolverInterface(*args):
     warnings.warn("please use precice.Interface to create the interface to C++ preCICE. Note that this function (precice.SolverInterface) does not do anything but throwing this warning. See https://github.com/precice/python-bindings/issues/92 for more information.")
 
 
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
+from . import _version
+__version__ = _version.get_versions()['version']
