@@ -6,6 +6,7 @@ The python module precice offers python language bindings to the C++ coupling li
 """
 
 cimport cyprecice
+cimport numpy
 import numpy as np
 from mpi4py import MPI
 import warnings

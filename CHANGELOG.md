@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 * Update to API introduced in preCICE v3.0.0. https://github.com/precice/python-bindings/pull/169 https://github.com/precice/python-bindings/pull/174 https://github.com/precice/python-bindings/pull/179
 
+## 2.5.0.3
+
+* Update from versioneer 0.19 to 0.29.
+* Add `cimport numpy` to avoid a segmentation fault originating from using Cython v3.0.0. https://github.com/precice/python-bindings/issues/182
+
 ## 2.5.0.2
 
 * Add Waveform API introduced in preCICE v2.4.0.
