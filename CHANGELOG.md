@@ -2,11 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
-
 ## 2.5.0.3
 
-* Add `cimport numpy` to avoid a segmentation fault originating from using Cython v3.0.0.
+* Add `cimport numpy` to avoid a segmentation fault originating from using Cython v3.0.0. https://github.com/precice/python-bindings/issues/182
 
 ## 2.5.0.2
 
