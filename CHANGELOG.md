@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2.5.0.3
 
+* Update from versioneer 0.19 to 0.29.
 * Add `cimport numpy` to avoid a segmentation fault originating from using Cython v3.0.0. https://github.com/precice/python-bindings/issues/182
 
 ## 2.5.0.2
