@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2.5.0.3
 
-* Stop using `_` before variables names which are defined using `cdef`. Necessary for compatibility with [Cython v3.0.0](https://cython.readthedocs.io/en/latest/src/userguide/migrating_to_cy30.html#)
+* Add `cimport numpy` to avoid a segmentation fault originating from using Cython v3.0.0.
 
 ## 2.5.0.2
 
