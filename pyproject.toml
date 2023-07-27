@@ -2,7 +2,7 @@
 # PEP 518 - minimum build system requirements
 requires = ["setuptools", "wheel", "Cython>=0.29", "packaging", "pip>=19.0.0", "numpy", "mpi4py", "pkgconfig"]
 
-[versioneer]
+[tool.versioneer]
 VCS = git
 style = pep440
 versionfile_source = precice/_version.py
