@@ -319,23 +319,6 @@ cdef class Participant:
 
     # mesh access
 
-    def has_mesh(self, mesh_name):
-        """
-        Checks if the mesh with the given name is used by a solver.
-
-        Parameters
-        ----------
-        mesh_name : string
-            Name of the mesh.
-
-        Returns
-        -------
-        tag : bool
-            Returns true is the mesh is used.
-        """
-        return self.thisptr.hasMesh (convert(mesh_name))
-
-
     def requires_mesh_connectivity_for (self, mesh_name):
         """
         Checks if the given mesh requires connectivity.
@@ -729,25 +712,6 @@ cdef class Participant:
 
     # data access
 
-    def has_data (self, data_name, mesh_name):
-        """
-        Checks if the data with given name is used by a solver and mesh.
-
-        Parameters
-        ----------
-        data_name : string
-            Name of the data.
-        mesh_name : str
-            Name of the associated mesh.
-
-        Returns
-        -------
-        tag : bool
-            True if the mesh is already used.
-        """
-        return self.thisptr.hasData(convert(data_name), convert(mesh_name))
-
-
     def write_data (self, mesh_name, data_name, vertex_ids, values):
         """
         This function writes values of specified vertices to data of a mesh.
@@ -1049,7 +1013,7 @@ cdef class Participant:
         self.thisptr.setMeshAccessRegion(convert(mesh_name), cpp_bounding_box)
 
 
-    def get_mesh_vertices_and_ids (self, mesh_name):
+    def get_mesh_vertices_and_coordinates (self, mesh_name):
         """
         Iterating over the region of interest defined by bounding boxes and reading the corresponding
         coordinates omitting the mapping. This function is still experimental.
@@ -1074,7 +1038,7 @@ cdef class Participant:
         cdef vector[int] cpp_ids = [-1 for _ in range(size)]
         cdef vector[double] cpp_coordinates = [-1 for _ in range(size * dimensions)]
 
-        self.thisptr.getMeshVerticesAndIDs(convert(mesh_name), cpp_ids, cpp_coordinates)
+        self.thisptr.getMeshVerticesAndCoordinates(convert(mesh_name), cpp_ids, cpp_coordinates)
 
         cdef np.ndarray[int, ndim=1] np_ids = np.array(cpp_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] np_coordinates = np.array(cpp_coordinates, dtype=np.double)

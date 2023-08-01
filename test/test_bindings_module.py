@@ -327,7 +327,7 @@ class TestBindings(TestCase):
         fake_bounding_box = np.arange(fake_dimension * 2)
         participant.set_mesh_access_region(fake_mesh_name, fake_bounding_box)
 
-    def test_get_mesh_vertices_and_ids(self):
+    def test_get_mesh_vertices_and_coordinates(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
         fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name
         n_fake_vertices = 3  # compare to test/SolverInterface.cpp, n_fake_vertices
@@ -338,7 +338,7 @@ class TestBindings(TestCase):
             coordinates[i, 0] = i * fake_dimension
             coordinates[i, 1] = i * fake_dimension + 1
             coordinates[i, 2] = i * fake_dimension + 2
-        fake_ids, fake_coordinates = participant.get_mesh_vertices_and_ids(fake_mesh_name)
+        fake_ids, fake_coordinates = participant.get_mesh_vertices_and_coordinates(fake_mesh_name)
         self.assertTrue(np.array_equal(fake_ids, vertex_ids))
         self.assertTrue(np.array_equal(fake_coordinates, coordinates))
 

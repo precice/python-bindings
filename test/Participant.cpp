@@ -139,13 +139,6 @@ bool Participant:: requiresWritingCheckpoint()
   return 0;
 }
 
-bool Participant:: hasMesh
-(
-  precice::string_view meshName ) const
-{
-  return 0;
-}
-
 bool Participant:: requiresMeshConnectivityFor
 (
   precice::string_view meshName) const
@@ -154,14 +147,6 @@ bool Participant:: requiresMeshConnectivityFor
 }
 
 bool Participant:: requiresGradientDataFor
-(
-  precice::string_view meshName,
-  precice::string_view dataName) const
-{
-  return 0;
-}
-
-bool Participant:: hasData
 (
   precice::string_view meshName,
   precice::string_view dataName) const
@@ -300,7 +285,7 @@ void Participant:: setMeshAccessRegion
     }
 }
 
-void Participant:: getMeshVerticesAndIDs
+void Participant:: getMeshVerticesAndCoordinates
 (
   precice::string_view meshName,
   precice::span<int> valueIndices,

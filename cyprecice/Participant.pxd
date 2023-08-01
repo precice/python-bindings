@@ -41,8 +41,6 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         # mesh access
 
-        bool hasMesh (const string& meshName) const
-
         bool requiresMeshConnectivityFor (const string& meshName) const
 
         int setMeshVertex (const string& meshName, vector[double] position)
@@ -69,8 +67,6 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         # data access
 
-        bool hasData (const string& dataName, const string& meshName) const
-
         void writeData (const string& meshName, const string& dataName, vector[int] vertices, vector[double] values)
 
         void readData (const string& meshName, const string& dataName, vector[int] vertices, const double relativeReadTime, vector[double]& values) const
@@ -79,7 +75,7 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) const
 
-        void getMeshVerticesAndIDs (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
+        void getMeshVerticesAndCoordinates (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
 
         # Gradient related API
 

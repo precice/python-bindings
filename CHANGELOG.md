@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Remove API functions `has_mesh` and `has_data` and rename `get_mesh_vertices_and_ids` to `get_mesh_vertices_and_coordinates`.
+
 ## 3.0.0.0dev0
 
 * Update to API introduced in preCICE v3.0.0. https://github.com/precice/python-bindings/pull/169 https://github.com/precice/python-bindings/pull/174 https://github.com/precice/python-bindings/pull/179
