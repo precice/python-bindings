@@ -285,7 +285,7 @@ void Participant:: setMeshAccessRegion
     }
 }
 
-void Participant:: getMeshVerticesAndCoordinates
+void Participant:: getMeshVertexIDsAndCoordinates
 (
   precice::string_view meshName,
   precice::span<int> valueIndices,

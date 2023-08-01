@@ -75,7 +75,7 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) const
 
-        void getMeshVerticesAndCoordinates (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
+        void getMeshVertexIDsAndCoordinates (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
 
         # Gradient related API
 

@@ -1013,7 +1013,7 @@ cdef class Participant:
         self.thisptr.setMeshAccessRegion(convert(mesh_name), cpp_bounding_box)
 
 
-    def get_mesh_vertices_and_coordinates (self, mesh_name):
+    def get_mesh_vertex_ids_and_coordinates (self, mesh_name):
         """
         Iterating over the region of interest defined by bounding boxes and reading the corresponding
         coordinates omitting the mapping. This function is still experimental.
@@ -1038,7 +1038,7 @@ cdef class Participant:
         cdef vector[int] cpp_ids = [-1 for _ in range(size)]
         cdef vector[double] cpp_coordinates = [-1 for _ in range(size * dimensions)]
 
-        self.thisptr.getMeshVerticesAndCoordinates(convert(mesh_name), cpp_ids, cpp_coordinates)
+        self.thisptr.getMeshVertexIDsAndCoordinates(convert(mesh_name), cpp_ids, cpp_coordinates)
 
         cdef np.ndarray[int, ndim=1] np_ids = np.array(cpp_ids, dtype=np.int32)
         cdef np.ndarray[double, ndim=1] np_coordinates = np.array(cpp_coordinates, dtype=np.double)
