@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## 3.0.0.0dev1
 
 * Remove API functions `has_mesh` and `has_data` and rename `get_mesh_vertices_and_ids` to `get_mesh_vertices_and_coordinates`.
 
