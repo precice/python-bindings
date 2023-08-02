@@ -1,10 +1,19 @@
 name: Update docker image
 
 on:
-  workflow_dispatch:      # Trigger by hand from the UI
+  workflow_dispatch: # Trigger by hand from the UI
+    inputs:
+      branch:
+        type: choice
+        description: branch to build the container from
+        options:
+          - develop
+          - master     
   push:
     branches:
       - develop
+      - master
+
 
 jobs:
   build-and-release-docker-image:
@@ -13,10 +22,24 @@ jobs:
     env:
         docker_username: precice
     steps:
-      - name: Get branch name
-        if: github.event_name != 'pull_request'
+      - name: Set branch name for manual triggering
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
-        run: echo "branch=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV    
+        run: echo "BINDINGS_REF=${{ inputs.branch }}" >> $GITHUB_ENV
+      - name: Set branch name for on pull triggering
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
+        shell: bash
+        run: echo "BINDINGS_REF=${{ github.ref_name }}" >> $GITHUB_ENV
+      - name: Set PRECICE_TAG and the TAG depending on branch
+        shell: bash
+        run: |
+          if [[ ${{ env.BINDINGS_REF }} == 'master' ]]; then
+              echo "PRECICE_TAG=latest >> "$GITHUB_ENV"
+              echo "TAG=latest >> "$GITHUB_ENV"
+          else
+              echo "PRECICE_TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
+              echo "TAG=${{ env.BINDINGS_REF }} >> "$GITHUB_ENV"
+          fi   
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Set up Docker Buildx
@@ -31,6 +54,7 @@ jobs:
         with:
           push: true
           file: "./tools/releasing/packaging/docker/Dockerfile"
-          tags: ${{ env.docker_username }}/python-bindings:${{ env.branch }},${{ env.docker_username }}/python-bindings:latest
+          tags: ${{ env.docker_username }}/python-bindings:${{ env.TAG }}
           build-args: |
-            branch=${{ env.branch }}
+            PRECICE_TAG=${{ env.PRECICE_TAG }}
+            PYTHON_BINDINGS_REF = ${{ env.BINDINGS_REF }}
