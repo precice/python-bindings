@@ -34,11 +34,11 @@ jobs:
         shell: bash
         run: |
           if [[ '${{ env.BINDINGS_REF }}' == 'master' ]]; then
-              echo "PRECICE_TAG=latest >> "$GITHUB_ENV"
-              echo "TAG=latest >> "$GITHUB_ENV"
+              echo "PRECICE_TAG=latest" >> "$GITHUB_ENV"
+              echo "TAG=latest" >> "$GITHUB_ENV"
           else
               echo "PRECICE_TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
-              echo "TAG=${{ env.BINDINGS_REF }} >> "$GITHUB_ENV"
+              echo "TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
           fi   
       - name: Checkout Repository
         uses: actions/checkout@v2
