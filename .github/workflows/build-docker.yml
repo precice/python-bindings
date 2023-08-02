@@ -33,7 +33,7 @@ jobs:
       - name: Set PRECICE_TAG and the TAG depending on branch
         shell: bash
         run: |
-          if [[ ${{ env.BINDINGS_REF }} == 'master' ]]; then
+          if [[ '${{ env.BINDINGS_REF }}' == 'master' ]]; then
               echo "PRECICE_TAG=latest >> "$GITHUB_ENV"
               echo "TAG=latest >> "$GITHUB_ENV"
           else
