@@ -36,9 +36,11 @@ jobs:
           if [[ '${{ env.BINDINGS_REF }}' == 'master' ]]; then
               echo "PRECICE_TAG=latest" >> "$GITHUB_ENV"
               echo "TAG=latest" >> "$GITHUB_ENV"
+              echo "Building TAG: latest"
           else
               echo "PRECICE_TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
               echo "TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
+              echo "Building TAG: ${{ env.BINDINGS_REF }}"
           fi   
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -57,4 +59,4 @@ jobs:
           tags: ${{ env.docker_username }}/python-bindings:${{ env.TAG }}
           build-args: |
             PRECICE_TAG=${{ env.PRECICE_TAG }}
-            PYTHON_BINDINGS_REF = ${{ env.BINDINGS_REF }}
+            PYTHON_BINDINGS_REF=${{ env.BINDINGS_REF }}

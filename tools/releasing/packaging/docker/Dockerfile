@@ -41,8 +41,7 @@ SHELL ["/bin/bash", "-c"]
 RUN python3 -m pip install --user --upgrade pip
 
 # Rebuild image if force_rebuild after that command
-ARG CACHEBUST
 ARG PYTHON_BINDINGS_REF=develop
 
 # Builds the precice python bindings for python3
-RUN pip3 install --user git+https://github.com/precice/python-bindings.git@$PYTHON_BINDINGS_REF
+RUN pip3 install --user git+https://github.com/precice/python-bindings.git@${PYTHON_BINDINGS_REF}
