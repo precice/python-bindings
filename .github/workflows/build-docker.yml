@@ -5,7 +5,7 @@ on:
     inputs:
       branch:
         type: choice
-        description: branch to build the container from
+        description: branch to build the image from
         options:
           - develop
           - master     
