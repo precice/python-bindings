@@ -26,7 +26,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: echo "BINDINGS_REF=${{ inputs.branch }}" >> $GITHUB_ENV
-      - name: Set branch name for on pull triggering
+      - name: Set branch name for "on pull request" triggering
         if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch'
         shell: bash
         run: echo "BINDINGS_REF=${{ github.ref_name }}" >> $GITHUB_ENV
