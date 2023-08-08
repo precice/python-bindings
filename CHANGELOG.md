@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.5.0.4
+
+* Add `tag_prefix = v` in versioneer configuration of `setup.cfg`.
+
 ## 2.5.0.3
 
 * Update from versioneer 0.19 to 0.29.
