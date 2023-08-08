@@ -107,7 +107,7 @@ jobs:
           cp precice-core/src/precice/Tooling.hpp precice/Tooling.cpp
           cd precice-core
           mkdir build && cd build
-          cmake .. -DPRECICE_MPICommunication=OFF -DPRECICE_PETScMapping=OFF -DPRECICE_PythonActions=OFF -DBUILD_TESTING=OFF
+          cmake .. -DPRECICE_FEATURE_MPI_COMMUNICATION=OFF -DPRECICE_FEATURE_PETSC_MAPPING=OFF -DPRECICE_FEATURE_PYTHON_ACTIONS=OFF -DBUILD_TESTING=OFF
       - name: Install dependencies
         run: |
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
