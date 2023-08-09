@@ -64,7 +64,7 @@ PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 def get_extensions(is_test):
     compile_args = []
     link_args = []
-    compile_args.append("-std=c++11")
+    compile_args.append("-std=c++17")
     compile_args.append("-I{}".format(numpy.get_include()))
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
@@ -76,7 +76,7 @@ def get_extensions(is_test):
         link_args += pkgconfig.libs('libprecice').split()
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
-                                             "SolverInterface.cpp"))
+                                             "Participant.cpp"))
 
     return [
         Extension(

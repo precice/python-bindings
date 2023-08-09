@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Update CMake configuration flags for preCICE source installation in Actions. https://github.com/precice/python-bindings/commit/23a840144c2647d6cf09c0ed87be3b768a22feb7
+* Use `tag_prefix = v` in versioneer configuration in setup.cfg. https://github.com/precice/python-bindings/commit/d6386ead4d7454e0ce7619a356f16df46c258a0c
+* Remove API functions `has_mesh` and `has_data` and rename `get_mesh_vertices_and_ids` to `get_mesh_vertices_and_coordinates`. https://github.com/precice/python-bindings/commit/cd446d2807b841d81a4cf5c9dd6656ab43c278c3
+
 ## 2.5.0.3
 
 * Update from versioneer 0.19 to 0.29.

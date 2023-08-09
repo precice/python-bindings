@@ -1,4 +1,5 @@
-## Guide to release new version of python-bindings
+# Guide to release new version of python-bindings
+
 The developer who is releasing a new version of the python-bindings is expected to follow this work flow:
 
 The release of the `python-bindings` repository is made directly from a release branch called `python-bindings-v2.1.1.1`. This branch is mainly needed to help other developers with testing.
@@ -12,7 +13,7 @@ The release of the `python-bindings` repository is made directly from a release 
     * `CHANGELOG.md` on `python-bindings-v2.1.1.1`.
     * There is no need to bump the version anywhere else, since we use the [python-versioneer](https://github.com/python-versioneer/python-versioneer/) for maintaining the version everywhere else.
 
-4. [Draft a New Release](https://github.com/precice/python-bindings/releases/new) in the `Releases` section of the repository page in a web browser. The release tag needs to be the exact version number (i.e.`v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing tags](https://github.com/precice/python-bindings/tags)). Use `@target:master`. Release title is also the version number (i.e. `v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing releases](https://github.com/precice/python-bindings/tags)). 
+4. [Draft a New Release](https://github.com/precice/python-bindings/releases/new) in the `Releases` section of the repository page in a web browser. The release tag needs to be the exact version number (i.e.`v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing tags](https://github.com/precice/python-bindings/tags)). Use `@target:master`. Release title is also the version number (i.e. `v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing releases](https://github.com/precice/python-bindings/tags)).
 
     * *Note:* We use the [python-versioneer](https://github.com/python-versioneer/python-versioneer/) for maintaining the version. Therefore the tag directly defines the version in all relevant places.
     * *Note:* If it is a pre-release then the option *This is a pre-release* needs to be selected at the bottom of the page. Use `@target:python-bindings-v2.1.1.1` for a pre-release, since we will never merge a pre-release into master.
@@ -28,23 +29,23 @@ The release of the `python-bindings` repository is made directly from a release 
 
 7. Add an empty commit on master via `git checkout master`, then `git commit --allow-empty -m "post-tag bump"`. Check that everything is in order via `git log`. Important: The `tag` and `origin/master` should not point to the same commit. For example:
 
-```
-commit 44b715dde4e3194fa69e61045089ca4ec6925fe3 (HEAD -> master, origin/master)
-Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
-Date:   Wed Oct 20 10:52:41 2021 +0200
+   ```bash
+   commit 44b715dde4e3194fa69e61045089ca4ec6925fe3 (HEAD -> master, origin/master)
+   Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
+   Date:   Wed Oct 20 10:52:41 2021 +0200
 
-    post-tag bump
+       post-tag bump
 
-commit d2645cc51f84ad5eda43b9c673400aada8e1505a (tag: v2.3.0.1)
-Merge: 2039557 aca2354
-Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
-Date:   Tue Oct 19 12:57:24 2021 +0200
+   commit d2645cc51f84ad5eda43b9c673400aada8e1505a (tag: v2.3.0.1)
+   Merge: 2039557 aca2354
+   Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
+   Date:   Tue Oct 19 12:57:24 2021 +0200
 
-    Merge pull request #132 from precice/python-bindings-v2.3.0.1
-    
-    Release v2.3.0.1
-```
+       Merge pull request #132 from precice/python-bindings-v2.3.0.1
 
-For more details refer to https://github.com/precice/python-bindings/issues/109 and https://github.com/python-versioneer/python-versioneer/issues/217.
+       Release v2.3.0.1
+   ```
+
+   For more details refer to https://github.com/precice/python-bindings/issues/109 and https://github.com/python-versioneer/python-versioneer/issues/217.
 
 8. Update Spack package (refer to `python-bindings/spack/README.md`).

@@ -16,14 +16,15 @@ RUN apt-get -qq update && apt-get -qq install \
     pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
-## Needed, because precice/precice:latest does not create a user? See also https://github.com/precice/precice/pull/1090
+## Needed, if base image does not create a user? See also https://github.com/precice/precice/pull/1090
+## At the moment: precice/precice:latest does not create a user, but benjaminrodenberg/precice:develop creates a user
 ## ------>
 # Create user precice
-ARG uid=1000
-ARG gid=1000
-RUN groupadd -g ${gid} precice \
-    && useradd -u ${uid} -g ${gid} -m -s /bin/bash precice \
-    && sudo usermod -a -G sudo precice
+# ARG uid=1000
+# ARG gid=1000
+# RUN groupadd -g ${gid} precice \
+#     && useradd -u ${uid} -g ${gid} -m -s /bin/bash precice \
+#     && sudo usermod -a -G sudo precice
 
 # Setup passwordless sudo
 RUN echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
