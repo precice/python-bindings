@@ -997,8 +997,6 @@ cdef class Participant:
         0.5, i.e. the defined access region as computed through the involved provided mesh is by 50%
         enlarged.
         """
-        warnings.warn("The function set_mesh_access_region is still experimental.")
-
         check_array_like(bounding_box, "bounding_box", "set_mesh_access_region")
 
         if not isinstance(bounding_box, np.ndarray):
@@ -1030,8 +1028,6 @@ cdef class Participant:
         coordinates : numpy.ndarray
             he coordinates associated to the IDs and corresponding data values (dim * size)
         """
-        warnings.warn("The function get_mesh_vertices_and_ids is still experimental.")
-
         size = self.get_mesh_vertex_size(mesh_name)
         dimensions = self.get_mesh_dimensions(mesh_name)
 
