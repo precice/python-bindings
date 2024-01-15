@@ -69,7 +69,6 @@ while participant.is_coupling_ongoing():
     participant.write_data(mesh_name, write_data_name, vertex_ids, write_data)
 
     print("DUMMY: Advancing in time")
-    dt = participant.get_max_time_step_size()
     participant.advance(dt)
 
     if participant.requires_reading_checkpoint():
