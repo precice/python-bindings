@@ -20,69 +20,59 @@ configuration_file_name = args.configurationFileName
 participant_name = args.participantName
 
 if participant_name == 'SolverOne':
-    write_data_name = 'dataOne'
-    read_data_name = 'dataTwo'
-    mesh_name = 'MeshOne'
+    write_data_name = 'Data-One'
+    read_data_name = 'Data-Two'
+    mesh_name = 'SolverOne-Mesh'
 
 if participant_name == 'SolverTwo':
-    read_data_name = 'dataOne'
-    write_data_name = 'dataTwo'
-    mesh_name = 'MeshTwo'
+    read_data_name = 'Data-One'
+    write_data_name = 'Data-Two'
+    mesh_name = 'SolverTwo-Mesh'
 
 num_vertices = 3  # Number of vertices
 
 solver_process_index = 0
 solver_process_size = 1
 
-interface = precice.Interface(participant_name, configuration_file_name,
-                              solver_process_index, solver_process_size)
+participant = precice.Participant(participant_name, configuration_file_name,
+                                  solver_process_index, solver_process_size)
 
-mesh_id = interface.get_mesh_id(mesh_name)
+assert (participant.requires_mesh_connectivity_for(mesh_name) is False)
 
-assert (interface.is_mesh_connectivity_required(mesh_id) is False)
-
-dimensions = interface.get_dimensions()
-
-vertices = np.zeros((num_vertices, dimensions))
-read_data = np.zeros((num_vertices, dimensions))
-write_data = np.zeros((num_vertices, dimensions))
+vertices = np.zeros((num_vertices, participant.get_mesh_dimensions(mesh_name)))
+read_data = np.zeros((num_vertices, participant.get_data_dimensions(mesh_name, read_data_name)))
+write_data = np.zeros((num_vertices, participant.get_data_dimensions(mesh_name, write_data_name)))
 
 for x in range(num_vertices):
-    for y in range(0, dimensions):
+    for y in range(participant.get_mesh_dimensions(mesh_name)):
         vertices[x, y] = x
+
+    for y in range(participant.get_data_dimensions(mesh_name, read_data_name)):
         read_data[x, y] = x
+
+    for y in range(participant.get_data_dimensions(mesh_name, write_data_name)):
         write_data[x, y] = x
 
-vertex_ids = interface.set_mesh_vertices(mesh_id, vertices)
-read_data_id = interface.get_data_id(read_data_name, mesh_id)
-write_data_id = interface.get_data_id(write_data_name, mesh_id)
+vertex_ids = participant.set_mesh_vertices(mesh_name, vertices)
 
-dt = interface.initialize()
+participant.initialize()
 
-while interface.is_coupling_ongoing():
-    if interface.is_action_required(
-            precice.action_write_iteration_checkpoint()):
+while participant.is_coupling_ongoing():
+    if participant.requires_writing_checkpoint():
         print("DUMMY: Writing iteration checkpoint")
-        interface.mark_action_fulfilled(
-            precice.action_write_iteration_checkpoint())
 
-    if interface.is_read_data_available():
-        read_data = interface.read_block_vector_data(read_data_id, vertex_ids)
+    dt = participant.get_max_time_step_size()
+    read_data = participant.read_data(mesh_name, read_data_name, vertex_ids, dt)
 
     write_data = read_data + 1
 
-    if interface.is_write_data_required(dt):
-        interface.write_block_vector_data(
-            write_data_id, vertex_ids, write_data)
+    participant.write_data(mesh_name, write_data_name, vertex_ids, write_data)
 
     print("DUMMY: Advancing in time")
-    dt = interface.advance(dt)
+    participant.advance(dt)
 
-    if interface.is_action_required(
-            precice.action_read_iteration_checkpoint()):
+    if participant.requires_reading_checkpoint():
         print("DUMMY: Reading iteration checkpoint")
-        interface.mark_action_fulfilled(
-            precice.action_read_iteration_checkpoint())
 
-interface.finalize()
+participant.finalize()
 print("DUMMY: Closing python solver dummy...")

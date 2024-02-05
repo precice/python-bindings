@@ -64,7 +64,7 @@ PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 def get_extensions(is_test):
     compile_args = []
     link_args = []
-    compile_args.append("-std=c++11")
+    compile_args.append("-std=c++17")
     compile_args.append("-I{}".format(numpy.get_include()))
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
@@ -76,7 +76,7 @@ def get_extensions(is_test):
         link_args += pkgconfig.libs('libprecice').split()
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
-                                             "SolverInterface.cpp"))
+                                             "Participant.cpp"))
 
     return [
         Extension(
@@ -148,7 +148,7 @@ setup(
     author_email='info@precice.org',
     license='LGPL-3.0',
     python_requires='>=3',
-    install_requires=['numpy', 'mpi4py'],
+    install_requires=['numpy', 'mpi4py', 'Cython'],
     # mpi4py is only needed, if preCICE was compiled with MPI
     # see https://github.com/precice/python-bindings/issues/8
     packages=['precice'],
