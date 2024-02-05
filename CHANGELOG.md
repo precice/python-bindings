@@ -4,8 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* Add Cython as build time dependency https://github.com/precice/python-bindings/pull/177
 * Update CMake configuration flags for preCICE source installation in Actions. https://github.com/precice/python-bindings/commit/23a840144c2647d6cf09c0ed87be3b768a22feb7
 * Remove API functions `has_mesh` and `has_data` and rename `get_mesh_vertices_and_ids` to `get_mesh_vertices_and_coordinates`. https://github.com/precice/python-bindings/commit/cd446d2807b841d81a4cf5c9dd6656ab43c278c3
+* Update API according to preCICE v3.0.0 https://github.com/precice/python-bindings/pull/179
 
 ## 2.5.0.4
 
