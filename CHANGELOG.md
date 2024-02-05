@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## v3.0.0.0rc1
 
 * Add Cython as build time dependency https://github.com/precice/python-bindings/pull/177
 * Update CMake configuration flags for preCICE source installation in Actions. https://github.com/precice/python-bindings/commit/23a840144c2647d6cf09c0ed87be3b768a22feb7
