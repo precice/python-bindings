@@ -12,7 +12,9 @@ jobs:
     name: Run setup.py phases needed by spack
     needs: [setup_test]
     runs-on: ubuntu-latest
-    container: precice/precice:develop
+    container:
+      image: precice/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -34,7 +36,9 @@ jobs:
   setup_install:
     name: Run setup install
     runs-on: ubuntu-latest
-    container: precice/precice:develop
+    container:
+      image: precice/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -59,7 +63,9 @@ jobs:
     name: Run setup install --single-version-externally-managed (for spack)
     needs: [setup_install]
     runs-on: ubuntu-latest
-    container: precice/precice:develop
+    container:
+      image: precice/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -96,12 +102,12 @@ jobs:
         run: |
           git clone --branch develop https://github.com/precice/precice.git precice-core
           mkdir -p precice
-          cp precice-core/src/precice/SolverInterface.hpp precice/SolverInterface.hpp
+          cp precice-core/src/precice/Participant.hpp precice/Participant.hpp
           cp precice-core/src/precice/Tooling.hpp precice/Tooling.hpp
           cp precice-core/src/precice/Tooling.hpp precice/Tooling.cpp
           cd precice-core
           mkdir build && cd build
-          cmake .. -DPRECICE_MPICommunication=OFF -DPRECICE_PETScMapping=OFF -DPRECICE_PythonActions=OFF -DBUILD_TESTING=OFF
+          cmake .. -DPRECICE_FEATURE_MPI_COMMUNICATION=OFF -DPRECICE_FEATURE_PETSC_MAPPING=OFF -DPRECICE_FEATURE_PYTHON_ACTIONS=OFF -DBUILD_TESTING=OFF
       - name: Install dependencies
         run: |
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
@@ -117,7 +123,9 @@ jobs:
     name: Run pip install
     needs: [setup_test]
     runs-on: ubuntu-latest
-    container: precice/precice:develop
+    container:
+      image: precice/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -138,7 +146,9 @@ jobs:
     name: Run solverdummy
     needs: [setup_install, setup_test]
     runs-on: ubuntu-latest
-    container: precice/precice:develop
+    container:
+      image: precice/precice:develop
+      options: --user root
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2

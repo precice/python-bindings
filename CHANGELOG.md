@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* Update CMake configuration flags for preCICE source installation in Actions. https://github.com/precice/python-bindings/commit/23a840144c2647d6cf09c0ed87be3b768a22feb7
+* Remove API functions `has_mesh` and `has_data` and rename `get_mesh_vertices_and_ids` to `get_mesh_vertices_and_coordinates`. https://github.com/precice/python-bindings/commit/cd446d2807b841d81a4cf5c9dd6656ab43c278c3
+
+## 2.5.0.4
+
+* Add `tag_prefix = v` in versioneer configuration of `setup.cfg`.
+
+## 2.5.0.3
+
+* Update from versioneer 0.19 to 0.29.
+* Add `cimport numpy` to avoid a segmentation fault originating from using Cython v3.0.0. https://github.com/precice/python-bindings/issues/182
+
 ## 2.5.0.2
 
 * Add Waveform API introduced in preCICE v2.4.0.
