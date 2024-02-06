@@ -3,7 +3,7 @@ from libcpp.set    cimport set
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-cdef extern from "precice/Participant.hpp" namespace "precice":
+cdef extern from "precice/precice.hpp" namespace "precice":
     cdef cppclass Participant:
         # construction and configuration
 
@@ -83,6 +83,4 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         void writeGradientData(const string& meshName, const string& dataName, vector[int] vertices, vector[double] gradientValues)
 
-
-cdef extern from "precice/Tooling.hpp" namespace "precice":
-    string getVersionInformation()
+        string getVersionInformation()
