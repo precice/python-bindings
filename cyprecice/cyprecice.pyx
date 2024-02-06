@@ -1041,7 +1041,7 @@ cdef class Participant:
 
         return np_ids, np_coordinates.reshape((size, dimensions))
 
-    def get_version_information ():
+    def get_version_information (self):
         """
         Returns
         -------
