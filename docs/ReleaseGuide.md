@@ -13,21 +13,27 @@ The release of the `python-bindings` repository is made directly from a release 
     * `CHANGELOG.md` on `python-bindings-v2.1.1.1`.
     * There is no need to bump the version anywhere else, since we use the [python-versioneer](https://github.com/python-versioneer/python-versioneer/) for maintaining the version everywhere else.
 
-4. [Draft a New Release](https://github.com/precice/python-bindings/releases/new) in the `Releases` section of the repository page in a web browser. The release tag needs to be the exact version number (i.e.`v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing tags](https://github.com/precice/python-bindings/tags)). Use `@target:master`. Release title is also the version number (i.e. `v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing releases](https://github.com/precice/python-bindings/tags)).
+4. [Draft a New Release](https://github.com/precice/python-bindings/releases/new) in the `Releases` section of the repository page in a web browser.
 
-    * *Note:* We use the [python-versioneer](https://github.com/python-versioneer/python-versioneer/) for maintaining the version. Therefore the tag directly defines the version in all relevant places.
-    * *Note:* If it is a pre-release then the option *This is a pre-release* needs to be selected at the bottom of the page. Use `@target:python-bindings-v2.1.1.1` for a pre-release, since we will never merge a pre-release into master.
-    * Use the `Auto-generate release notes` feature. See, for example, https://github.com/precice/python-bindings/releases/tag/v2.3.0.1
+    * The release tag needs to be the exact version number (i.e.`v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing tags](https://github.com/precice/python-bindings/tags)).
+    * If this is a full release, use `@target:master`. If this is a pre-release, use `@target:python-bindings-v2.1.1.1`. If you are making a pre-release, **directly skip to the [pre-release](#pre-release) section below**.
+    * Release title is also the version number (i.e. `v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing releases](https://github.com/precice/python-bindings/tags)).
 
-    a) If a pre-release is made: Directly hit the "Publish release" button in your Release Draft. Now you can check the artifacts (e.g. release on [PyPI](https://pypi.org/project/pyprecice/#history)) of the release. *Note:* As soon as a new tag is created github actions will take care of deploying the new version on PyPI using [this workflow](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
+5. As soon as one approving review is made, merge the release PR (from `python-bindings-v2.1.1.1`) into `master`.
 
-    b) If this is a "real" release: As soon as one approving review is made, merge the release PR (from `python-bindings-v2.1.1.1`) into `master`.
+6. Merge `master` into `develop` for synchronization of `develop`.
 
-5. Merge `master` into `develop` for synchronization of `develop`.
+7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
 
-6. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
+8. Add an empty commit on master by running the steps:
 
-7. Add an empty commit on master via `git checkout master`, then `git commit --allow-empty -m "post-tag bump"`. Check that everything is in order via `git log`. Important: The `tag` and `origin/master` should not point to the same commit. For example:
+    ```bash
+    git checkout master
+    git commit --allow-empty -m "post-tag bump"
+    git push
+    ```
+
+    Check that everything is in order via `git log`. Important: The `tag` and `origin/master` should not point to the same commit. For example:
 
    ```bash
    commit 44b715dde4e3194fa69e61045089ca4ec6925fe3 (HEAD -> master, origin/master)
@@ -48,4 +54,8 @@ The release of the `python-bindings` repository is made directly from a release 
 
    For more details refer to https://github.com/precice/python-bindings/issues/109 and https://github.com/python-versioneer/python-versioneer/issues/217.
 
-8. Update Spack package (refer to `python-bindings/spack/README.md`).
+9. *Temporarily not maintained* Update Spack package (refer to `python-bindings/spack/README.md`).
+
+## Pre-release
+
+A pre-release branch is never merged into a master branch. After creating the branch and drafting a release, directly hit the "Publish release" button in your Release Draft. Now you can check the pre-release artifacts (e.g. release on [PyPI](https://pypi.org/project/pyprecice/#history)) of the release. No further action is required for a pre-release.
