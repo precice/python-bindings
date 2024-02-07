@@ -25,7 +25,7 @@ The release of the `python-bindings` repository is made directly from a release 
 
 7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
 
-8. Add an empty commit on master by running the steps:
+8. Add an empty commit (details https://github.com/precice/python-bindings/issues/109) on master by running the steps:
 
     ```bash
     git checkout master
