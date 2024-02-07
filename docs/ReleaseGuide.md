@@ -58,4 +58,4 @@ The release of the `python-bindings` repository is made directly from a release 
 
 ## Pre-release
 
-A pre-release branch is never merged into a master branch. After creating the branch and drafting a release, directly hit the "Publish release" button in your Release Draft. Now you can check the pre-release artifacts (e.g. release on [PyPI](https://pypi.org/project/pyprecice/#history)) of the release. No further action is required for a pre-release.
+After creating the branch and drafting a release, directly hit the "Publish release" button in your Release Draft. Please note that the release branch is not merged into the master branch during a pre-release. Merging is done only for the stable release. You can check the pre-release artifacts (e.g. release on [PyPI](https://pypi.org/project/pyprecice/#history)) of the release. No further action is required for a pre-release.
