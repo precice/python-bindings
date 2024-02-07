@@ -16,16 +16,16 @@ The release of the `python-bindings` repository is made directly from a release 
 4. [Draft a New Release](https://github.com/precice/python-bindings/releases/new) in the `Releases` section of the repository page in a web browser.
 
     * The release tag needs to be the exact version number (i.e.`v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing tags](https://github.com/precice/python-bindings/tags)).
-    * If this is a full release, use `@target:master`. If this is a pre-release, use `@target:python-bindings-v2.1.1.1`. If you are making a pre-release, **directly skip to the [pre-release](#pre-release) section below**.
+    * If this is a stable release, use `@target:master`. If this is a pre-release, use `@target:python-bindings-v2.1.1.1`. If you are making a pre-release, **directly skip to the [pre-release](#pre-release) section below**.
     * Release title is also the version number (i.e. `v2.1.1.1` or `v2.1.1.1rc1`, compare to [existing releases](https://github.com/precice/python-bindings/tags)).
 
 5. As soon as one approving review is made, merge the release PR (from `python-bindings-v2.1.1.1`) into `master`.
 
 6. Merge `master` into `develop` for synchronization of `develop`.
 
-7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
+7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
 
-8. Add an empty commit on master by running the steps:
+8. Add an empty commit (details https://github.com/precice/python-bindings/issues/109) on master by running the steps:
 
     ```bash
     git checkout master
