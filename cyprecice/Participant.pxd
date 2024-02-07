@@ -83,4 +83,4 @@ cdef extern from "precice/precice.hpp" namespace "precice":
 
         void writeGradientData(const string& meshName, const string& dataName, vector[int] vertices, vector[double] gradientValues)
 
-        string getVersionInformation()
+    string getVersionInformation()
