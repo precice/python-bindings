@@ -50,4 +50,4 @@ The release of the `python-bindings` repository is made directly from a release 
 
    For more details refer to https://github.com/precice/python-bindings/issues/109 and https://github.com/python-versioneer/python-versioneer/issues/217.
 
-8. Update Spack package (refer to `python-bindings/spack/README.md`).
+9. Update Spack package (refer to `python-bindings/spack/README.md`).
