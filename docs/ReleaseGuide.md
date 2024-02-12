@@ -27,7 +27,9 @@ The release of the `python-bindings` repository is made directly from a release 
 
 6. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your Release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
 
-7. Add an empty commit on master via `git checkout master`, then `git commit --allow-empty -m "post-tag bump"`. Check that everything is in order via `git log`. Important: The `tag` and `origin/master` should not point to the same commit. For example:
+7. Now there exists be a tag corresponding to the release on `master`. Re-run the [docker release workflow `build-docker.yml` via dispatch]([https://github.com/precice/fenics-adapter/actions/workflows/build-docker.yml](https://github.com/precice/python-bindings/actions/workflows/build-docker.yml)) such that the correct version is picked up by `versioneer`. Check the version in the container via `docker pull precice/pythonbindings`, then `docker run -ti precice/pythonbindings`, and inside the container `$ python3 -c "import precice; print(precice.__version__)"`. ⚠️ There is an open issue that needs fixing https://github.com/precice/python-bindings/issues/195 ⚠️
+
+8. Add an empty commit on master via `git checkout master`, then `git commit --allow-empty -m "post-tag bump"`. Check that everything is in order via `git log`. Important: The `tag` and `origin/master` should not point to the same commit. For example:
 
    ```bash
    commit 44b715dde4e3194fa69e61045089ca4ec6925fe3 (HEAD -> master, origin/master)
