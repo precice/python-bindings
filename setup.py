@@ -61,6 +61,13 @@ APPNAME = "pyprecice"
 PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
+def set_pkg_config_path():
+    if not pkgconfig.exists("libprecice"):
+        os.environ["PKG_CONFIG_PATH"] = ":".join(
+            [path + "/pkgconfig" for path in os.environ["LD_LIBRARY_PATH"].split(":")]
+        )
+
+
 def get_extensions(is_test):
     compile_args = []
     link_args = []
@@ -69,6 +76,8 @@ def get_extensions(is_test):
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
                                      "cyprecice" + ".pyx")]
+
+    set_pkg_config_path()
 
     compile_args += pkgconfig.cflags('libprecice').split()
 
