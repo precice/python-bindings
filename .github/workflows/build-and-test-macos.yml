@@ -1,0 +1,77 @@
+name: Build and Test (macOS)
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }}
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - CONFIG: MPIPETSc
+            CXX: 'clang++'
+            TYPE: Debug
+    steps:
+      - name: Install preCICE dependencies
+        run: brew install cmake eigen libxml2 boost petsc openmpi python3 numpy
+      - name: Check out preCICE
+        uses: actions/checkout@v3
+        with:
+          repository:  precice/precice
+          ref: 'master'
+          path: 'precice-repo'
+      - name: Generate build directory
+        run: mkdir -p precice-repo/build
+      - name: Configure preCICE
+        working-directory: precice-repo/build
+        env:
+          CXX: ${{ matrix.CXX }}
+          CXXFLAGS: "-Wall"
+          MPI: ${{ contains(matrix.CONFIG, 'MPI') }}
+          PETSc: ${{ contains(matrix.CONFIG, 'PETSc') }}
+        run: |
+          cmake --version
+          cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=${{ matrix.TYPE }} -DPRECICE_MPICommunication=${{ env.MPI }} -DPRECICE_PETScMapping=${{ env.PETSc }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CMakeCache
+          path: precice-repo/build/CMakeCache.txt
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CMakeLogs
+          path: 'precice-repo/build/CMakeFiles/*.log'
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CompileCommands
+          path: precice-repo/build/compile_commands.json
+      - name: Compile and install preCICE
+        working-directory: precice-repo/build
+        run: |
+          make -j $(sysctl -n hw.ncpu)
+          make install
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} TestOutput
+          path: precice-repo/build/TestOutput/
+      - name: Check out Python binding repository
+        uses: actions/checkout@v3
+      - name: Install & upgrade pip3
+        run: python3 -m ensurepip --upgrade
+      - name: Install bindings using pip
+        run: |
+          export PKG_CONFIG_PATH="/usr/local/lib/precice/pkgconfig":"${PKG_CONFIG_PATH}"
+          pip3 install --user .
+      - name: Import Python bindings
+        run: |
+          python3 -c "import precice"
