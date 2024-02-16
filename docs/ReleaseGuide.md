@@ -25,7 +25,9 @@ The release of the `python-bindings` repository is made directly from a release 
 
 7. If everything is in order up to this point then the new version can be released by hitting the "Publish release" button in your release Draft. This will create the corresponding tag and trigger [publishing the release to PyPI](https://github.com/precice/python-bindings/actions?query=workflow%3A%22Upload+Python+Package%22).
 
-8. Add an empty commit (details https://github.com/precice/python-bindings/issues/109) on master by running the steps:
+8. Now there exists be a tag corresponding to the release on `master`. Re-run the [docker release workflow `build-docker.yml` via dispatch]([https://github.com/precice/fenics-adapter/actions/workflows/build-docker.yml](https://github.com/precice/python-bindings/actions/workflows/build-docker.yml)) such that the correct version is picked up by `versioneer`. Check the version in the container via `docker pull precice/pythonbindings`, then `docker run -ti precice/pythonbindings`, and inside the container `$ python3 -c "import precice; print(precice.__version__)"`. ⚠️ There is an open issue that needs fixing https://github.com/precice/python-bindings/issues/195 ⚠️
+
+9. Add an empty commit (details https://github.com/precice/python-bindings/issues/109) on master by running the steps:
 
     ```bash
     git checkout master
@@ -54,7 +56,7 @@ The release of the `python-bindings` repository is made directly from a release 
 
    For more details refer to https://github.com/precice/python-bindings/issues/109 and https://github.com/python-versioneer/python-versioneer/issues/217.
 
-9. *Temporarily not maintained* Update Spack package (refer to `python-bindings/spack/README.md`).
+10. *Temporarily not maintained* Update Spack package (refer to `python-bindings/spack/README.md`).
 
 ## Pre-release
 
