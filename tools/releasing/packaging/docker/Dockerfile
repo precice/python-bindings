@@ -16,16 +16,7 @@ RUN apt-get -qq update && apt-get -qq install \
     pkg-config && \
     rm -rf /var/lib/apt/lists/*
 
-# Setup passwordless sudo
-RUN echo "ALL            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
-
-# Switch to the user precice
 USER precice
-WORKDIR /home/precice
-ENV USER=precice
-
-# Use bash instead of default sh
-SHELL ["/bin/bash", "-c"]
 
 # Upgrade pip to newest version (pip version from 18.04 apt-get is outdated)
 RUN python3 -m pip install --user --upgrade pip
