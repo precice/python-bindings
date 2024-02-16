@@ -8,7 +8,6 @@ on:
         description: branch to build the image from
         options:
           - develop
-          - master     
   push:
     branches:
       - develop
@@ -32,15 +31,9 @@ jobs:
       - name: Set PRECICE_TAG and the TAG depending on branch
         shell: bash
         run: |
-          if [[ '${{ env.BINDINGS_REF }}' == 'master' ]]; then
-              echo "PRECICE_TAG=latest" >> "$GITHUB_ENV"
-              echo "TAG=latest" >> "$GITHUB_ENV"
-              echo "Building TAG: latest"
-          else
-              echo "PRECICE_TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
-              echo "TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
-              echo "Building TAG: ${{ env.BINDINGS_REF }}"
-          fi   
+          echo "PRECICE_TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
+          echo "TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
+          echo "Building TAG: ${{ env.BINDINGS_REF }}"
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Set up Docker Buildx
