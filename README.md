@@ -321,7 +321,7 @@ pip3 install numpy --upgrade
 
 ## Old versioning scheme
 
-Bindings versions up to `v3.0.0.0` have four digits, where the first three digits are the supported preCICE version, and the fourth digit is the bindings version. Example: `v2.0.0.1` and `v2.0.0.2` of the bindings represent versions `1` and `2` of the bindings that are compatible with preCICE `v2.0.0`.
+Bindings versions up to `v3.0.0.0` have four digits, where the first three digits are the supported preCICE version, and the fourth digit is the bindings version. Example: `v2.0.0.1` and `v2.0.0.2` of the bindings represent versions `1` and `2` of the bindings that are compatible with preCICE `v2.0.0`. We dropped the third digit of the preCICE version as bugfix releases are always compatible and do not impact the bindings. The new three digit format is now consistent with other preCICE bindings.
 
 ## Contributors
 
