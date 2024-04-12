@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Change versioning scheme https://github.com/precice/python-bindings/pull/199
+
 ## 3.0.0.0
 
 * Add Cython as build time dependency https://github.com/precice/python-bindings/pull/177
