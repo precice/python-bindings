@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## v3.1.0
 
 * Change versioning scheme https://github.com/precice/python-bindings/pull/199
 
