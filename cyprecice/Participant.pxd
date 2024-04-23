@@ -65,6 +65,10 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         void setMeshTetrahedra (const string& meshName, vector[int] vertices)
 
+        # remeshing
+
+        void resetMesh (const string& meshName)
+
         # data access
 
         void writeData (const string& meshName, const string& dataName, vector[int] vertices, vector[double] values)
