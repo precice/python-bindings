@@ -710,6 +710,22 @@ cdef class Participant:
 
         self.thisptr.setMeshTetrahedra (convert(mesh_name), cpp_vertices)
 
+    # remeshing
+
+
+    def reset_mesh (self, mesh_name):
+        """
+        Resets a mesh
+
+        Parameters
+        ----------
+        mesh_name : str
+            Name of the mesh to reset.
+
+        """
+
+        self.thisptr.resetMesh (convert(mesh_name))
+
     # data access
 
     def write_data (self, mesh_name, data_name, vertex_ids, values):
