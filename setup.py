@@ -65,7 +65,7 @@ def get_extensions(is_test):
     compile_args = []
     link_args = []
     compile_args.append("-std=c++17")
-    compile_args.append("-I{}".format(numpy.get_include()))
+    include_dirs = [numpy.get_include()]
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
                                      "cyprecice" + ".pyx")]
@@ -84,6 +84,7 @@ def get_extensions(is_test):
             sources=bindings_sources,
             libraries=[],
             language="c++",
+            include_dirs=include_dirs,
             extra_compile_args=compile_args,
             extra_link_args=link_args
         )
