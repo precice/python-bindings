@@ -14,7 +14,7 @@
 #     name: build_spack
 #     runs-on: ubuntu-latest
 #     timeout-minutes: 15
-#     container: precice/ci-spack-pyprecice-deps-2204
+#     container: precice/ci-spack-pyprecice-deps-2404
 #     defaults:
 #       run:
 #         shell: "bash --login -eo pipefail {0}"
