@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Fix NumPy include order to not conflict with system NumPy and the one installed via pip https://github.com/precice/python-bindings/pull/204
+
 ## v3.1.0
 
 * Change versioning scheme https://github.com/precice/python-bindings/pull/199
