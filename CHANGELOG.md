@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Require setuptools >= 61 to guarantee that pyproject.toml is used https://github.com/precice/python-bindings/pull/207
+* Fix CI pipeline for spack https://github.com/precice/python-bindings/pull/206
+
 ## v3.1.1
 
 * Fix NumPy include order to not conflict with system NumPy and the one installed via pip https://github.com/precice/python-bindings/pull/204
