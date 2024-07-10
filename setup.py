@@ -5,17 +5,6 @@ import versioneer
 
 uses_pip = "pip" in __file__
 
-# check whether pip is used for installation. If pip is not used, dependencies defined in pyproject.toml might be
-# missing.
-if not uses_pip:
-    warnings.warn(
-        "It looks like you are not using pip for installation. Installing the package via 'pip3 install "
-        "--user .' is recommended. You can still use 'python3 setup.py install --user', if you want and if "
-        "the bindings work correctly, you do not have to worry. However, if you face problems during "
-        "installation or running pyprecice, this means that you have to make sure that all dependencies are "
-        "installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list "
-        "of dependencies.")
-
 if uses_pip:
     # If installed with pip we need to check its version
     try:
@@ -45,7 +34,6 @@ if uses_pip:
                 " flag.".format(pip.__version__))
 
 from setuptools import setup
-from setuptools import Command
 from setuptools.command.test import test
 from setuptools.command.install import install
 from Cython.Distutils.extension import Extension
@@ -65,7 +53,7 @@ def get_extensions(is_test):
     compile_args = []
     link_args = []
     compile_args.append("-std=c++17")
-    compile_args.append("-I{}".format(numpy.get_include()))
+    include_dirs = [numpy.get_include()]
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
                                      "cyprecice" + ".pyx")]
@@ -84,6 +72,7 @@ def get_extensions(is_test):
             sources=bindings_sources,
             libraries=[],
             language="c++",
+            include_dirs=include_dirs,
             extra_compile_args=compile_args,
             extra_link_args=link_args
         )
