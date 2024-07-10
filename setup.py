@@ -5,17 +5,6 @@ import versioneer
 
 uses_pip = "pip" in __file__
 
-# check whether pip is used for installation. If pip is not used, dependencies defined in pyproject.toml might be
-# missing.
-if not uses_pip:
-    warnings.warn(
-        "It looks like you are not using pip for installation. Installing the package via 'pip3 install "
-        "--user .' is recommended. You can still use 'python3 setup.py install --user', if you want and if "
-        "the bindings work correctly, you do not have to worry. However, if you face problems during "
-        "installation or running pyprecice, this means that you have to make sure that all dependencies are "
-        "installed correctly and repeat the installation of pyprecice. Refer to pyproject.toml for a list "
-        "of dependencies.")
-
 if uses_pip:
     # If installed with pip we need to check its version
     try:
@@ -45,13 +34,13 @@ if uses_pip:
                 " flag.".format(pip.__version__))
 
 from setuptools import setup
-from setuptools import Command
 from setuptools.command.test import test
 from setuptools.command.install import install
 from Cython.Distutils.extension import Extension
 from Cython.Distutils.build_ext import new_build_ext as build_ext
 from Cython.Build import cythonize
 import numpy
+import pkgconfig
 
 
 # name of Interfacing API
@@ -63,17 +52,19 @@ PYTHON_BINDINGS_PATH = os.path.dirname(os.path.abspath(__file__))
 def get_extensions(is_test):
     compile_args = []
     link_args = []
-    compile_args.append("-std=c++11")
-    compile_args.append("-I{}".format(numpy.get_include()))
+    compile_args.append("-std=c++17")
+    include_dirs = [numpy.get_include()]
 
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
                                      "cyprecice" + ".pyx")]
 
+    compile_args += pkgconfig.cflags('libprecice').split()
+
     if not is_test:
-        link_args.append("-lprecice")
+        link_args += pkgconfig.libs('libprecice').split()
     if is_test:
         bindings_sources.append(os.path.join(PYTHON_BINDINGS_PATH, "test",
-                                             "SolverInterface.cpp"))
+                                             "Participant.cpp"))
 
     return [
         Extension(
@@ -81,6 +72,7 @@ def get_extensions(is_test):
             sources=bindings_sources,
             libraries=[],
             language="c++",
+            include_dirs=include_dirs,
             extra_compile_args=compile_args,
             extra_link_args=link_args
         )
@@ -145,7 +137,7 @@ setup(
     author_email='info@precice.org',
     license='LGPL-3.0',
     python_requires='>=3',
-    install_requires=['numpy', 'mpi4py'],
+    install_requires=['numpy', 'mpi4py', 'Cython'],
     # mpi4py is only needed, if preCICE was compiled with MPI
     # see https://github.com/precice/python-bindings/issues/8
     packages=['precice'],

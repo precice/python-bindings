@@ -1,5 +1,5 @@
 # Build stage with Spack pre-installed and ready to be used
-FROM spack/ubuntu-bionic:latest
+FROM spack/ubuntu-noble:latest
 
 # Mount the current sources into the build container
 # and build the default environment
