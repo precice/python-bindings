@@ -1,5 +1,5 @@
 # Build stage with Spack pre-installed and ready to be used
-FROM ubuntu:20.04
+FROM spack/ubuntu-noble:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-c"]

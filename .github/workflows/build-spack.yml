@@ -31,7 +31,7 @@ jobs:
     name: build_spack_external
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    container: precice/ci-spack-pyprecice-external-deps-2004
+    container: precice/ci-spack-pyprecice-external-deps-2404
     defaults:
       run:
         shell: "bash --login -eo pipefail {0}"
