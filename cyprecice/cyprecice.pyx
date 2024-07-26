@@ -1044,10 +1044,10 @@ cdef class Participant:
 
         return np_ids, np_coordinates.reshape((size, dimensions))
 
-def get_version_information ():
-    """
-    Returns
-    -------
-    Current preCICE version information
-    """
-    return CppParticipant.getVersionInformation()
+    def get_version_information (self):
+        """
+        Returns
+        -------
+        Current preCICE version information
+        """
+        return self.thisptr.getVersionInformation()
