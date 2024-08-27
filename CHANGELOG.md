@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## v3.1.2
 
 * Restrict to numpy < 2 for better compatibility with CI pipeline. https://github.com/precice/python-bindings/pull/213
 * Require setuptools < 72 since support for the test command was removed in Setuptools 72. https://github.com/precice/python-bindings/pull/213
