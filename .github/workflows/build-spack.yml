@@ -1,35 +1,35 @@
-# name: Build Spack
-# on:
-#   push:
-#     branches:
-#       - "*"
-#   pull_request:
-#     branches:
-#       - "*"
-#   schedule:
-#     - cron: '0 4 * * 1'   # Schedule it every Sunday
-#
-# jobs:
-#   build_spack:
-#     name: build_spack
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 15
-#     container: precice/ci-spack-pyprecice-deps-2404
-#     defaults:
-#       run:
-#         shell: "bash --login -eo pipefail {0}"
-#     steps:
-#       - name: Checkout Repository
-#         uses: actions/checkout@v2
-#       - name: Move Package Script
-#         run: |
-#           cp -r spack/repo/packages/py-pyprecice/ /py-pyprecice-repo/packages/
-#       - name: Try to build py-pyprecice with spack and test it
-#         run: |
-#           . /opt/spack/share/spack/setup-env.sh
-#           spack env activate ci && spack arch
-#           spack remove py-pyprecice
-#           spack add pyprecice.test.py-pyprecice@develop && spack develop pyprecice.test.py-pyprecice@develop
-#           spack install && spack find
-#           spack load py-pyprecice
-#           BINDINGS_VERSION=$(python3 -c "import precice; print(precice.__version__)") && echo "Installed version of bindings is ${BINDINGS_VERSION}"
+name: Build Spack
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+  schedule:
+    - cron: '0 4 * * 1'   # Schedule it every Sunday
+
+jobs:
+  build_spack:
+    name: build_spack
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container: precice/ci-spack-pyprecice-deps-2404
+    defaults:
+      run:
+        shell: "bash --login -eo pipefail {0}"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Move Package Script
+        run: |
+          cp -r spack/repo/packages/py-pyprecice/ /py-pyprecice-repo/packages/
+      - name: Try to build py-pyprecice with spack and test it
+        run: |
+          . /opt/spack/share/spack/setup-env.sh
+          spack env activate ci && spack arch
+          spack remove py-pyprecice
+          spack add pyprecice.test.py-pyprecice@develop && spack develop pyprecice.test.py-pyprecice@develop
+          spack install && spack find
+          spack load py-pyprecice
+          BINDINGS_VERSION=$(python3 -c "import precice; print(precice.__version__)") && echo "Installed version of bindings is ${BINDINGS_VERSION}"

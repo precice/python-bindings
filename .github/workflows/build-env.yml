@@ -2,6 +2,12 @@ name: Update build environment
 
 on:
   workflow_dispatch:      # Trigger by hand from the UI
+    inputs:
+      tag:
+        description: 'tag for docker image'
+        required: true
+        default: 'latest'
+        type: string
   schedule:
     - cron: '0 0 * * 0'   # Schedule it every Sunday
 
@@ -24,5 +30,5 @@ jobs:
         with:
           push: true
           context: .
-          file: spack/ci-spack-pyprecice-deps-2204.dockerfile
-          tags: precice/ci-spack-pyprecice-deps-2204
+          file: spack/ci-spack-pyprecice-deps-2404.dockerfile
+          tags: precice/ci-spack-pyprecice-deps-2404:${{ inputs.tag }}
