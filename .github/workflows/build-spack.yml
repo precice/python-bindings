@@ -33,3 +33,27 @@ jobs:
           spack install && spack find
           spack load py-pyprecice
           BINDINGS_VERSION=$(python3 -c "import precice; print(precice.__version__)") && echo "Installed version of bindings is ${BINDINGS_VERSION}"
+  build_spack_external:
+    name: build_spack_external
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container: precice/ci-spack-pyprecice-external-deps-2404
+    defaults:
+      run:
+        shell: "bash --login -eo pipefail {0}"
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Move Package Script
+        run: |
+          ls
+          cp -r spack/repo/packages/py-pyprecice/ /py-pyprecice-repo/packages/
+      - name: Try to build py-pyprecice with spack and test it
+        run: |
+          . /spack/share/spack/setup-env.sh
+          spack env activate ci && spack arch
+          spack remove py-pyprecice
+          spack add pyprecice.test.py-pyprecice@develop && spack develop pyprecice.test.py-pyprecice@develop
+          spack install && spack find && spack external find 
+          spack load py-pyprecice
+          BINDINGS_VERSION=$(python3 -c "import precice; print(precice.__version__)") && echo "Installed version of bindings is ${BINDINGS_VERSION}"
