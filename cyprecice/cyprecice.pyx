@@ -818,7 +818,8 @@ cdef class Participant:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_data(mesh_name, data_name, vertex_ids)
+        >>> dt = 1.0
+        >>> values = read_data(mesh_name, data_name, vertex_ids, dt)
         >>> values.shape
         >>> (5, )
 
@@ -826,7 +827,8 @@ cdef class Participant:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_data(mesh_name, data_name, vertex_ids)
+        >>> dt = 1.0
+        >>> values = read_data(mesh_name, data_name, vertex_ids, dt)
         >>> values.shape
         >>> (5, 2)
 
@@ -834,7 +836,8 @@ cdef class Participant:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_data(mesh_name, data_name, vertex_ids)
+        >>> dt = 1.0
+        >>> values = read_data(mesh_name, data_name, vertex_ids, dt)
         >>> values.shape
         >>> (5, 3)
         """
