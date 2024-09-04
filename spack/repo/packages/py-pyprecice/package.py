@@ -59,8 +59,9 @@ class PyPyprecice(PythonPackage):
 
     depends_on("python@3:", type=("build", "link", "run"))
     depends_on("py-setuptools@61:71", type="build")
-    depends_on("py-numpy@:1", type=("build", "link", "run"), when="@:3.1.1")
+    depends_on("py-numpy:", type=("build", "link", "run"), when="@develop")  # explicitly specity develop
     depends_on("py-numpy", type=("build", "link", "run"), when="@3.1.1:")
+    depends_on("py-numpy@:1", type=("build", "link", "run"), when="@:3.1.1")
     depends_on("py-mpi4py", type=("build", "run"))
     depends_on("py-cython@0.29:", type="build")
     depends_on("py-packaging", type="build")
