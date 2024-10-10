@@ -83,7 +83,8 @@ def get_extensions(is_test):
             language="c++",
             include_dirs=include_dirs,
             extra_compile_args=compile_args,
-            extra_link_args=link_args
+            extra_link_args=link_args,
+            define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
         )
     ]
 
