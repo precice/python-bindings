@@ -36,9 +36,9 @@ The release of the `python-bindings` repository is made directly from a release 
       git commit --allow-empty -m "post-tag bump"
       git push
       ```
-   
+
       Check that everything is in order via `git log`. Important: The `tag` and `origin/master` should not point to the same commit. For example:
-   
+
       ```bash
       commit 44b715dde4e3194fa69e61045089ca4ec6925fe3 (HEAD -> master, origin/master)
       Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
@@ -55,7 +55,7 @@ The release of the `python-bindings` repository is made directly from a release 
    
           Release v2.3.0.1
       ```
-   
+
       For more details refer to https://github.com/precice/python-bindings/issues/109 and https://github.com/python-versioneer/python-versioneer/issues/217.
 
 11. *Temporarily not maintained* Update the [py-pyprecice Spack package](https://github.com/spack/spack/blob/develop/var/spack/repos/builtin/packages/py-pyprecice/package.py).
