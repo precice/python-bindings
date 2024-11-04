@@ -11,7 +11,7 @@ jobs:
     name: Run solverdummies
     runs-on: ubuntu-latest
     container:
-      image: precice/precice:develop
+      image: precice/precice:nightly
       options: --user root
     steps:
       - name: Checkout Repository

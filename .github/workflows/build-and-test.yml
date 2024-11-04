@@ -12,7 +12,7 @@ jobs:
     name: Run setup install
     runs-on: ubuntu-latest
     container:
-      image: precice/precice:develop
+      image: precice/precice:nightly
       options: --user root
     steps:
       - name: Checkout Repository
@@ -75,7 +75,7 @@ jobs:
     needs: [setup_test]
     runs-on: ubuntu-latest
     container:
-      image: precice/precice:develop
+      image: precice/precice:nightly
       options: --user root
     steps:
       - name: Checkout Repository
@@ -98,7 +98,7 @@ jobs:
     needs: [pip_install]
     runs-on: ubuntu-latest
     container:
-      image: precice/precice:develop
+      image: precice/precice:nightly
       options: --user root
     steps:
       - name: Checkout Repository
