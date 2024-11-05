@@ -237,6 +237,9 @@ void Participant::setMeshTetrahedra
     precice::span<const precice::VertexID> vertices)
 {}
 
+void Participant:: resetMesh(precice::string_view meshName)
+{}
+
 void Participant:: writeData
 (
   precice::string_view meshName,
