@@ -728,11 +728,11 @@ cdef class Participant:
         Please refer to the documentation on how to enable and use it.
 
         Previous calls:
-            advance() been called
+            advance() has been called
 
         Examples
         --------
-        Set mesh vertices for a 2D problem with 5 mesh vertices.
+        Reset a mesh with 5 vertices to have 3 vertices.
 
         >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
         >>> mesh_name = "MeshOne"
