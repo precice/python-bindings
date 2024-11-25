@@ -11,8 +11,6 @@ cdef extern from "precice/precice.hpp" namespace "precice":
 
         Participant (const string&, const string&, int, int, void*) except +
 
-        void configure (const string&)
-
         # steering methods
 
         void initialize ()
