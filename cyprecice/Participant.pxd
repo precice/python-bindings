@@ -21,15 +21,15 @@ cdef extern from "precice/precice.hpp" namespace "precice":
 
         # status queries
 
-        int getMeshDimensions(const string& meshName) const
+        int getMeshDimensions(const string& meshName)
 
-        int getDataDimensions(const string& meshName, const string& dataName) const
+        int getDataDimensions(const string& meshName, const string& dataName)
 
-        bool isCouplingOngoing() const
+        bool isCouplingOngoing()
 
-        bool isTimeWindowComplete() const
+        bool isTimeWindowComplete()
 
-        double getMaxTimeStepSize() const
+        double getMaxTimeStepSize()
 
         bool requiresInitialData()
 
@@ -39,11 +39,11 @@ cdef extern from "precice/precice.hpp" namespace "precice":
 
         # mesh access
 
-        bool requiresMeshConnectivityFor (const string& meshName) const
+        bool requiresMeshConnectivityFor (const string& meshName)
 
         int setMeshVertex (const string& meshName, vector[double] position)
 
-        int getMeshVertexSize (const string& meshName) const
+        int getMeshVertexSize (const string& meshName)
 
         void setMeshVertices (const string& meshName, vector[double] positions, vector[int]& ids)
 
@@ -71,17 +71,17 @@ cdef extern from "precice/precice.hpp" namespace "precice":
 
         void writeData (const string& meshName, const string& dataName, vector[int] vertices, vector[double] values)
 
-        void readData (const string& meshName, const string& dataName, vector[int] vertices, const double relativeReadTime, vector[double]& values) const
+        void readData (const string& meshName, const string& dataName, vector[int] vertices, const double relativeReadTime, vector[double]& values)
 
         # direct access
 
-        void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) const
+        void setMeshAccessRegion (const string& meshName, vector[double] boundingBox)
 
-        void getMeshVertexIDsAndCoordinates (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
+        void getMeshVertexIDsAndCoordinates (const string& meshName, vector[int]& ids, vector[double]& coordinates)
 
         # Gradient related API
 
-        bool requiresGradientDataFor(const string& meshName, const string& dataName) const
+        bool requiresGradientDataFor(const string& meshName, const string& dataName)
 
         void writeGradientData(const string& meshName, const string& dataName, vector[int] vertices, vector[double] gradientValues)
 
