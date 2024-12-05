@@ -2,7 +2,7 @@
 
 ⚠️ The latest version of the documentation for the python bindings can be found on [precice.org](https://precice.org/installation-bindings-python.html). The information from this `README` is currently under revision and will be moved ⚠️
 
-[![Upload Python Package](https://github.com/precice/python-bindings/workflows/Upload%20Python%20Package/badge.svg?branch=master)](https://pypi.org/project/pyprecice/)
+[![Upload Python Package](https://github.com/precice/python-bindings/workflows/Upload%20Python%20Package/badge.svg)](https://pypi.org/project/pyprecice/)
 
 This package provides python language bindings for the C++ library [preCICE](https://github.com/precice/precice). Note that the first two digits of the version number of the bindings indicate the major and minor version of the preCICE version that the bindings support. The last digit represents the version of the bindings. Example: `v3.1.0` and `v3.1.1` of the bindings represent versions `0` and `1` of the bindings that are compatible with preCICE `v3.1.x`. Note that this versioning scheme was introduced from bindings `v3.1.0`, which is different than the [old versioning scheme](#old-versioning-scheme).
 
