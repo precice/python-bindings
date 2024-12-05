@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2.5.1.0
+
+* Backported trivial changes from v3. https://github.com/precice/python-bindings/issues/203
+
 ## 2.5.0.4
 
 * Add `tag_prefix = v` in versioneer configuration of `setup.cfg`.
