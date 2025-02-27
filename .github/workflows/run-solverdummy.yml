@@ -19,7 +19,7 @@ jobs:
       - name: Install Dependencies
         run: |
           apt-get -qq update
-          apt-get -qq install software-properties-common python3-dev python3-pip git apt-utils pkg-config
+          apt-get -qq install software-properties-common python3-dev python3-pip python3.12-venv git apt-utils pkg-config
           rm -rf /var/lib/apt/lists/*
       - name: Create venv
         run: |
