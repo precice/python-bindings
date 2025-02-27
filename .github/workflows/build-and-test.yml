@@ -22,13 +22,16 @@ jobs:
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
-          pip3 install --upgrade --user pip
+      - name: Create venv
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
       - name: Install dependencies
         run: |
-          pip3 install --user toml
+          pip3 install toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup install
-        run:  python3 setup.py install --user
+        run:  python3 setup.py install
       - name: Test install
         run: |
           export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
@@ -85,10 +88,13 @@ jobs:
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
-          pip3 install --upgrade --user pip
+      - name: Create venv
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
       - name: Run pip install
-        run:  pip3 install --user .
-      - name: Run pip install
+        run:  pip3 install .
+      - name: Check import
         run: |
           export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
           python3 -c "import precice"
@@ -108,9 +114,12 @@ jobs:
           apt-get -yy update
           apt-get install -y python3-pip pkg-config
           rm -rf /var/lib/apt/lists/*
-          pip3 install --upgrade --user pip
+      - name: Create venv
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
       - name: Run pip install
-        run:  pip3 install --user .
+        run:  pip3 install .
       - name: Run solverdummy
         run: |
           export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
