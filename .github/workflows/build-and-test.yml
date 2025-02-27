@@ -22,12 +22,10 @@ jobs:
           apt-get -yy update
           apt-get install -y python3-pip python3.12-venv pkg-config
           rm -rf /var/lib/apt/lists/*
-      - name: Create venv
+      - name: Create venv & install dependencies
         run: |
           python3 -m venv .venv
           . .venv/bin/activate
-      - name: Install dependencies
-        run: |
           pip3 install toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup install
