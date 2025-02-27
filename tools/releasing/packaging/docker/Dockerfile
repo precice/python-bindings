@@ -18,11 +18,8 @@ RUN apt-get -qq update && apt-get -qq install \
 
 USER precice
 
-# Upgrade pip to newest version (pip version from 18.04 apt-get is outdated)
-RUN python3 -m pip install --user --upgrade pip
-
 # Rebuild image if force_rebuild after that command
 ARG PYTHON_BINDINGS_REF=develop
 
 # Builds the precice python bindings for python3
-RUN pip3 install --user git+https://github.com/precice/python-bindings.git@${PYTHON_BINDINGS_REF}
+RUN pip3 install --break-system-packages git+https://github.com/precice/python-bindings.git@${PYTHON_BINDINGS_REF}
