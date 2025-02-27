@@ -24,7 +24,11 @@ jobs:
       - name: Create venv
         run: |
           python3 -m venv .venv
+      - name: Activate venv
+        # see https://stackoverflow.com/a/74669486
+        run: |
           . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
       - name: Install bindings
         run:  pip3 install --user .
       - name: Check whether preCICE was built with MPI  # reformat version information as a dict and check whether preCICE was compiled with MPI

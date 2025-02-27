@@ -22,10 +22,15 @@ jobs:
           apt-get -yy update
           apt-get install -y python3-pip python3.12-venv pkg-config
           rm -rf /var/lib/apt/lists/*
-      - name: Create venv & install dependencies
+      - name: Create venv
+        run: python3 -m venv .venv
+      - name: Activate venv
+        # see https://stackoverflow.com/a/74669486
         run: |
-          python3 -m venv .venv
           . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
+      - name: Install dependencies
+        run: |
           pip3 install toml
           python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
       - name: Run setup install
@@ -89,7 +94,11 @@ jobs:
       - name: Create venv
         run: |
           python3 -m venv .venv
+      - name: Activate venv
+        # see https://stackoverflow.com/a/74669486
+        run: |
           . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
       - name: Run pip install
         run:  pip3 install .
       - name: Check import
@@ -115,7 +124,11 @@ jobs:
       - name: Create venv
         run: |
           python3 -m venv .venv
+      - name: Activate venv
+        # see https://stackoverflow.com/a/74669486
+        run: |
           . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
       - name: Run pip install
         run:  pip3 install .
       - name: Run solverdummy
