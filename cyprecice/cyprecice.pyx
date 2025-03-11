@@ -1087,13 +1087,24 @@ cdef class Participant:
         Parameters
         ----------
         event_name : str
-            Name of the event to profile.    
+            Name of the event to profile.
+
+        Examples
+        --------
+        Start a profiling section with the event name "EventOne":
+        >>> event_name = "EventOne"
+        >>> participant.start_profiling_section(event_name)    
         """
         self.thisptr.startProfilingSection(convert(event_name))
 
     def stop_last_profiling_section(self):
         """
         Stops the last profiling section.
+
+        Examples
+        --------
+        Stop the last profiling section:
+        >>> participant.stop_last_profiling_section()
         """
         self.thisptr.stopLastProfilingSection()
 
