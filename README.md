@@ -20,13 +20,9 @@ Please refer to [the preCICE documentation](https://www.precice.org/installation
 
 ## Installing the package
 
-We recommend using pip3 (version 19.0.0 or newer required) for the sake of simplicity. You can check your pip3 version via `pip3 --version`. To update pip3, use the following line:
+### Using pip
 
-```bash
-$ pip3 install --user --upgrade pip
-```
-
-### Using pip3
+We recommend using `pip` (version 19.0.0 or newer required). You can check your pip version via `pip --version`.
 
 #### preCICE system installs
 
@@ -35,19 +31,19 @@ For system installs of preCICE, installation works out of the box. There are dif
 * (recommended) install [pyprecice from PyPI](https://pypi.org/project/pyprecice/)
 
   ```bash
-  $ pip3 install --user pyprecice
+  $ pip install pyprecice
   ```
 
 * provide the link to this repository to pip (replace `<branch>` with the branch you want to use, preferably `master` or `develop`)
 
   ```bash
-  $ pip3 install --user https://github.com/precice/python-bindings/archive/<branch>.zip
+  $ pip install https://github.com/precice/python-bindings.git@<branch>
   ```
 
 * if you already cloned this repository, execute the following command from this directory:
 
   ```bash
-  $ pip3 install --user .
+  $ pip install .
   ```
 
   *note the dot at the end of the line*
@@ -65,14 +61,14 @@ The preCICE documentation provides more informaiton on [linking preCICE](https:/
 
 You can also install the python language bindings for preCICE via Spack by installing the Spack package `py-pyprecice`. Refer to [our installation guide for preCICE via Spack](https://precice.org/installation-spack.html) for getting started with Spack.
 
-### Using setup.py
+### Using setup.py (deprecated)
 
 #### preCICE system installs
 
 In this directory, execute:
 
 ```bash
-$ python3 setup.py install --user
+$ python3 setup.py install
 ```
 
 #### preCICE at custom location (setting PATHS)
@@ -80,7 +76,7 @@ $ python3 setup.py install --user
 see above. Then run
 
 ```bash
-$ python3 setup.py install --user
+$ python3 setup.py install
 ```
 
 #### preCICE at custom location (explicit include path, library path)
@@ -88,7 +84,7 @@ $ python3 setup.py install --user
 1. Install cython and other dependencies via pip3
 
    ```bash
-   $ pip3 install --user setuptools wheel cython packaging numpy
+   $ pip3 install setuptools wheel cython packaging numpy
    ```
 
 2. Open terminal in this folder.
@@ -110,7 +106,7 @@ $ python3 setup.py install --user
 4. Install the bindings
 
    ```bash
-   $ python3 setup.py install --user
+   $ python3 setup.py install
    ```
 
 5. Clean-up *optional*
