@@ -24,13 +24,13 @@ Generally, it is recommended to work in a virtual environment when using the pre
 
 Before running any of the commands below, please create a virtual environment at a location of your choice by running:
 
-```
+```bash
 python3 -m venv .venv
 ```
 
 Using `.venv` is a common choice as path of your virtual environment. But you can use any path here. Next activate the virtual environment by running
 
-```
+```bash
 . .venv/bin/activate
 ```
 
