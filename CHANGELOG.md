@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Discontinued maintainment of Docker image `precice/python-bindings`. Python packages should be installed using virtual environments instead. Please refer to `README.md` for further information. https://github.com/precice/python-bindings/pull/228
+
 ## v3.1.2
 
 * Restrict to numpy < 2 for better compatibility with CI pipeline. https://github.com/precice/python-bindings/pull/213
