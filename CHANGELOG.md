@@ -2,7 +2,53 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## 3.1.2
+
+* Restrict to numpy < 2 for better compatibility with CI pipeline. https://github.com/precice/python-bindings/pull/213
+* Require setuptools < 72 since support for the test command was removed in Setuptools 72. https://github.com/precice/python-bindings/pull/213
+* Require setuptools >= 61 to guarantee that pyproject.toml is used https://github.com/precice/python-bindings/pull/207
+* Fix CI pipeline for spack https://github.com/precice/python-bindings/pull/206
+
+## 3.1.1
+
+* Fix NumPy include order to not conflict with system NumPy and the one installed via pip https://github.com/precice/python-bindings/pull/204
+
+## 3.1.0
+
+* Change versioning scheme https://github.com/precice/python-bindings/pull/199
+
+## 3.0.0.0
+
+* Add Cython as build time dependency https://github.com/precice/python-bindings/pull/177
+* Update CMake configuration flags for preCICE source installation in Actions. https://github.com/precice/python-bindings/commit/23a840144c2647d6cf09c0ed87be3b768a22feb7
+* Remove API functions `has_mesh` and `has_data` and rename `get_mesh_vertices_and_ids` to `get_mesh_vertices_and_coordinates`. https://github.com/precice/python-bindings/commit/cd446d2807b841d81a4cf5c9dd6656ab43c278c3
+* Update API according to preCICE v3.0.0 https://github.com/precice/python-bindings/pull/179
+
+## 2.5.0.4
+
+* Add `tag_prefix = v` in versioneer configuration of `setup.cfg`.
+
+## 2.5.0.3
+
+* Update from versioneer 0.19 to 0.29.
+* Add `cimport numpy` to avoid a segmentation fault originating from using Cython v3.0.0. https://github.com/precice/python-bindings/issues/182
+
+## 2.5.0.2
+
+* Add Waveform API introduced in preCICE v2.4.0.
+
+## 2.5.0.1
+
+* Add pkgconfig as dependency to the pythonpublish workflow https://github.com/precice/python-bindings/commit/200dc2aba160e18a7d1dae44ef3493d546e69eb9
+
+## 2.5.0.0
+
+* Bindings now use pkgconfig to determine flags and link to preCICE. https://github.com/precice/python-bindings/pull/149
+
+## 2.4.0.0
+
+* Move solverdummy into examples/ folder and remove MeshName from its input arguments. https://github.com/precice/python-bindings/pull/141
+* Remove MeshName from input arguments of solverdummy. https://github.com/precice/python-bindings/pull/142
 
 ## 2.3.0.1
 
