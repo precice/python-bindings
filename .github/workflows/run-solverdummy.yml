@@ -11,7 +11,7 @@ jobs:
     name: Run solverdummies
     runs-on: ubuntu-latest
     container:
-      image: precice/precice:develop
+      image: precice/precice:nightly
       options: --user root
     steps:
       - name: Checkout Repository
@@ -19,11 +19,18 @@ jobs:
       - name: Install Dependencies
         run: |
           apt-get -qq update
-          apt-get -qq install software-properties-common python3-dev python3-pip git apt-utils pkg-config
+          apt-get -qq install software-properties-common python3-dev python3-pip python3.12-venv git apt-utils pkg-config
           rm -rf /var/lib/apt/lists/*
-          pip3 install --upgrade --user pip
+      - name: Create venv
+        run: |
+          python3 -m venv .venv
+      - name: Activate venv
+        # see https://stackoverflow.com/a/74669486
+        run: |
+          . .venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV
       - name: Install bindings
-        run:  pip3 install --user .
+        run:  pip3 install .
       - name: Check whether preCICE was built with MPI  # reformat version information as a dict and check whether preCICE was compiled with MPI
         run: python3 -c "import precice; assert({item.split('=')[0]:item.split('=')[-1] for item in str(precice.get_version_information()).split(';')}['PRECICE_FEATURE_MPI_COMMUNICATION']=='Y')"
       - name: Run solverdummies

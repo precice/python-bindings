@@ -43,6 +43,11 @@ class TestBindings(TestCase):
         fake_mesh_name = "FakeMesh"
         self.assertEqual(fake_bool, participant.requires_mesh_connectivity_for(fake_mesh_name))
 
+    def test_reset_mesh(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        participant.reset_mesh(fake_mesh_name)
+
     def test_set_mesh_vertices(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
         fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name

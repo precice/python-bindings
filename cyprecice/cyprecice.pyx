@@ -710,6 +710,42 @@ cdef class Participant:
 
         self.thisptr.setMeshTetrahedra (convert(mesh_name), cpp_vertices)
 
+    # remeshing
+
+
+    def reset_mesh (self, mesh_name):
+        """
+        Resets a mesh and allows setting it using set_mesh functions again.
+
+        Parameters
+        ----------
+        mesh_name : str
+            Name of the mesh to reset.
+
+        Notes
+        -----
+        This function is still experimental.
+        Please refer to the documentation on how to enable and use it.
+
+        Previous calls:
+            advance() has been called
+
+        Examples
+        --------
+        Reset a mesh with 5 vertices to have 3 vertices.
+
+        >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
+        >>> mesh_name = "MeshOne"
+        >>> vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
+        >>> # later in the coupling loop
+        >>> if remeshing_required():
+        >>>     participant.reset_mesh(mesh_name)
+        >>>     positions = np.array([[1, 1], [3, 3], [5, 5]])
+        >>>     vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
+        """
+
+        self.thisptr.resetMesh (convert(mesh_name))
+
     # data access
 
     def write_data (self, mesh_name, data_name, vertex_ids, values):
@@ -818,7 +854,8 @@ cdef class Participant:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_data(mesh_name, data_name, vertex_ids)
+        >>> dt = 1.0
+        >>> values = read_data(mesh_name, data_name, vertex_ids, dt)
         >>> values.shape
         >>> (5, )
 
@@ -826,7 +863,8 @@ cdef class Participant:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_data(mesh_name, data_name, vertex_ids)
+        >>> dt = 1.0
+        >>> values = read_data(mesh_name, data_name, vertex_ids, dt)
         >>> values.shape
         >>> (5, 2)
 
@@ -834,7 +872,8 @@ cdef class Participant:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
-        >>> values = read_data(mesh_name, data_name, vertex_ids)
+        >>> dt = 1.0
+        >>> values = read_data(mesh_name, data_name, vertex_ids, dt)
         >>> values.shape
         >>> (5, 3)
         """

@@ -31,7 +31,7 @@ jobs:
       - name: Set PRECICE_TAG and the TAG depending on branch
         shell: bash
         run: |
-          echo "PRECICE_TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
+          echo "PRECICE_TAG=${{ env.BINDINGS_REF == 'develop' && 'nightly' || env.BINDINGS_REF }}" >> "$GITHUB_ENV"
           echo "TAG=${{ env.BINDINGS_REF }}" >> "$GITHUB_ENV"
           echo "Building TAG: ${{ env.BINDINGS_REF }}"
       - name: Checkout Repository

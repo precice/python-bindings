@@ -1,5 +1,5 @@
 # Dockerfile to build a ubuntu image containing the installed Debian package of a release 
-ARG PRECICE_TAG=develop
+ARG PRECICE_TAG=nightly
 ARG from=precice/precice:${PRECICE_TAG}
 FROM $from
 
