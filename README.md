@@ -20,6 +20,20 @@ Please refer to [the preCICE documentation](https://www.precice.org/installation
 
 ## Installing the package
 
+Generally, it is recommended to work in a virtual environment when using the preCICE Python bindings. For this purpose, you might have to run `apt install python3-venv` first.
+
+Before running any of the commands below, please create a virtual environment at a location of your choice by running:
+
+```
+python3 -m venv .venv
+```
+
+Using `.venv` is a common choice as path of your virtual environment. But you can use any path here. Next activate the virtual environment by running
+
+```
+. .venv/bin/activate
+```
+
 ### Using pip
 
 We recommend using `pip` (version 19.0.0 or newer required). You can check your pip version via `pip --version`.
