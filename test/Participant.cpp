@@ -320,6 +320,15 @@ void Participant::writeGradientData(
   }
 }
 
+void Participant::startProfilingSection(
+    precice::string_view sectionName)
+{
+}
+
+void Participant::stopLastProfilingSection()
+{
+}
+
 std::string getVersionInformation()
 {
   return fake_version;
