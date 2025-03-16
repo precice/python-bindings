@@ -87,4 +87,11 @@ cdef extern from "precice/precice.hpp" namespace "precice":
 
         void writeGradientData(const string& meshName, const string& dataName, vector[int] vertices, vector[double] gradientValues)
 
+        # Experimental profiling API
+
+        void startProfilingSection(const string& eventName)
+
+        void stopLastProfilingSection()
+
+cdef extern from "precice/Tooling.hpp" namespace "precice":
     string getVersionInformation()
