@@ -3,7 +3,7 @@ from libcpp.set    cimport set
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-cdef extern from "precice/Participant.hpp" namespace "precice":
+cdef extern from "precice/precice.hpp" namespace "precice":
     cdef cppclass Participant:
         # construction and configuration
 
