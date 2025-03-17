@@ -1080,6 +1080,34 @@ cdef class Participant:
 
         return np_ids, np_coordinates.reshape((size, dimensions))
 
+    def start_profiling_section(self, event_name):
+        """
+        Starts a profiling section with the given event name.
+        
+        Parameters
+        ----------
+        event_name : str
+            Name of the event to profile.
+
+        Examples
+        --------
+        Start a profiling section with the event name "EventOne":
+        >>> event_name = "EventOne"
+        >>> participant.start_profiling_section(event_name)    
+        """
+        self.thisptr.startProfilingSection(convert(event_name))
+
+    def stop_last_profiling_section(self):
+        """
+        Stops the last profiling section.
+
+        Examples
+        --------
+        Stop the last profiling section:
+        >>> participant.stop_last_profiling_section()
+        """
+        self.thisptr.stopLastProfilingSection()
+
 def get_version_information ():
     """
     Returns
