@@ -22,13 +22,13 @@ Please refer to [the preCICE documentation](https://www.precice.org/installation
 
 Generally, it is recommended to work in a virtual environment when using the preCICE Python bindings. For this purpose, you might have to run `apt install python3-venv` first.
 
-Before running any of the commands below, please create a virtual environment at a location of your choice by running:
+Create a virtual environment in your working directory by running:
 
 ```bash
 python3 -m venv .venv
 ```
 
-Using `.venv` is a common choice as path of your virtual environment. But you can use any path here. Next activate the virtual environment by running
+Using `.venv` is a common choice as path of your virtual environment. But you can use any path here. Activate the virtual environment by running
 
 ```bash
 . .venv/bin/activate
