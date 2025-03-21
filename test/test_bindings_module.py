@@ -320,6 +320,15 @@ class TestBindings(TestCase):
         read_data = participant.read_data("FakeMesh", "FakeVectorData", [0], dt)
         self.assertTrue(np.array_equal(write_data, read_data))
 
+    def test_jit_mapping(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        write_data = [1, 2, 3]
+        participant.write_and_map_data("FakeMesh", "FakeScalarData", [0, 1, 2], write_data)
+        dt = 1
+        read_data = participant.map_and_read_data("FakeMesh", "FakeScalarData", [0, 1, 2], dt)
+        print(f"{read_data=},{write_data=}")
+        self.assertTrue(np.array_equal(write_data, read_data))
+
     def test_get_version_information(self):
         version_info = precice.get_version_information()
         fake_version_info = b"dummy"  # compare to test/SolverInterface.cpp
