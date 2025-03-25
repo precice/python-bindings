@@ -278,6 +278,31 @@ void Participant:: readData
   }
 }
 
+void Participant:: writeAndMapData
+(
+  precice::string_view meshName,
+  precice::string_view dataName,
+  precice::span<const double> coordinates,
+  precice::span<const double> values)
+{
+  fake_read_write_buffer.clear();
+
+  for(const double value: values) {
+    fake_read_write_buffer.push_back(value);
+  }
+}
+
+void Participant:: mapAndReadData
+(
+  precice::string_view meshName,
+  precice::string_view dataName,
+  precice::span<const double> coordinates,
+  double  relativeReadTime,
+  precice::span<double> values) const
+{
+  std::copy(fake_read_write_buffer.begin(), fake_read_write_buffer.end(), values.begin());
+}
+
 void Participant:: setMeshAccessRegion
 (
   precice::string_view meshName,

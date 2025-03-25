@@ -73,6 +73,12 @@ cdef extern from "precice/precice.hpp" namespace "precice":
 
         void readData (const string& meshName, const string& dataName, vector[int] vertices, const double relativeReadTime, vector[double]& values) except +
 
+        # Just-in-time mapping
+        
+        void writeAndMapData (const string& meshName, const string& dataName, vector[double] coordinates, vector[double] values) except +
+
+        void mapAndReadData  (const string& meshName, const string& dataName, vector[double] coordinates, double relativeReadTime, vector[double]& values) except +
+
         # direct access
 
         void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) except +
