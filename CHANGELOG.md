@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* Update `requirements.txt` of the solver dummy https://github.com/precice/python-bindings/pull/233
+* Add API functions for Just-in-time mapping https://github.com/precice/python-bindings/pull/231
 * Discontinued maintainment of Docker image `precice/python-bindings`. Python packages should be installed using virtual environments instead. Please refer to `README.md` for further information. https://github.com/precice/python-bindings/pull/228
+* Added profiling API functions https://github.com/precice/python-bindings/pull/226
+* Added API function `reset_mesh()` https://github.com/precice/python-bindings/pull/224
+* Removed testing of spack package https://github.com/precice/python-bindings/pull/221
+* Use the newer `precice/precice.hpp` header to access C++ API https://github.com/precice/python-bindings/pull/193
 
 ## 3.1.2
 
