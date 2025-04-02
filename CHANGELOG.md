@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## 3.2.0
 
 * Update `requirements.txt` of the solver dummy https://github.com/precice/python-bindings/pull/233
 * Add API functions for Just-in-time mapping https://github.com/precice/python-bindings/pull/231
