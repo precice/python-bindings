@@ -2,18 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
-## v3.1.2
+## 3.2.0
+
+* Update `requirements.txt` of the solver dummy https://github.com/precice/python-bindings/pull/233
+* Add API functions for Just-in-time mapping https://github.com/precice/python-bindings/pull/231
+* Discontinued maintainment of Docker image `precice/python-bindings`. Python packages should be installed using virtual environments instead. Please refer to `README.md` for further information. https://github.com/precice/python-bindings/pull/228
+* Added profiling API functions https://github.com/precice/python-bindings/pull/226
+* Added API function `reset_mesh()` https://github.com/precice/python-bindings/pull/224
+* Removed testing of spack package https://github.com/precice/python-bindings/pull/221
+* Use the newer `precice/precice.hpp` header to access C++ API https://github.com/precice/python-bindings/pull/193
+
+## 3.1.2
 
 * Restrict to numpy < 2 for better compatibility with CI pipeline. https://github.com/precice/python-bindings/pull/213
 * Require setuptools < 72 since support for the test command was removed in Setuptools 72. https://github.com/precice/python-bindings/pull/213
 * Require setuptools >= 61 to guarantee that pyproject.toml is used https://github.com/precice/python-bindings/pull/207
 * Fix CI pipeline for spack https://github.com/precice/python-bindings/pull/206
 
-## v3.1.1
+## 3.1.1
 
 * Fix NumPy include order to not conflict with system NumPy and the one installed via pip https://github.com/precice/python-bindings/pull/204
 
-## v3.1.0
+## 3.1.0
 
 * Change versioning scheme https://github.com/precice/python-bindings/pull/199
 

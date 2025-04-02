@@ -58,6 +58,15 @@ def get_extensions(is_test):
     bindings_sources = [os.path.join(PYTHON_BINDINGS_PATH, "cyprecice",
                                      "cyprecice" + ".pyx")]
 
+    if not pkgconfig.exists('libprecice'):
+        raise Exception("\n".join([
+            "pkg-config was unable to find libprecice.",
+            "Please make sure that preCICE was installed correctly and pkg-config is able to find it.",
+            "You may need to set PKG_CONFIG_PATH to include the location of the libprecice.pc file.",
+            "Use \"pkg-config --modversion libprecice\" for debugging."]))
+
+    print("Found preCICE version " + pkgconfig.modversion('libprecice'))
+
     compile_args += pkgconfig.cflags('libprecice').split()
 
     if not is_test:
@@ -74,7 +83,8 @@ def get_extensions(is_test):
             language="c++",
             include_dirs=include_dirs,
             extra_compile_args=compile_args,
-            extra_link_args=link_args
+            extra_link_args=link_args,
+            define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
         )
     ]
 
@@ -137,7 +147,7 @@ setup(
     author_email='info@precice.org',
     license='LGPL-3.0',
     python_requires='>=3',
-    install_requires=['numpy<2', 'mpi4py', 'Cython'],
+    install_requires=['numpy', 'mpi4py', 'Cython'],
     # mpi4py is only needed, if preCICE was compiled with MPI
     # see https://github.com/precice/python-bindings/issues/8
     packages=['precice'],

@@ -710,6 +710,42 @@ cdef class Participant:
 
         self.thisptr.setMeshTetrahedra (convert(mesh_name), cpp_vertices)
 
+    # remeshing
+
+
+    def reset_mesh (self, mesh_name):
+        """
+        Resets a mesh and allows setting it using set_mesh functions again.
+
+        Parameters
+        ----------
+        mesh_name : str
+            Name of the mesh to reset.
+
+        Notes
+        -----
+        This function is still experimental.
+        Please refer to the documentation on how to enable and use it.
+
+        Previous calls:
+            advance() has been called
+
+        Examples
+        --------
+        Reset a mesh with 5 vertices to have 3 vertices.
+
+        >>> positions = np.array([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]])
+        >>> mesh_name = "MeshOne"
+        >>> vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
+        >>> # later in the coupling loop
+        >>> if remeshing_required():
+        >>>     participant.reset_mesh(mesh_name)
+        >>>     positions = np.array([[1, 1], [3, 3], [5, 5]])
+        >>>     vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
+        """
+
+        self.thisptr.resetMesh (convert(mesh_name))
+
     # data access
 
     def write_data (self, mesh_name, data_name, vertex_ids, values):
@@ -794,7 +830,7 @@ cdef class Participant:
         mesh_name : str
             Name of the mesh to write to.
         data_name : str
-            ID to read from.
+            Name of the data to read from.
         vertex_ids : array_like
             Indices of the vertices.
         relative_read_time : double
@@ -867,6 +903,113 @@ cdef class Participant:
         else:
             return np_values.reshape((size, dimensions))
 
+    def write_and_map_data (self, mesh_name, data_name, coordinates, values):
+        """
+        This function writes values at temporary locations to data of a mesh.
+        As opposed to the writeData function using VertexIDs, this function allows to write data via coordinates,
+        which don't have to be specified during the initialization. This is particularly useful for meshes, which
+        vary over time. Note that using this function comes at a performance cost, since the specified mapping
+        needs to be computed locally for the given locations, whereas the other variant (writeData) can typically
+        exploit the static interface mesh and pre-compute data structures more efficiently.
+
+        Values are passed identically to write_data.
+
+        Parameters
+        ----------
+        mesh_name : str
+            name of the mesh to write to.
+        data_name : str
+            Data name to write to.
+        coordinates : array_like
+            The coordinates of the vertices in a numpy array [N x D] where
+            N = number of vertices and D = dimensions of geometry.
+        values : array_like
+            Values of data
+
+        Examples
+        --------
+        Write scalar data for a 2D problem with 5 vertices:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> coordinates = np.array([[c1_x, c1_y], [c2_x, c2_y], [c3_x, c3_y], [c4_x, c4_y], [c5_x, c5_y]])
+        >>> values = np.array([v1, v2, v3, v4, v5])
+        >>> participant.write_and_map_data(mesh_name, data_name, coordinates, values)
+        """
+
+        check_array_like(coordinates, "coordinates", "write_and_map_data")
+        check_array_like(values, "values", "write_and_map_data")
+
+        if not isinstance(coordinates, np.ndarray):
+            coordinates = np.asarray(coordinates)
+
+        if not isinstance(values, np.ndarray):
+            values = np.asarray(values)
+
+        cdef vector[double] cpp_coordinates = coordinates.flatten()
+        cdef vector[double] cpp_values = values.flatten()
+
+        self.thisptr.writeAndMapData (convert(mesh_name), convert(data_name), cpp_coordinates, cpp_values)
+
+    def map_and_read_data (self, mesh_name, data_name, coordinates, relative_read_time):
+        """
+        This function reads values at temporary locations from data of a mesh.
+        As opposed to the readData function using VertexIDs, this function allows reading data via coordinates,
+        which don't have to be specified during the initialization. This is particularly useful for meshes, which
+        vary over time. Note that using this function comes at a performance cost, since the specified mapping
+        needs to be computed locally for the given locations, whereas the other variant (readData) can typically
+        exploit the static interface mesh and pre-compute data structures more efficient.
+
+        Values are read identically to read_data.
+
+        Parameters
+        ----------
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
+            Name of the data to read from.
+        coordinates : array_like
+            Coordinates of the vertices.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
+
+        Returns
+        -------
+        values : numpy.ndarray
+            Contains the read data.
+
+        Examples
+        --------
+        Read scalar data for a 2D problem with 2 vertices:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> coordinates = [(1.0, 1.0), (2.0, 2.0)]
+        >>> dt = 1.0
+        >>> values = map_and_read_data(mesh_name, data_name, coordinates, dt)
+        >>> values.shape
+        >>> (2, )
+        """
+
+        check_array_like(coordinates, "coordinates", "map_and_read_data")
+
+        if not isinstance(coordinates, np.ndarray):
+            coordinates = np.asarray(coordinates)
+
+        size = coordinates.shape[0]
+        dimensions =  self.get_data_dimensions(mesh_name, data_name)
+
+        cdef vector[double] cpp_coordinates = coordinates
+        cdef vector[double] cpp_values = [-1 for _ in range(size * dimensions)]
+
+        self.thisptr.mapAndReadData (convert(mesh_name), convert(data_name), cpp_coordinates, relative_read_time, cpp_values)
+
+        cdef np.ndarray[double, ndim=1] np_values = np.array(cpp_values, dtype=np.double)
+
+        if len(coordinates) == 0:
+            return np_values.reshape((size))
+        elif self.get_data_dimensions(mesh_name, data_name) == 1:
+            return np_values.reshape((size))
+        else:
+            return np_values.reshape((size, dimensions))
 
     def write_gradient_data (self, mesh_name, data_name, vertex_ids, gradients):
         """
@@ -1043,6 +1186,34 @@ cdef class Participant:
         cdef np.ndarray[double, ndim=1] np_coordinates = np.array(cpp_coordinates, dtype=np.double)
 
         return np_ids, np_coordinates.reshape((size, dimensions))
+
+    def start_profiling_section(self, event_name):
+        """
+        Starts a profiling section with the given event name.
+        
+        Parameters
+        ----------
+        event_name : str
+            Name of the event to profile.
+
+        Examples
+        --------
+        Start a profiling section with the event name "EventOne":
+        >>> event_name = "EventOne"
+        >>> participant.start_profiling_section(event_name)    
+        """
+        self.thisptr.startProfilingSection(convert(event_name))
+
+    def stop_last_profiling_section(self):
+        """
+        Stops the last profiling section.
+
+        Examples
+        --------
+        Stop the last profiling section:
+        >>> participant.stop_last_profiling_section()
+        """
+        self.thisptr.stopLastProfilingSection()
 
 def get_version_information ():
     """

@@ -3,7 +3,7 @@ from libcpp.set    cimport set
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-cdef extern from "precice/Participant.hpp" namespace "precice":
+cdef extern from "precice/precice.hpp" namespace "precice":
     cdef cppclass Participant:
         # construction and configuration
 
@@ -11,27 +11,25 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         Participant (const string&, const string&, int, int, void*) except +
 
-        void configure (const string&)
-
         # steering methods
 
-        void initialize ()
+        void initialize () except +
 
-        void advance (double computedTimestepLength)
+        void advance (double computedTimestepLength) except +
 
         void finalize()
 
         # status queries
 
-        int getMeshDimensions(const string& meshName) const
+        int getMeshDimensions(const string& meshName) except +
 
-        int getDataDimensions(const string& meshName, const string& dataName) const
+        int getDataDimensions(const string& meshName, const string& dataName) except +
 
-        bool isCouplingOngoing() const
+        bool isCouplingOngoing()
 
-        bool isTimeWindowComplete() const
+        bool isTimeWindowComplete()
 
-        double getMaxTimeStepSize() const
+        double getMaxTimeStepSize()
 
         bool requiresInitialData()
 
@@ -41,48 +39,63 @@ cdef extern from "precice/Participant.hpp" namespace "precice":
 
         # mesh access
 
-        bool requiresMeshConnectivityFor (const string& meshName) const
+        bool requiresMeshConnectivityFor (const string& meshName) except +
 
-        int setMeshVertex (const string& meshName, vector[double] position)
+        int setMeshVertex (const string& meshName, vector[double] position) except +
 
-        int getMeshVertexSize (const string& meshName) const
+        int getMeshVertexSize (const string& meshName) except +
 
-        void setMeshVertices (const string& meshName, vector[double] positions, vector[int]& ids)
+        void setMeshVertices (const string& meshName, vector[double] positions, vector[int]& ids) except +
 
-        void setMeshEdge (const string& meshName, int firstVertexID, int secondVertexID)
+        void setMeshEdge (const string& meshName, int firstVertexID, int secondVertexID) except +
 
-        void setMeshEdges (const string& meshName, vector[int] vertices)
+        void setMeshEdges (const string& meshName, vector[int] vertices) except +
 
-        void setMeshTriangle (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID)
+        void setMeshTriangle (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID) except +
 
-        void setMeshTriangles (const string& meshName, vector[int] vertices)
+        void setMeshTriangles (const string& meshName, vector[int] vertices) except +
 
-        void setMeshQuad (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
+        void setMeshQuad (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID) except +
 
-        void setMeshQuads (const string& meshName, vector[int] vertices)
+        void setMeshQuads (const string& meshName, vector[int] vertices) except +
 
-        void setMeshTetrahedron (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID)
+        void setMeshTetrahedron (const string& meshName, int firstVertexID, int secondVertexID, int thirdVertexID, int fourthVertexID) except +
 
-        void setMeshTetrahedra (const string& meshName, vector[int] vertices)
+        void setMeshTetrahedra (const string& meshName, vector[int] vertices) except +
+
+        # remeshing
+
+        void resetMesh (const string& meshName) except +
 
         # data access
 
-        void writeData (const string& meshName, const string& dataName, vector[int] vertices, vector[double] values)
+        void writeData (const string& meshName, const string& dataName, vector[int] vertices, vector[double] values) except +
 
-        void readData (const string& meshName, const string& dataName, vector[int] vertices, const double relativeReadTime, vector[double]& values) const
+        void readData (const string& meshName, const string& dataName, vector[int] vertices, const double relativeReadTime, vector[double]& values) except +
+
+        # Just-in-time mapping
+        
+        void writeAndMapData (const string& meshName, const string& dataName, vector[double] coordinates, vector[double] values) except +
+
+        void mapAndReadData  (const string& meshName, const string& dataName, vector[double] coordinates, double relativeReadTime, vector[double]& values) except +
 
         # direct access
 
-        void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) const
+        void setMeshAccessRegion (const string& meshName, vector[double] boundingBox) except +
 
-        void getMeshVertexIDsAndCoordinates (const string& meshName, vector[int]& ids, vector[double]& coordinates) const
+        void getMeshVertexIDsAndCoordinates (const string& meshName, vector[int]& ids, vector[double]& coordinates) except +
 
         # Gradient related API
 
-        bool requiresGradientDataFor(const string& meshName, const string& dataName) const
+        bool requiresGradientDataFor(const string& meshName, const string& dataName) except +
 
-        void writeGradientData(const string& meshName, const string& dataName, vector[int] vertices, vector[double] gradientValues)
+        void writeGradientData(const string& meshName, const string& dataName, vector[int] vertices, vector[double] gradientValues) except +
 
+        # Experimental profiling API
+
+        void startProfilingSection(const string& eventName)
+
+        void stopLastProfilingSection()
 
 cdef extern from "precice/Tooling.hpp" namespace "precice":
     string getVersionInformation()

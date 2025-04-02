@@ -43,6 +43,11 @@ class TestBindings(TestCase):
         fake_mesh_name = "FakeMesh"
         self.assertEqual(fake_bool, participant.requires_mesh_connectivity_for(fake_mesh_name))
 
+    def test_reset_mesh(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        participant.reset_mesh(fake_mesh_name)
+
     def test_set_mesh_vertices(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
         fake_mesh_name = "FakeMesh"  # compare to test/SolverInterface.cpp, fake_mesh_name
@@ -313,6 +318,14 @@ class TestBindings(TestCase):
         participant.write_data("FakeMesh", "FakeVectorData", [0], write_data)
         dt = 1
         read_data = participant.read_data("FakeMesh", "FakeVectorData", [0], dt)
+        self.assertTrue(np.array_equal(write_data, read_data))
+
+    def test_jit_mapping(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        write_data = [1, 2, 3]
+        participant.write_and_map_data("FakeMesh", "FakeScalarData", [0, 1, 2], write_data)
+        dt = 1
+        read_data = participant.map_and_read_data("FakeMesh", "FakeScalarData", [0, 1, 2], dt)
         self.assertTrue(np.array_equal(write_data, read_data))
 
     def test_get_version_information(self):
