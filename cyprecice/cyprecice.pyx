@@ -997,7 +997,7 @@ cdef class Participant:
         size = coordinates.shape[0]
         dimensions =  self.get_data_dimensions(mesh_name, data_name)
 
-        cdef vector[double] cpp_coordinates = [coord for point in coordinates for coord in point]
+        cdef vector[double] cpp_coordinates = coordinates.flatten()
         cdef vector[double] cpp_values = [-1 for _ in range(size * dimensions)]
 
         self.thisptr.mapAndReadData (convert(mesh_name), convert(data_name), cpp_coordinates, relative_read_time, cpp_values)
