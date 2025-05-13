@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Fix bug in `map_and_read_data` https://github.com/precice/python-bindings/pull/237
+
 ## 3.2.0
 
 * Update `requirements.txt` of the solver dummy https://github.com/precice/python-bindings/pull/233
