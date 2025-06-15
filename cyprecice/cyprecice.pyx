@@ -436,6 +436,16 @@ cdef class Participant:
         >>> vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
         >>> vertex_ids.shape
         (5,)
+
+        Set mesh vertices for a 3D problem with 5 mesh vertices, where the positions are a list of tuples.
+
+        >>> positions = [(1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4), (5, 5, 5)]
+        >>> positions.shape
+        (5, 3)
+        >>> mesh_name = "MeshOne"
+        >>> vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
+        >>> vertex_ids.shape
+        (5,)
         """
         check_array_like(positions, "positions", "set_mesh_vertices")
 

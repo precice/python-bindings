@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* Modify docstrings to higlight flexbility of the API in terms of its ability to handle multidimensional input data structures https://github.com/precice/python-bindings/pull/239
 * Fix bug in `map_and_read_data` https://github.com/precice/python-bindings/pull/237
 
 ## 3.2.0
