@@ -1010,6 +1010,15 @@ cdef class Participant:
         Read scalar data for a 2D problem with 2 vertices:
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
+        >>> coordinates = np.array([[1.0, 1.0], [2.0, 2.0]])
+        >>> dt = 1.0
+        >>> values = map_and_read_data(mesh_name, data_name, coordinates, dt)
+        >>> values.shape
+        >>> (2, )
+
+        Read scalar data for a 2D problem with 2 vertices, where the coordinates are provided as a list of tuples:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
         >>> coordinates = [(1.0, 1.0), (2.0, 2.0)]
         >>> dt = 1.0
         >>> values = map_and_read_data(mesh_name, data_name, coordinates, dt)
