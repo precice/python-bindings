@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 3.2.1
+
+* Modify docstrings to highlight flexibility of the API in terms of its ability to handle multidimensional input data structures https://github.com/precice/python-bindings/pull/239
+* Fix bug in `map_and_read_data` https://github.com/precice/python-bindings/pull/237
+
 ## 3.2.0
 
 * Update `requirements.txt` of the solver dummy https://github.com/precice/python-bindings/pull/233
