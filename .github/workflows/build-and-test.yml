@@ -66,7 +66,7 @@ jobs:
           mkdir build && cd build
           cmake .. -DPRECICE_FEATURE_MPI_COMMUNICATION=OFF -DPRECICE_FEATURE_PETSC_MAPPING=OFF -DPRECICE_FEATURE_PYTHON_ACTIONS=OFF -DBUILD_TESTING=OFF
       - name: Install tox
-        run: tox
+        run: pip install tox
       - name: Run tox
         env:
           PKG_CONFIG_PATH: "precice-core/build"
