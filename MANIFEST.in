@@ -10,5 +10,4 @@ include LICENSE.txt
 include cyprecice/*.pyx
 include cyprecice/*.pxd
 include test/test_bindings_module.py
-include versioneer.py
 include precice/_version.py
