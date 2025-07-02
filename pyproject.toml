@@ -1,3 +1,31 @@
 [build-system]
-# PEP 518 - minimum build system requirements
-requires = ["setuptools>=61,<72", "wheel", "Cython>=0.29", "packaging", "pip>=19.0.0", "numpy", "mpi4py", "pkgconfig"]
+requires = ["setuptools>=61", "wheel", "Cython>=0.29", "packaging", "pip>=19.0.0", "numpy", "mpi4py", "pkgconfig", "setuptools-git-versioning"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyprecice"
+dynamic = [ "version" ]
+readme = "README.md"
+description="Python language bindings for the preCICE coupling library"
+license = "LGPL-3.0"
+license-files = ["LICENSE.txt"]
+
+requires-python = ">= 3.10"
+dependencies = [
+  "numpy",
+  "mpi4py", # mpi4py is only needed, if preCICE was compiled with MPI see https://github.com/precice/python-bindings/issues/8
+]
+
+authors = [
+  {name = "the preCICE developers", email = "info@precice.org"},
+]
+
+[project.urls]
+Repository = "https://github.com/precice/python-bindings.git"
+Issues = "https://github.com/precice/python-bindings/issues"
+
+[tool.setuptools-git-versioning]
+enabled = true
+
+[tool.setuptools]
+packages = ["precice"]
