@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Renaming and using a newer workflow for publishing according to the trusted publishing in PyPI https://github.com/precice/python-bindings/pull/241
+
 ## 3.2.1
 
 * Modify docstrings to highlight flexibility of the API in terms of its ability to handle multidimensional input data structures https://github.com/precice/python-bindings/pull/239
