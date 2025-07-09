@@ -21,8 +21,12 @@ authors = [
 ]
 
 [project.urls]
-Repository = "https://github.com/precice/python-bindings.git"
-Issues = "https://github.com/precice/python-bindings/issues"
+changelog = "https://github.com/precice/python-bindings/blob/develop/CHANGELOG.md"
+documentation = "https://precice.org/installation-bindings-python.html"
+homepage = "https://precice.org"
+issues = "https://github.com/precice/python-bindings/issues"
+repository = "https://github.com/precice/python-bindings.git"
+sponsor = "https://precice.org/community-support-precice.html"
 
 [tool.setuptools-git-versioning]
 enabled = true
