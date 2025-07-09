@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61", "wheel", "Cython>=0.29", "packaging", "pip>=19.0.0", "numpy", "mpi4py", "pkgconfig", "setuptools-git-versioning"]
+requires = ["setuptools>=61", "wheel", "Cython>=0.29", "numpy", "mpi4py", "pkgconfig", "setuptools-git-versioning"]
 build-backend = "setuptools.build_meta"
 
 [project]
