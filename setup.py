@@ -6,6 +6,7 @@ import numpy
 import pkgconfig
 import os
 
+MOCKED_ENV="PYPRECICE_MOCKED"
 
 def get_extensions():
     if not pkgconfig.exists('libprecice'):
@@ -23,8 +24,8 @@ def get_extensions():
     bindings_sources = ["cyprecice/cyprecice.pyx"]
     compile_args += pkgconfig.cflags('libprecice').split()
 
-    if os.environ.get('TOX_ENV_NAME') is not None:
-        print("Builing mocked pyprecice as we are in a tox environment")
+    if os.environ.get(MOCKED_ENV) is not None:
+        print(f"Builing mocked pyprecice as {MOCKED_ENV} is set")
         bindings_sources.append("test/Participant.cpp")
     else:
         link_args += pkgconfig.libs('libprecice').split()
