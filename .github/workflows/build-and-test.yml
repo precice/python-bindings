@@ -40,8 +40,8 @@ jobs:
           export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
           python3 -c "import precice"
 
-  setup_test:
-    name: Run setup test
+  run_tox:
+    name: Run tox
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -65,16 +65,15 @@ jobs:
           cd precice-core
           mkdir build && cd build
           cmake .. -DPRECICE_FEATURE_MPI_COMMUNICATION=OFF -DPRECICE_FEATURE_PETSC_MAPPING=OFF -DPRECICE_FEATURE_PYTHON_ACTIONS=OFF -DBUILD_TESTING=OFF
-      - name: Install dependencies
-        run: |
-          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Run setup test
+      - name: Install tox
+        run: pip install tox
+      - name: Run tox
         env:
-          PKG_CONFIG_PATH: "precice-core/build"
           PKG_CONFIG_SYSTEM_INCLUDE_PATH: 1
         run: |
           export CFLAGS=-I$GITHUB_WORKSPACE
-          python3 setup.py test
+          export PKG_CONFIG_PATH=$(readlink -f "precice-core/build")
+          tox
 
   pip_install:
     name: Run pip install
