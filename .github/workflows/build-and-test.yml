@@ -8,40 +8,8 @@ on:
       - "*"
 
 jobs:
-  setup_install:
-    name: Run setup install
-    runs-on: ubuntu-latest
-    container:
-      image: precice/precice:nightly
-      options: --user root
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Install pip3, pkgconfig and upgrade pip3
-        run: |
-          apt-get -yy update
-          apt-get install -y python3-pip python3.12-venv pkg-config
-          rm -rf /var/lib/apt/lists/*
-      - name: Create venv
-        run: python3 -m venv .venv
-      - name: Activate venv
-        # see https://stackoverflow.com/a/74669486
-        run: |
-          . .venv/bin/activate
-          echo PATH=$PATH >> $GITHUB_ENV
-      - name: Install dependencies
-        run: |
-          pip3 install toml
-          python3 -c 'import toml; c = toml.load("pyproject.toml"); print("\n".join(c["build-system"]["requires"]))' | pip3 install -r /dev/stdin
-      - name: Run setup install
-        run:  python3 setup.py install
-      - name: Test install
-        run: |
-          export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-          python3 -c "import precice"
-
   run_tox:
-    name: Run tox
+    name: Run mocked tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -52,9 +20,6 @@ jobs:
           sudo apt-get -yy update
           sudo apt-get install -y libopenmpi-dev cmake libboost-all-dev libeigen3-dev pkg-config
           sudo rm -rf /var/lib/apt/lists/*
-      - uses: BSFishy/pip-action@v1
-        with:
-          packages: toml
       - name: Checkout precice and make required files discoverable
         run: |
           git clone --branch develop https://github.com/precice/precice.git precice-core
@@ -71,20 +36,18 @@ jobs:
         env:
           PKG_CONFIG_SYSTEM_INCLUDE_PATH: 1
         run: |
-          export CFLAGS=-I$GITHUB_WORKSPACE
           export PKG_CONFIG_PATH=$(readlink -f "precice-core/build")
           tox
 
   pip_install:
     name: Run pip install
-    needs: [setup_test]
     runs-on: ubuntu-latest
     container:
       image: precice/precice:nightly
       options: --user root
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           apt-get -yy update
@@ -93,17 +56,18 @@ jobs:
       - name: Create venv
         run: |
           python3 -m venv .venv
-      - name: Activate venv
-        # see https://stackoverflow.com/a/74669486
-        run: |
-          . .venv/bin/activate
-          echo PATH=$PATH >> $GITHUB_ENV
       - name: Run pip install
-        run:  pip3 install .
+        run: |
+          .venv/bin/pip3 install .
       - name: Check import
         run: |
           export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-          python3 -c "import precice"
+          .venv/bin/python3 -c "import precice"
+      - name: Get version
+        run: |
+          export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+          .venv/bin/python3 -c "import precice; print(precice.__version__)"
+          .venv/bin/python3 -c "import precice; print(precice.get_version_information())"
 
   solverdummy_test:
     name: Run solverdummy
@@ -114,7 +78,7 @@ jobs:
       options: --user root
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           apt-get -yy update
