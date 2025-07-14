@@ -6,29 +6,35 @@ import numpy
 import pkgconfig
 import os
 
-MOCKED_ENV="PYPRECICE_MOCKED"
+MOCKED_ENV = "PYPRECICE_MOCKED"
+
 
 def get_extensions():
-    if not pkgconfig.exists('libprecice'):
-        raise Exception("\n".join([
-            "pkg-config was unable to find libprecice.",
-            "Please make sure that preCICE was installed correctly and pkg-config is able to find it.",
-            "You may need to set PKG_CONFIG_PATH to include the location of the libprecice.pc file.",
-            "Use \"pkg-config --modversion libprecice\" for debugging."]))
+    if not pkgconfig.exists("libprecice"):
+        raise Exception(
+            "\n".join(
+                [
+                    "pkg-config was unable to find libprecice.",
+                    "Please make sure that preCICE was installed correctly and pkg-config is able to find it.",
+                    "You may need to set PKG_CONFIG_PATH to include the location of the libprecice.pc file.",
+                    'Use "pkg-config --modversion libprecice" for debugging.',
+                ]
+            )
+        )
 
-    print("Found preCICE version " + pkgconfig.modversion('libprecice'))
+    print("Found preCICE version " + pkgconfig.modversion("libprecice"))
 
     compile_args = ["-std=c++17"]
     link_args = []
     include_dirs = [numpy.get_include()]
     bindings_sources = ["cyprecice/cyprecice.pyx"]
-    compile_args += pkgconfig.cflags('libprecice').split()
+    compile_args += pkgconfig.cflags("libprecice").split()
 
     if os.environ.get(MOCKED_ENV) is not None:
         print(f"Builing mocked pyprecice as {MOCKED_ENV} is set")
         bindings_sources.append("test/Participant.cpp")
     else:
-        link_args += pkgconfig.libs('libprecice').split()
+        link_args += pkgconfig.libs("libprecice").split()
 
     return [
         Extension(
@@ -39,14 +45,11 @@ def get_extensions():
             include_dirs=include_dirs,
             extra_compile_args=compile_args,
             extra_link_args=link_args,
-            define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
+            define_macros=[("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")],
         )
     ]
 
 
 setup(
-    ext_modules=cythonize(
-        get_extensions(),
-        compiler_directives={'language_level': "3"}
-    )
+    ext_modules=cythonize(get_extensions(), compiler_directives={"language_level": "3"})
 )
