@@ -6,10 +6,28 @@ on:
   pull_request:
     branches:
       - "*"
+  workflow_dispatch:
+
+concurrency:
+  group: ${ {github.event_name }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{github.event_name == 'pull_request'}}
 
 jobs:
+  pre-commit:
+    name: pre-commit checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup python
+        uses: actions/setup-python@v5
+        with:
+         python-version: '3.x'
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
+
   run_tox:
-    name: Run mocked tests
+    name: mocked tests
+    needs: [pre-commit]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -39,8 +57,40 @@ jobs:
           export PKG_CONFIG_PATH=$(readlink -f "precice-core/build")
           tox
 
+  build_dist:
+    name: build distributions
+    needs: [pre-commit]
+    runs-on: ubuntu-latest
+    container:
+      image: precice/precice:nightly
+      options: --user root
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure safe directory
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+      - name: Install dependencies
+        run: |
+          apt-get -yy update
+          apt-get install -y python3-pip python3.12-venv pkg-config pipx
+          rm -rf /var/lib/apt/lists/*
+      - name: Install pyproject-build
+        run: |
+          pipx install build
+      - name: Build sdist
+        run: |
+          export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+          $HOME/.local/bin/pyproject-build -s
+      - name: Build wheel
+        run: |
+          export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+          $HOME/.local/bin/pyproject-build -w
+
   pip_install:
-    name: Run pip install
+    name: pip install
+    needs: [pre-commit]
     runs-on: ubuntu-latest
     container:
       image: precice/precice:nightly
@@ -69,8 +119,9 @@ jobs:
           .venv/bin/python3 -c "import precice; print(precice.__version__)"
           .venv/bin/python3 -c "import precice; print(precice.get_version_information())"
 
+
   solverdummy_test:
-    name: Run solverdummy
+    name: solverdummies
     needs: [pip_install]
     runs-on: ubuntu-latest
     container:
