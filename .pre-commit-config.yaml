@@ -1,0 +1,33 @@
+repos:
+# Official repo for the clang-format hook
+- repo: https://github.com/pre-commit/mirrors-clang-format
+  rev: 'v20.1.0'
+  hooks:
+  - id: clang-format
+    name: format C/C++
+    types_or: [c++]
+# Official repo for default hooks
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: 'v5.0.0'
+  hooks:
+  - id: check-merge-conflict
+  - id: mixed-line-ending
+  - id: trailing-whitespace
+    args: [--markdown-linebreak-ext=md]
+  - id: end-of-file-fixer
+# black repo for python formatting
+- repo: https://github.com/ambv/black
+  rev: 25.1.0
+  hooks:
+    - id: black
+      name: format python
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.4.1
+  hooks:
+    - id: codespell
+      name: check spelling
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.33.2
+  hooks:
+    - id: check-github-workflows
+      args: ["--verbose"]

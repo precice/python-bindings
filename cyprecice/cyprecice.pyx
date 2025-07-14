@@ -272,7 +272,7 @@ cdef class Participant:
         Returns
         -------
         tag : bool
-            Returns True if inital data is required.
+            Returns True if initial data is required.
 
         Notes
         -----
@@ -284,10 +284,10 @@ cdef class Participant:
     def requires_writing_checkpoint (self):
         """
         Checks if the participant is required to write an iteration checkpoint.
-        
+
         If true, the participant is required to write an iteration checkpoint before
         calling advance().
-        
+
         preCICE refuses to proceed if writing a checkpoint is required,
         but this method isn't called prior to advance().
 
@@ -1062,7 +1062,7 @@ cdef class Participant:
         vertex_ids : array_like
             Indices of the vertices.
         gradients : array_like
-             Gradient values differentiated in the spacial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
+             Gradient values differentiated in the spatial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
 
         Notes
         -----
@@ -1117,7 +1117,7 @@ cdef class Participant:
 
     def requires_gradient_data_for(self, mesh_name, data_name):
         """
-        Checks if the given data set requires gradient data. We check if the data object has been intialized with the gradient flag.
+        Checks if the given data set requires gradient data. We check if the data object has been initialized with the gradient flag.
 
         Parameters
         ----------
@@ -1229,7 +1229,7 @@ cdef class Participant:
     def start_profiling_section(self, event_name):
         """
         Starts a profiling section with the given event name.
-        
+
         Parameters
         ----------
         event_name : str
@@ -1239,7 +1239,7 @@ cdef class Participant:
         --------
         Start a profiling section with the event name "EventOne":
         >>> event_name = "EventOne"
-        >>> participant.start_profiling_section(event_name)    
+        >>> participant.start_profiling_section(event_name)
         """
         self.thisptr.startProfilingSection(convert(event_name))
 

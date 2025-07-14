@@ -31,7 +31,7 @@ def get_extensions():
     compile_args += pkgconfig.cflags("libprecice").split()
 
     if os.environ.get(MOCKED_ENV) is not None:
-        print(f"Builing mocked pyprecice as {MOCKED_ENV} is set")
+        print(f"Building mocked pyprecice as {MOCKED_ENV} is set")
         bindings_sources.append("test/Participant.cpp")
     else:
         link_args += pkgconfig.libs("libprecice").split()

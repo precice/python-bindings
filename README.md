@@ -69,7 +69,7 @@ If preCICE (the C++ library) was installed in a custom prefix, or only built but
 * `LIBRARY_PATH`, `LD_LIBRARY_PATH` to the library location, or `$prefix/lib`
 * `CPATH` either to the `src` directory or the `$prefix/include`
 
-The preCICE documentation provides more informaiton on [linking preCICE](https://precice.org/installation-linking.html).
+The preCICE documentation provides more information on [linking preCICE](https://precice.org/installation-linking.html).
 
 ### Using Spack
 
