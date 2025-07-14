@@ -5,6 +5,11 @@
 #include <cassert>
 #include <vector>
 
+bool operator==(const ::precice::string_view& sv, const std::string& s)
+{
+  return std::string(sv.begin(), sv.end()) == s;
+}
+
 std::string fake_version;
 std::vector<double> fake_read_write_buffer;
 int fake_mesh_dimensions;
