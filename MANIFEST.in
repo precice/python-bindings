@@ -11,3 +11,6 @@ include cyprecice/*.pyx
 include cyprecice/*.pxd
 include test/test_bindings_module.py
 include precice/_version.py
+
+# Include mocked interface file
+include test/Participant.cpp
