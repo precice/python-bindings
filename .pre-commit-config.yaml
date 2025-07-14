@@ -26,3 +26,8 @@ repos:
   hooks:
     - id: codespell
       name: check spelling
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.33.2
+  hooks:
+    - id: check-github-workflows
+      args: ["--verbose"]
