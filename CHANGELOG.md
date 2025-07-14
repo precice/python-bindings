@@ -82,7 +82,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2.2.0.2
 
-* Improved error messgaes for all assertions. https://github.com/precice/python-bindings/pull/9
+* Improved error messages for all assertions. https://github.com/precice/python-bindings/pull/9
 * Improve CI w.r.t spack package. https://github.com/precice/python-bindings/pull/89
 
 ## 2.2.0.1
@@ -118,7 +118,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0.2
 
-* Improvement of PyPI intergration.
+* Improvement of PyPI integration.
 
 ## 2.0.0.1
 

@@ -272,7 +272,7 @@ cdef class Participant:
         Returns
         -------
         tag : bool
-            Returns True if inital data is required.
+            Returns True if initial data is required.
 
         Notes
         -----
@@ -1062,7 +1062,7 @@ cdef class Participant:
         vertex_ids : array_like
             Indices of the vertices.
         gradients : array_like
-             Gradient values differentiated in the spacial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
+             Gradient values differentiated in the spatial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
 
         Notes
         -----
@@ -1117,7 +1117,7 @@ cdef class Participant:
 
     def requires_gradient_data_for(self, mesh_name, data_name):
         """
-        Checks if the given data set requires gradient data. We check if the data object has been intialized with the gradient flag.
+        Checks if the given data set requires gradient data. We check if the data object has been initialized with the gradient flag.
 
         Parameters
         ----------
