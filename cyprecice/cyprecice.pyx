@@ -284,10 +284,10 @@ cdef class Participant:
     def requires_writing_checkpoint (self):
         """
         Checks if the participant is required to write an iteration checkpoint.
-        
+
         If true, the participant is required to write an iteration checkpoint before
         calling advance().
-        
+
         preCICE refuses to proceed if writing a checkpoint is required,
         but this method isn't called prior to advance().
 
@@ -1229,7 +1229,7 @@ cdef class Participant:
     def start_profiling_section(self, event_name):
         """
         Starts a profiling section with the given event name.
-        
+
         Parameters
         ----------
         event_name : str
@@ -1239,7 +1239,7 @@ cdef class Participant:
         --------
         Start a profiling section with the event name "EventOne":
         >>> event_name = "EventOne"
-        >>> participant.start_profiling_section(event_name)    
+        >>> participant.start_profiling_section(event_name)
         """
         self.thisptr.startProfilingSection(convert(event_name))
 
