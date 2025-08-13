@@ -22,7 +22,7 @@ jobs:
       - name: Install preCICE dependencies
         run: brew install cmake eigen libxml2 boost petsc openmpi python3 numpy
       - name: Check out preCICE
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository:  precice/precice
           ref: 'master'
@@ -39,7 +39,7 @@ jobs:
         run: |
           cmake --version
           cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DCMAKE_BUILD_TYPE=${{ matrix.TYPE }} -DPRECICE_MPICommunication=${{ env.MPI }} -DPRECICE_PETScMapping=${{ env.PETSc }} -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} CMakeCache
@@ -65,7 +65,7 @@ jobs:
           name: ${{ format('{0} {1} {2}', matrix.CXX, matrix.CONFIG, matrix.TYPE) }} TestOutput
           path: precice-repo/build/TestOutput/
       - name: Check out Python binding repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install & upgrade pip3
         run: python3 -m ensurepip --upgrade
       - name: Install bindings using pip
