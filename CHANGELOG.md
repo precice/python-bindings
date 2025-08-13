@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Renaming and using a newer workflow for publishing according to the trusted publishing in PyPI https://github.com/precice/python-bindings/pull/241
+
+## 3.2.1
+
+* Modify docstrings to highlight flexibility of the API in terms of its ability to handle multidimensional input data structures https://github.com/precice/python-bindings/pull/239
+* Fix bug in `map_and_read_data` https://github.com/precice/python-bindings/pull/237
+
+## 3.2.0
+
+* Update `requirements.txt` of the solver dummy https://github.com/precice/python-bindings/pull/233
+* Add API functions for Just-in-time mapping https://github.com/precice/python-bindings/pull/231
+* Discontinued maintainment of Docker image `precice/python-bindings`. Python packages should be installed using virtual environments instead. Please refer to `README.md` for further information. https://github.com/precice/python-bindings/pull/228
+* Added profiling API functions https://github.com/precice/python-bindings/pull/226
+* Added API function `reset_mesh()` https://github.com/precice/python-bindings/pull/224
+* Removed testing of spack package https://github.com/precice/python-bindings/pull/221
+* Use the newer `precice/precice.hpp` header to access C++ API https://github.com/precice/python-bindings/pull/193
+
 ## 3.1.2
 
 * Restrict to numpy < 2 for better compatibility with CI pipeline. https://github.com/precice/python-bindings/pull/213
@@ -63,7 +82,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2.2.0.2
 
-* Improved error messgaes for all assertions. https://github.com/precice/python-bindings/pull/9
+* Improved error messages for all assertions. https://github.com/precice/python-bindings/pull/9
 * Improve CI w.r.t spack package. https://github.com/precice/python-bindings/pull/89
 
 ## 2.2.0.1
@@ -99,7 +118,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2.0.0.2
 
-* Improvement of PyPI intergration.
+* Improvement of PyPI integration.
 
 ## 2.0.0.1
 

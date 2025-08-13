@@ -272,7 +272,7 @@ cdef class Participant:
         Returns
         -------
         tag : bool
-            Returns True if inital data is required.
+            Returns True if initial data is required.
 
         Notes
         -----
@@ -284,10 +284,10 @@ cdef class Participant:
     def requires_writing_checkpoint (self):
         """
         Checks if the participant is required to write an iteration checkpoint.
-        
+
         If true, the participant is required to write an iteration checkpoint before
         calling advance().
-        
+
         preCICE refuses to proceed if writing a checkpoint is required,
         but this method isn't called prior to advance().
 
@@ -401,6 +401,7 @@ cdef class Participant:
         positions : array_like
             The coordinates of the vertices in a numpy array [N x D] where
             N = number of vertices and D = dimensions of geometry.
+            A list of the same shape is also accepted.
 
         Returns
         -------
@@ -429,6 +430,16 @@ cdef class Participant:
         Set mesh vertices for a 3D problem with 5 mesh vertices.
 
         >>> positions = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3], [4, 4, 4], [5, 5, 5]])
+        >>> positions.shape
+        (5, 3)
+        >>> mesh_name = "MeshOne"
+        >>> vertex_ids = participant.set_mesh_vertices(mesh_name, positions)
+        >>> vertex_ids.shape
+        (5,)
+
+        Set mesh vertices for a 3D problem with 5 mesh vertices, where the positions are a list of tuples.
+
+        >>> positions = [(1, 1, 1), (2, 2, 2), (3, 3, 3), (4, 4, 4), (5, 5, 5)]
         >>> positions.shape
         (5, 3)
         >>> mesh_name = "MeshOne"
@@ -496,6 +507,7 @@ cdef class Participant:
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 2] where
             N = number of edges and D = dimensions of geometry.
+            A list of the same shape is also accepted.
 
         Examples
         --------
@@ -557,6 +569,7 @@ cdef class Participant:
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 3] where
             N = number of triangles and D = dimensions of geometry.
+            A list of the same shape is also accepted.
 
         Examples
         --------
@@ -621,6 +634,7 @@ cdef class Participant:
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 4] where
             N = number of quads and D = dimensions of geometry.
+            A list of the same shape is also accepted.
 
         Examples
         --------
@@ -685,6 +699,7 @@ cdef class Participant:
         vertices : array_like
             The IDs of the vertices in a numpy array [N x 4] where
             N = number of quads and D = dimensions of geometry.
+            A list of the same shape is also accepted.
 
         Examples
         --------
@@ -794,6 +809,13 @@ cdef class Participant:
         >>> vertex_ids = [1, 2, 3, 4, 5]
         >>> values = np.array([[v1_x, v1_y, v1_z], [v2_x, v2_y, v2_z], [v3_x, v3_y, v3_z], [v4_x, v4_y, v4_z], [v5_x, v5_y, v5_z]])
         >>> participant.write_data(mesh_name, data_name, vertex_ids, values)
+
+        Write vector data for a 3D (D=3) problem with 5 (N=5) vertices, where the values are provided as a list of tuples:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> vertex_ids = [1, 2, 3, 4, 5]
+        >>> values = [(v1_x, v1_y, v1_z), (v2_x, v2_y, v2_z), (v3_x, v3_y, v3_z), (v4_x, v4_y, v4_z), (v5_x, v5_y, v5_z)]
+        >>> participant.write_data(mesh_name, data_name, vertex_ids, values)
         """
         check_array_like(vertex_ids, "vertex_ids", "write_data")
         check_array_like(values, "values", "write_data")
@@ -830,7 +852,7 @@ cdef class Participant:
         mesh_name : str
             Name of the mesh to write to.
         data_name : str
-            ID to read from.
+            Name of the data to read from.
         vertex_ids : array_like
             Indices of the vertices.
         relative_read_time : double
@@ -903,6 +925,127 @@ cdef class Participant:
         else:
             return np_values.reshape((size, dimensions))
 
+    def write_and_map_data (self, mesh_name, data_name, coordinates, values):
+        """
+        This function writes values at temporary locations to data of a mesh.
+        As opposed to the writeData function using VertexIDs, this function allows to write data via coordinates,
+        which don't have to be specified during the initialization. This is particularly useful for meshes, which
+        vary over time. Note that using this function comes at a performance cost, since the specified mapping
+        needs to be computed locally for the given locations, whereas the other variant (writeData) can typically
+        exploit the static interface mesh and pre-compute data structures more efficiently.
+
+        Values are passed identically to write_data.
+
+        Parameters
+        ----------
+        mesh_name : str
+            name of the mesh to write to.
+        data_name : str
+            Data name to write to.
+        coordinates : array_like
+            The coordinates of the vertices in a numpy array [N x D] where
+            N = number of vertices and D = dimensions of geometry.
+        values : array_like
+            Values of data
+
+        Examples
+        --------
+        Write scalar data for a 2D problem with 5 vertices:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> coordinates = np.array([[c1_x, c1_y], [c2_x, c2_y], [c3_x, c3_y], [c4_x, c4_y], [c5_x, c5_y]])
+        >>> values = np.array([v1, v2, v3, v4, v5])
+        >>> participant.write_and_map_data(mesh_name, data_name, coordinates, values)
+
+        Write scalar data for a 2D problem with 5 vertices, where the coordinates are provided as a list of tuples, and the values are provided as a list of scalars:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> coordinates = [(c1_x, c1_y), (c2_x, c2_y), (c3_x, c3_y), (c4_x, c4_y), (c5_x, c5_y)]
+        >>> values = [v1, v2, v3, v4, v5]
+        >>> participant.write_and_map_data(mesh_name, data_name, coordinates, values)
+        """
+        check_array_like(coordinates, "coordinates", "write_and_map_data")
+        check_array_like(values, "values", "write_and_map_data")
+
+        if not isinstance(coordinates, np.ndarray):
+            coordinates = np.asarray(coordinates)
+
+        if not isinstance(values, np.ndarray):
+            values = np.asarray(values)
+
+        cdef vector[double] cpp_coordinates = coordinates.flatten()
+        cdef vector[double] cpp_values = values.flatten()
+
+        self.thisptr.writeAndMapData (convert(mesh_name), convert(data_name), cpp_coordinates, cpp_values)
+
+    def map_and_read_data (self, mesh_name, data_name, coordinates, relative_read_time):
+        """
+        This function reads values at temporary locations from data of a mesh.
+        As opposed to the readData function using VertexIDs, this function allows reading data via coordinates,
+        which don't have to be specified during the initialization. This is particularly useful for meshes, which
+        vary over time. Note that using this function comes at a performance cost, since the specified mapping
+        needs to be computed locally for the given locations, whereas the other variant (readData) can typically
+        exploit the static interface mesh and pre-compute data structures more efficient.
+
+        Values are read identically to read_data.
+
+        Parameters
+        ----------
+        mesh_name : str
+            Name of the mesh to write to.
+        data_name : str
+            Name of the data to read from.
+        coordinates : array_like
+            Coordinates of the vertices.
+        relative_read_time : double
+            Point in time where data is read relative to the beginning of the current time step
+
+        Returns
+        -------
+        values : numpy.ndarray
+            Contains the read data.
+
+        Examples
+        --------
+        Read scalar data for a 2D problem with 2 vertices:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> coordinates = np.array([[1.0, 1.0], [2.0, 2.0]])
+        >>> dt = 1.0
+        >>> values = map_and_read_data(mesh_name, data_name, coordinates, dt)
+        >>> values.shape
+        >>> (2, )
+
+        Read scalar data for a 2D problem with 2 vertices, where the coordinates are provided as a list of tuples:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> coordinates = [(1.0, 1.0), (2.0, 2.0)]
+        >>> dt = 1.0
+        >>> values = map_and_read_data(mesh_name, data_name, coordinates, dt)
+        >>> values.shape
+        >>> (2, )
+        """
+        check_array_like(coordinates, "coordinates", "map_and_read_data")
+
+        if not isinstance(coordinates, np.ndarray):
+            coordinates = np.asarray(coordinates)
+
+        size = coordinates.shape[0]
+        dimensions =  self.get_data_dimensions(mesh_name, data_name)
+
+        cdef vector[double] cpp_coordinates = coordinates.flatten()
+        cdef vector[double] cpp_values = [-1 for _ in range(size * dimensions)]
+
+        self.thisptr.mapAndReadData (convert(mesh_name), convert(data_name), cpp_coordinates, relative_read_time, cpp_values)
+
+        cdef np.ndarray[double, ndim=1] np_values = np.array(cpp_values, dtype=np.double)
+
+        if len(coordinates) == 0:
+            return np_values.reshape((size))
+        elif self.get_data_dimensions(mesh_name, data_name) == 1:
+            return np_values.reshape((size))
+        else:
+            return np_values.reshape((size, dimensions))
 
     def write_gradient_data (self, mesh_name, data_name, vertex_ids, gradients):
         """
@@ -919,7 +1062,7 @@ cdef class Participant:
         vertex_ids : array_like
             Indices of the vertices.
         gradients : array_like
-             Gradient values differentiated in the spacial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
+             Gradient values differentiated in the spatial direction (dx, dy) for 2D space, (dx, dy, dz) for 3D space
 
         Notes
         -----
@@ -936,6 +1079,13 @@ cdef class Participant:
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
         >>> gradients = np.array([[v1x_dx, v1y_dx, v1x_dy, v1y_dy], [v2x_dx, v2y_dx, v2x_dy, v2y_dy]])
+        >>> participant.write_gradient_data(mesh_name, data_name, vertex_ids, gradients)
+
+        Write gradient vector data for a 2D problem with 2 vertices, where the gradients are provided as a list of tuples:
+        >>> mesh_name = "MeshOne"
+        >>> data_name = "DataOne"
+        >>> vertex_ids = [1, 2]
+        >>> gradients = [(v1x_dx, v1y_dx, v1x_dy, v1y_dy), (v2x_dx, v2y_dx, v2x_dy, v2y_dy)]
         >>> participant.write_gradient_data(mesh_name, data_name, vertex_ids, gradients)
 
         Write vector data for a 3D problem with 2 vertices:
@@ -965,10 +1115,9 @@ cdef class Participant:
 
         self.thisptr.writeGradientData (convert(mesh_name), convert(data_name), cpp_vertex_ids, cpp_gradients)
 
-
     def requires_gradient_data_for(self, mesh_name, data_name):
         """
-        Checks if the given data set requires gradient data. We check if the data object has been intialized with the gradient flag.
+        Checks if the given data set requires gradient data. We check if the data object has been initialized with the gradient flag.
 
         Parameters
         ----------
@@ -989,11 +1138,9 @@ cdef class Participant:
         >>> data_name = "DataOne"
         >>> participant.is_gradient_data_required(mesh_name, data_name)
         """
-
         return self.thisptr.requiresGradientDataFor(convert(mesh_name), convert(data_name))
 
-
-    def set_mesh_access_region (self, mesh_name, bounding_box):
+    def set_mesh_access_region(self, mesh_name, bounding_box):
         """
         This function is required if you don't want to use the mapping schemes in preCICE, but rather
         want to use your own solver for data mapping. As opposed to the usual preCICE mapping, only a
@@ -1049,8 +1196,7 @@ cdef class Participant:
 
         self.thisptr.setMeshAccessRegion(convert(mesh_name), cpp_bounding_box)
 
-
-    def get_mesh_vertex_ids_and_coordinates (self, mesh_name):
+    def get_mesh_vertex_ids_and_coordinates(self, mesh_name):
         """
         Iterating over the region of interest defined by bounding boxes and reading the corresponding
         coordinates omitting the mapping. This function is still experimental.
@@ -1079,6 +1225,34 @@ cdef class Participant:
         cdef np.ndarray[double, ndim=1] np_coordinates = np.array(cpp_coordinates, dtype=np.double)
 
         return np_ids, np_coordinates.reshape((size, dimensions))
+
+    def start_profiling_section(self, event_name):
+        """
+        Starts a profiling section with the given event name.
+
+        Parameters
+        ----------
+        event_name : str
+            Name of the event to profile.
+
+        Examples
+        --------
+        Start a profiling section with the event name "EventOne":
+        >>> event_name = "EventOne"
+        >>> participant.start_profiling_section(event_name)
+        """
+        self.thisptr.startProfilingSection(convert(event_name))
+
+    def stop_last_profiling_section(self):
+        """
+        Stops the last profiling section.
+
+        Examples
+        --------
+        Stop the last profiling section:
+        >>> participant.stop_last_profiling_section()
+        """
+        self.thisptr.stopLastProfilingSection()
 
 def get_version_information ():
     """

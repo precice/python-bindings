@@ -5,8 +5,9 @@ import numpy as np
 import precice
 
 parser = argparse.ArgumentParser()
-parser.add_argument("configurationFileName",
-                    help="Name of the xml config file.", type=str)
+parser.add_argument(
+    "configurationFileName", help="Name of the xml config file.", type=str
+)
 parser.add_argument("participantName", help="Name of the solver.", type=str)
 
 try:
@@ -19,29 +20,34 @@ except SystemExit:
 configuration_file_name = args.configurationFileName
 participant_name = args.participantName
 
-if participant_name == 'SolverOne':
-    write_data_name = 'Data-One'
-    read_data_name = 'Data-Two'
-    mesh_name = 'SolverOne-Mesh'
+if participant_name == "SolverOne":
+    write_data_name = "Data-One"
+    read_data_name = "Data-Two"
+    mesh_name = "SolverOne-Mesh"
 
-if participant_name == 'SolverTwo':
-    read_data_name = 'Data-One'
-    write_data_name = 'Data-Two'
-    mesh_name = 'SolverTwo-Mesh'
+if participant_name == "SolverTwo":
+    read_data_name = "Data-One"
+    write_data_name = "Data-Two"
+    mesh_name = "SolverTwo-Mesh"
 
 num_vertices = 3  # Number of vertices
 
 solver_process_index = 0
 solver_process_size = 1
 
-participant = precice.Participant(participant_name, configuration_file_name,
-                                  solver_process_index, solver_process_size)
+participant = precice.Participant(
+    participant_name, configuration_file_name, solver_process_index, solver_process_size
+)
 
-assert (participant.requires_mesh_connectivity_for(mesh_name) is False)
+assert participant.requires_mesh_connectivity_for(mesh_name) is False
 
 vertices = np.zeros((num_vertices, participant.get_mesh_dimensions(mesh_name)))
-read_data = np.zeros((num_vertices, participant.get_data_dimensions(mesh_name, read_data_name)))
-write_data = np.zeros((num_vertices, participant.get_data_dimensions(mesh_name, write_data_name)))
+read_data = np.zeros(
+    (num_vertices, participant.get_data_dimensions(mesh_name, read_data_name))
+)
+write_data = np.zeros(
+    (num_vertices, participant.get_data_dimensions(mesh_name, write_data_name))
+)
 
 for x in range(num_vertices):
     for y in range(participant.get_mesh_dimensions(mesh_name)):

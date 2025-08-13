@@ -43,16 +43,16 @@ The release of the `python-bindings` repository is made directly from a release 
       commit 44b715dde4e3194fa69e61045089ca4ec6925fe3 (HEAD -> master, origin/master)
       Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
       Date:   Wed Oct 20 10:52:41 2021 +0200
-   
+
           post-tag bump
-   
+
       commit d2645cc51f84ad5eda43b9c673400aada8e1505a (tag: v2.3.0.1)
       Merge: 2039557 aca2354
       Author: Benjamin Rodenberg <benjamin.rodenberg@in.tum.de>
       Date:   Tue Oct 19 12:57:24 2021 +0200
-   
+
           Merge pull request #132 from precice/python-bindings-v2.3.0.1
-   
+
           Release v2.3.0.1
       ```
 
