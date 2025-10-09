@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## 3.3.0
 
 * Renaming and using a newer workflow for publishing according to the trusted publishing in PyPI https://github.com/precice/python-bindings/pull/241
 
