@@ -10,7 +10,8 @@ jobs:
     name: Build package
     runs-on: ubuntu-latest
     container:
-      image: precice/precice:3.3.0
+      image: precice/precice:nightly
+      options: --user root
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
