@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: Build package
-    runs-on: ubuntu-latest
+    runs-on: precice/precice:3.3.0
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
