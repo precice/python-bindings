@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Run the upload package creation workflow on the latest preCICE release image https://github.com/precice/python-bindings/commit/9c3ad2e832ac1c1e5c03a189788eead00f97744b
+
 ## 3.3.0
 
 * Renaming and using a newer workflow for publishing according to the trusted publishing in PyPI https://github.com/precice/python-bindings/pull/241
