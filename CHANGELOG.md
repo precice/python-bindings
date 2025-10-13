@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## latest
 
+* Fix release workflow by using the correct image in the container https://github.com/precice/python-bindings/commit/63c594678490718474b33f225b05cc5f19f8b569
 * Run the upload package creation workflow on the latest preCICE release image https://github.com/precice/python-bindings/commit/9c3ad2e832ac1c1e5c03a189788eead00f97744b
 
 ## 3.3.0
