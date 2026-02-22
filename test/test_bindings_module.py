@@ -667,6 +667,7 @@ class TestBindings(TestCase):
         self.assertTrue(
             np.array_equiv(np.array(write_data).flatten(), read_data.flatten())
         )
+
     def test_set_mesh_edge(self):
         participant = precice.Participant("test", "dummy.xml", 0, 1)
         fake_mesh_name = "FakeMesh"
