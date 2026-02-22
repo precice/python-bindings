@@ -667,3 +667,54 @@ class TestBindings(TestCase):
         self.assertTrue(
             np.array_equiv(np.array(write_data).flatten(), read_data.flatten())
         )
+
+    def test_set_mesh_edge(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        participant.set_mesh_edge(fake_mesh_name, 0, 1)
+
+    def test_set_mesh_edges(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        vertices = np.array([[0, 1], [1, 2]])
+        participant.set_mesh_edges(fake_mesh_name, vertices)
+
+    def test_set_mesh_edges_empty(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        vertices = np.empty((0, 2), dtype=int)
+        participant.set_mesh_edges(fake_mesh_name, vertices)
+
+    def test_set_mesh_triangle(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        participant.set_mesh_triangle(fake_mesh_name, 0, 1, 2)
+
+    def test_set_mesh_triangles(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        vertices = np.array([[0, 1, 2], [1, 2, 3]])
+        participant.set_mesh_triangles(fake_mesh_name, vertices)
+
+    def test_set_mesh_triangles_empty(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        vertices = np.empty((0, 3), dtype=int)
+        participant.set_mesh_triangles(fake_mesh_name, vertices)
+
+    def test_set_mesh_quad(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        participant.set_mesh_quad(fake_mesh_name, 0, 1, 2, 3)
+
+    def test_set_mesh_quads(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        vertices = np.array([[0, 1, 2, 3], [1, 2, 3, 4]])
+        participant.set_mesh_quads(fake_mesh_name, vertices)
+
+    def test_set_mesh_quads_empty(self):
+        participant = precice.Participant("test", "dummy.xml", 0, 1)
+        fake_mesh_name = "FakeMesh"
+        vertices = np.empty((0, 4), dtype=int)
+        participant.set_mesh_quads(fake_mesh_name, vertices)
