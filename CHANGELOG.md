@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Added support for documentation rendering https://github.com/precice/python-bindings/pull/250
+
 ## 3.3.1
 
 * Remove root user option from the usage of the preCICE image in the release workflow https://github.com/precice/python-bindings/commit/0a9ccd449e875f0165bebc968b3a23d6d9094b0d
