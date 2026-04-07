@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## 3.4.0
 
 * Added support for documentation rendering https://github.com/precice/python-bindings/pull/250
 
