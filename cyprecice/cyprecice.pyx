@@ -39,12 +39,13 @@ cdef class Participant:
     """
     Main Application Programming Interface of preCICE.
     To adapt a solver to preCICE, follow the following main structure:
-        - Create an object of Participant with Participant()
-        - Initialize preCICE with Participant::initialize()
-        - Advance to the next (time)step with Participant::advance()
-        - Finalize preCICE with Participant::finalize()
-        - We use solver, simulation code, and participant as synonyms.
-        - The preferred name in the documentation is participant.
+
+    - Create an object of Participant with Participant()
+    - Initialize preCICE with Participant::initialize()
+    - Advance to the next (time)step with Participant::advance()
+    - Finalize preCICE with Participant::finalize()
+    - We use solver, simulation code, and participant as synonyms.
+    - The preferred name in the documentation is participant.
     """
 
     # fake __init__ needed to display docstring for __cinit__ (see https://stackoverflow.com/a/42733794/5158031)
@@ -105,10 +106,10 @@ cdef class Participant:
         method to finally exchange the data.
 
         This function handles:
-            - Parallel communication to the coupling partner/s is setup.
-            - Meshes are exchanged between coupling partners and the parallel partitions are created.
-            - [Serial Coupling Scheme] If the solver is not starting the simulation, coupling data is received
-                                       from the coupling partner's first computation.
+
+        - Parallel communication to the coupling partner/s is setup.
+        - Meshes are exchanged between coupling partners and the parallel partitions are created.
+        - [Serial Coupling Scheme] If the solver is not starting the simulation, coupling data is received from the coupling partner's first computation.
 
         Returns
         -------
@@ -206,8 +207,10 @@ cdef class Participant:
         """
         Checks if the coupled simulation is still ongoing.
         A coupling is ongoing as long as
-            - the maximum number of timesteps has not been reached, and
-            - the final time has not been reached.
+
+        - the maximum number of timesteps has not been reached, and
+        - the final time has not been reached.
+
         The user should call finalize() after this function returns false.
 
         Returns
@@ -227,8 +230,9 @@ cdef class Participant:
         """
         Checks if the current coupling timewindow is completed.
         The following reasons require several solver time steps per coupling time step:
-            - A solver chooses to perform subcycling.
-            - An implicit coupling timestep iteration is not yet converged.
+
+        - A solver chooses to perform subcycling.
+        - An implicit coupling timestep iteration is not yet converged.
 
         Returns
         -------
@@ -790,6 +794,7 @@ cdef class Participant:
         Examples
         --------
         Write scalar data for a 2D problem with 5 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
@@ -797,6 +802,7 @@ cdef class Participant:
         >>> participant.write_data(mesh_name, data_name, vertex_ids, values)
 
         Write vector data for a 2D problem with 5 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
@@ -804,6 +810,7 @@ cdef class Participant:
         >>> participant.write_data(mesh_name, data_name, vertex_ids, values)
 
         Write vector data for a 3D (D=3) problem with 5 (N=5) vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
@@ -811,6 +818,7 @@ cdef class Participant:
         >>> participant.write_data(mesh_name, data_name, vertex_ids, values)
 
         Write vector data for a 3D (D=3) problem with 5 (N=5) vertices, where the values are provided as a list of tuples:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
@@ -873,6 +881,7 @@ cdef class Participant:
         Examples
         --------
         Read scalar data for a 2D problem with 5 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
@@ -882,6 +891,7 @@ cdef class Participant:
         >>> (5, )
 
         Read vector data for a 2D problem with 5 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
@@ -891,6 +901,7 @@ cdef class Participant:
         >>> (5, 2)
 
         Read vector data for a 3D system with 5 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2, 3, 4, 5]
@@ -951,6 +962,7 @@ cdef class Participant:
         Examples
         --------
         Write scalar data for a 2D problem with 5 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> coordinates = np.array([[c1_x, c1_y], [c2_x, c2_y], [c3_x, c3_y], [c4_x, c4_y], [c5_x, c5_y]])
@@ -958,6 +970,7 @@ cdef class Participant:
         >>> participant.write_and_map_data(mesh_name, data_name, coordinates, values)
 
         Write scalar data for a 2D problem with 5 vertices, where the coordinates are provided as a list of tuples, and the values are provided as a list of scalars:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> coordinates = [(c1_x, c1_y), (c2_x, c2_y), (c3_x, c3_y), (c4_x, c4_y), (c5_x, c5_y)]
@@ -1008,6 +1021,7 @@ cdef class Participant:
         Examples
         --------
         Read scalar data for a 2D problem with 2 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> coordinates = np.array([[1.0, 1.0], [2.0, 2.0]])
@@ -1017,6 +1031,7 @@ cdef class Participant:
         >>> (2, )
 
         Read scalar data for a 2D problem with 2 vertices, where the coordinates are provided as a list of tuples:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> coordinates = [(1.0, 1.0), (2.0, 2.0)]
@@ -1075,6 +1090,7 @@ cdef class Participant:
         Examples
         --------
         Write gradient vector data for a 2D problem with 2 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
@@ -1082,6 +1098,7 @@ cdef class Participant:
         >>> participant.write_gradient_data(mesh_name, data_name, vertex_ids, gradients)
 
         Write gradient vector data for a 2D problem with 2 vertices, where the gradients are provided as a list of tuples:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
@@ -1089,6 +1106,7 @@ cdef class Participant:
         >>> participant.write_gradient_data(mesh_name, data_name, vertex_ids, gradients)
 
         Write vector data for a 3D problem with 2 vertices:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> vertex_ids = [1, 2]
@@ -1134,6 +1152,7 @@ cdef class Participant:
         Examples
         --------
         Check if gradient data is required for a data:
+
         >>> mesh_name = "MeshOne"
         >>> data_name = "DataOne"
         >>> participant.is_gradient_data_required(mesh_name, data_name)
@@ -1238,6 +1257,7 @@ cdef class Participant:
         Examples
         --------
         Start a profiling section with the event name "EventOne":
+
         >>> event_name = "EventOne"
         >>> participant.start_profiling_section(event_name)
         """
@@ -1250,6 +1270,7 @@ cdef class Participant:
         Examples
         --------
         Stop the last profiling section:
+
         >>> participant.stop_last_profiling_section()
         """
         self.thisptr.stopLastProfilingSection()

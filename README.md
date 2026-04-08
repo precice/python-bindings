@@ -12,11 +12,10 @@ Please refer to [the preCICE documentation](https://www.precice.org/installation
 
 ## Required dependencies
 
-**preCICE**: Refer to [the preCICE documentation](https://precice.org/installation-overview.html) for information on building and installation.
-
-**C++**: A working C++ compiler, e.g., `g++`.
-
-**MPI**: `mpi4py` requires MPI to be installed on your system.
+- preCICE: Refer to [the preCICE documentation](https://precice.org/installation-overview.html) for information on building and installation.
+- A working C++ compiler, e.g., `g++`.
+- `mpi4py` requires MPI to be installed on your system.
+- pkg-config.
 
 ## Installing the package
 
@@ -42,19 +41,19 @@ We recommend using `pip` (version 19.0.0 or newer required). You can check your 
 
 For system installs of preCICE, installation works out of the box. There are different ways how pip can be used to install pyprecice. pip will fetch cython and other build-time dependencies, compile the bindings and finally install the package pyprecice.
 
-* (recommended) install [pyprecice from PyPI](https://pypi.org/project/pyprecice/)
+- (recommended) install [pyprecice from PyPI](https://pypi.org/project/pyprecice/)
 
   ```bash
   $ pip install pyprecice
   ```
 
-* provide the link to this repository to pip (replace `<branch>` with the branch you want to use, preferably `master` or `develop`)
+- provide the link to this repository to pip (replace `<branch>` with the branch you want to use, preferably `master` or `develop`)
 
   ```bash
   $ pip install https://github.com/precice/python-bindings.git@<branch>
   ```
 
-* if you already cloned this repository, execute the following command from this directory:
+- if you already cloned this repository, execute the following command from this directory:
 
   ```bash
   $ pip install .
@@ -66,8 +65,8 @@ For system installs of preCICE, installation works out of the box. There are dif
 
 If preCICE (the C++ library) was installed in a custom prefix, or only built but not installed at all, you have to extend the following environment variables:
 
-* `LIBRARY_PATH`, `LD_LIBRARY_PATH` to the library location, or `$prefix/lib`
-* `CPATH` either to the `src` directory or the `$prefix/include`
+- `LIBRARY_PATH`, `LD_LIBRARY_PATH` to the library location, or `$prefix/lib`
+- `CPATH` either to the `src` directory or the `$prefix/include`
 
 The preCICE documentation provides more information on [linking preCICE](https://precice.org/installation-linking.html).
 
@@ -109,13 +108,13 @@ $ python3 setup.py install
    ```
 
    **Options:**
-   * `--include-dirs=`, default: `''`
+   - `--include-dirs=`, default: `''`
      Path to the headers of preCICE, point to the sources `$PRECICE_ROOT/src`, or the your custom install prefix `$prefix/include`.
 
    **NOTES:**
 
-   * If you have built preCICE using CMake, you can pass the path to the CMake binary directory using `--library-dirs`.
-   * It is recommended to use preCICE as a shared library here.
+   - If you have built preCICE using CMake, you can pass the path to the CMake binary directory using `--library-dirs`.
+   - It is recommended to use preCICE as a shared library here.
 
 4. Install the bindings
 
@@ -264,8 +263,8 @@ boost 1.65.1 was installed per the `boost and yaml-cpp` guide above.
 In order to have the right python dependencies, a packaged conda environment was transferred to
 SuperMUC. The following dependencies were installed:
 
-* numpy
-* mpi4py
+- numpy
+- mpi4py
 
 With the python environment active, we have to feed the right python file directories to the cmake command.
 Note that -DPYTHON_LIBRARY expects a python shared library. You can likely modify the version to fit what is required.
@@ -335,10 +334,10 @@ Bindings versions up to `v3.0.0.0` have four digits, where the first three digit
 
 ## Contributors
 
-* [Benjamin Rodenberg](https://github.com/BenjaminRodenberg)
-* [Ishaan Desai](https://github.com/IshaanDesai)
-* [Saumitra Vinay Joshi](https://github.com/saumiJ) contributed first working prototype in [`3db9c9` on `precice/precice`](https://github.com/precice/precice/commit/3db9c95e527db1e1cacb2fd116a5ce13ee877513)
-* [Frédéric Simonis](https://github.com/fsimonis)
-* [Florian Lindner](https://github.com/floli)
-* [Benjamin Uekermann](https://github.com/uekerman)
-* [Gerasimos Chourdakis](https://github.com/MakisH)
+- [Benjamin Rodenberg](https://github.com/BenjaminRodenberg)
+- [Ishaan Desai](https://github.com/IshaanDesai)
+- [Saumitra Vinay Joshi](https://github.com/saumiJ) contributed first working prototype in [`3db9c9` on `precice/precice`](https://github.com/precice/precice/commit/3db9c95e527db1e1cacb2fd116a5ce13ee877513)
+- [Frédéric Simonis](https://github.com/fsimonis)
+- [Florian Lindner](https://github.com/floli)
+- [Benjamin Uekermann](https://github.com/uekerman)
+- [Gerasimos Chourdakis](https://github.com/MakisH)
