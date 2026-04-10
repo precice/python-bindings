@@ -9,6 +9,7 @@ cimport cyprecice
 cimport numpy
 import numpy as np
 from mpi4py import MPI
+
 import warnings
 from libcpp.string cimport string
 from libcpp.vector cimport vector
@@ -63,7 +64,7 @@ cdef class Participant:
             Rank of the process
         solver_process_size : int
             Size of the process
-        communicator: mpi4py.MPI.Intracomm, optional
+        communicator: mpi4py.MPI.Comm, optional
             Custom MPI communicator to use
 
         Returns
@@ -82,10 +83,10 @@ cdef class Participant:
         pass
 
     def __cinit__ (self, solver_name, configuration_file_name, solver_process_index, solver_process_size, communicator=None):
-        cdef void* communicator_ptr
+        cdef size_t c_comm_addr;
         if communicator:
-            communicator_ptr = <void*> communicator
-            self.thisptr = new CppParticipant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size, communicator_ptr)
+            c_comm_addr = MPI._addressof(communicator)
+            self.thisptr = new CppParticipant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size, <void*>c_comm_addr)
         else:
             self.thisptr = new CppParticipant.Participant (convert(solver_name), convert(configuration_file_name), solver_process_index, solver_process_size)
         pass
