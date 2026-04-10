@@ -9,7 +9,6 @@ cimport cyprecice
 cimport numpy
 import numpy as np
 from mpi4py import MPI
-
 import warnings
 from libcpp.string cimport string
 from libcpp.vector cimport vector
