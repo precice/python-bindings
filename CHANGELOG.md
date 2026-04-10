@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## latest
+
+* Fixed passing custom MPI communicators to the Participant https://github.com/precice/python-bindings/pull/256
+
 ## 3.4.0
 
 * Added support for documentation rendering https://github.com/precice/python-bindings/pull/250
