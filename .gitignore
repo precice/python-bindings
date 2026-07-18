@@ -6,4 +6,4 @@ docs/_build
 docs/.docs_venv
 *.egg-info
 __pycache__
-env
+**/.venv
