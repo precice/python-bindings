@@ -33,8 +33,11 @@ def get_extensions():
     compile_args += cflags
 
     if os.environ.get(MOCKED_ENV) is not None:
-        print(f"Building mocked pyprecice as {MOCKED_ENV} is set")
-        bindings_sources.append("test/Participant.cpp")
+        print(
+            f"Building pyprecice without linking libprecice as {MOCKED_ENV} is set.\n"
+            "The preCICE symbols have to be provided at runtime by preloading the "
+            "universal preCICE mock, e.g. LD_PRELOAD=/path/to/libpreciceMocked.so"
+        )
     else:
         link_args += ldflags
 
