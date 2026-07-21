@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Configuration used by test_bindings_module.py together with the universal
+     preCICE mock (libpreciceMocked.so, see extras/mock in the preCICE repository).
+     The mock parses this file and validates all API calls against it. -->
+<precice-configuration experimental="true" allow-remeshing="true">
+  <data:scalar name="FakeScalarData" />
+  <data:scalar name="FakeScalarReadData" />
+  <data:vector name="FakeVectorData" />
+  <data:vector name="FakeVectorReadData" />
+  <data:scalar name="JitWriteData" />
+  <data:scalar name="JitReadData" />
+
+  <mesh name="FakeMesh" dimensions="3">
+    <use-data name="FakeScalarData" />
+    <use-data name="FakeScalarReadData" />
+    <use-data name="FakeVectorData" />
+    <use-data name="FakeVectorReadData" />
+  </mesh>
+
+  <mesh name="PartnerMesh" dimensions="3">
+    <use-data name="JitWriteData" />
+    <use-data name="JitReadData" />
+  </mesh>
+
+  <participant name="test">
+    <provide-mesh name="FakeMesh" />
+    <receive-mesh name="PartnerMesh" from="partner" api-access="true" />
+    <write-data name="FakeScalarData" mesh="FakeMesh" />
+    <write-data name="FakeVectorData" mesh="FakeMesh" />
+    <read-data name="FakeScalarReadData" mesh="FakeMesh" />
+    <read-data name="FakeVectorReadData" mesh="FakeMesh" />
+    <write-data name="JitWriteData" mesh="PartnerMesh" />
+    <read-data name="JitReadData" mesh="PartnerMesh" />
+    <!-- just-in-time mappings for the direct-access mesh (no from/to attribute) -->
+    <mapping:nearest-neighbor direction="write" to="PartnerMesh" constraint="conservative" />
+    <mapping:nearest-neighbor direction="read" from="PartnerMesh" constraint="consistent" />
+    <!-- gradient mapping so that preCICE requires gradient data for write data on FakeMesh -->
+    <mapping:nearest-neighbor-gradient direction="write" from="FakeMesh" to="PartnerMesh" constraint="consistent" />
+  </participant>
+
+  <participant name="partner">
+    <receive-mesh name="FakeMesh" from="test" />
+    <provide-mesh name="PartnerMesh" />
+    <!-- projection-based mapping so that preCICE requires connectivity on FakeMesh -->
+    <mapping:nearest-projection direction="read" from="FakeMesh" to="PartnerMesh" constraint="consistent" />
+  </participant>
+
+  <m2n:sockets acceptor="test" connector="partner" exchange-directory=".." />
+
+  <coupling-scheme:serial-explicit>
+    <participants first="test" second="partner" />
+    <max-time-windows value="2" />
+    <time-window-size value="1.0" />
+    <exchange data="FakeScalarData" mesh="FakeMesh" from="test" to="partner" />
+    <exchange data="JitReadData" mesh="PartnerMesh" from="partner" to="test" />
+  </coupling-scheme:serial-explicit>
+</precice-configuration>
