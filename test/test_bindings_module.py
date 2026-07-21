@@ -84,9 +84,7 @@ class TestBindings(TestCase):
 
     def test_get_mesh_dimensions(self):
         participant = self._participant()
-        self.assertEqual(
-            MESH_DIMENSIONS, participant.get_mesh_dimensions(MESH_NAME)
-        )
+        self.assertEqual(MESH_DIMENSIONS, participant.get_mesh_dimensions(MESH_NAME))
 
     def test_get_mesh_dimensions_unknown_mesh(self):
         participant = self._participant()
@@ -132,9 +130,7 @@ class TestBindings(TestCase):
             dt = participant.get_max_time_step_size()
             self.assertEqual(TIME_WINDOW_SIZE, dt)
             write_data = np.random.rand(len(vertex_ids))
-            participant.write_data(
-                MESH_NAME, SCALAR_WRITE_DATA, vertex_ids, write_data
-            )
+            participant.write_data(MESH_NAME, SCALAR_WRITE_DATA, vertex_ids, write_data)
             participant.advance(dt)
             self.assertTrue(participant.is_time_window_complete())
             n_time_windows += 1
@@ -160,9 +156,7 @@ class TestBindings(TestCase):
         # the partner participant defines a projection-based mapping from
         # FakeMesh, so connectivity is required for it
         self.assertTrue(participant.requires_mesh_connectivity_for(MESH_NAME))
-        self.assertFalse(
-            participant.requires_mesh_connectivity_for(DIRECT_ACCESS_MESH)
-        )
+        self.assertFalse(participant.requires_mesh_connectivity_for(DIRECT_ACCESS_MESH))
 
     def test_reset_mesh(self):
         participant, _ = self._initialized_participant()
@@ -388,9 +382,13 @@ class TestBindings(TestCase):
     def test_read_write_scalar_data(self):
         participant, vertex_ids = self._initialized_participant()
         write_data = [3]
-        participant.write_data(MESH_NAME, SCALAR_WRITE_DATA, [vertex_ids[0]], write_data)
+        participant.write_data(
+            MESH_NAME, SCALAR_WRITE_DATA, [vertex_ids[0]], write_data
+        )
         dt = participant.get_max_time_step_size()
-        read_data = participant.read_data(MESH_NAME, SCALAR_READ_DATA, [vertex_ids[0]], dt)
+        read_data = participant.read_data(
+            MESH_NAME, SCALAR_READ_DATA, [vertex_ids[0]], dt
+        )
         self.assertTrue(np.array_equal(write_data, read_data))
 
     def test_read_write_block_vector_data(self):
@@ -452,25 +450,37 @@ class TestBindings(TestCase):
     def test_read_write_vector_data(self):
         participant, vertex_ids = self._initialized_participant()
         write_data = np.array([[0, 1, 2]], dtype=np.double)
-        participant.write_data(MESH_NAME, VECTOR_WRITE_DATA, [vertex_ids[0]], write_data)
+        participant.write_data(
+            MESH_NAME, VECTOR_WRITE_DATA, [vertex_ids[0]], write_data
+        )
         dt = participant.get_max_time_step_size()
-        read_data = participant.read_data(MESH_NAME, VECTOR_READ_DATA, [vertex_ids[0]], dt)
+        read_data = participant.read_data(
+            MESH_NAME, VECTOR_READ_DATA, [vertex_ids[0]], dt
+        )
         self.assertTrue(np.array_equal(write_data, read_data))
 
     def test_read_write_vector_data_list(self):
         participant, vertex_ids = self._initialized_participant()
         write_data = [[0.0, 1.0, 2.0]]
-        participant.write_data(MESH_NAME, VECTOR_WRITE_DATA, [vertex_ids[0]], write_data)
+        participant.write_data(
+            MESH_NAME, VECTOR_WRITE_DATA, [vertex_ids[0]], write_data
+        )
         dt = participant.get_max_time_step_size()
-        read_data = participant.read_data(MESH_NAME, VECTOR_READ_DATA, [vertex_ids[0]], dt)
+        read_data = participant.read_data(
+            MESH_NAME, VECTOR_READ_DATA, [vertex_ids[0]], dt
+        )
         self.assertTrue(np.array_equal(write_data, read_data))
 
     def test_read_write_vector_data_tuple(self):
         participant, vertex_ids = self._initialized_participant()
         write_data = [(1.0, 2.0, 3.0)]
-        participant.write_data(MESH_NAME, VECTOR_WRITE_DATA, [vertex_ids[0]], write_data)
+        participant.write_data(
+            MESH_NAME, VECTOR_WRITE_DATA, [vertex_ids[0]], write_data
+        )
         dt = participant.get_max_time_step_size()
-        read_data = participant.read_data(MESH_NAME, VECTOR_READ_DATA, [vertex_ids[0]], dt)
+        read_data = participant.read_data(
+            MESH_NAME, VECTOR_READ_DATA, [vertex_ids[0]], dt
+        )
         self.assertTrue(np.array_equal(write_data, read_data))
 
     def test_read_write_vector_data_non_contiguous(self):
@@ -484,9 +494,13 @@ class TestBindings(TestCase):
         write_data = dummy_array[:, 1]
         assert write_data.flags["C_CONTIGUOUS"] is False
         write_data = [write_data]
-        participant.write_data(MESH_NAME, VECTOR_WRITE_DATA, [vertex_ids[0]], write_data)
+        participant.write_data(
+            MESH_NAME, VECTOR_WRITE_DATA, [vertex_ids[0]], write_data
+        )
         dt = participant.get_max_time_step_size()
-        read_data = participant.read_data(MESH_NAME, VECTOR_READ_DATA, [vertex_ids[0]], dt)
+        read_data = participant.read_data(
+            MESH_NAME, VECTOR_READ_DATA, [vertex_ids[0]], dt
+        )
         self.assertTrue(np.array_equal(write_data, read_data))
 
     def test_write_data_not_configured_for_writing_raises(self):
@@ -569,12 +583,8 @@ class TestBindings(TestCase):
         vertex_ids, coordinates = participant.get_mesh_vertex_ids_and_coordinates(
             DIRECT_ACCESS_MESH
         )
-        self.assertTrue(
-            np.array_equal(np.arange(N_DIRECT_ACCESS_VERTICES), vertex_ids)
-        )
-        self.assertEqual(
-            (N_DIRECT_ACCESS_VERTICES, MESH_DIMENSIONS), coordinates.shape
-        )
+        self.assertTrue(np.array_equal(np.arange(N_DIRECT_ACCESS_VERTICES), vertex_ids))
+        self.assertEqual((N_DIRECT_ACCESS_VERTICES, MESH_DIMENSIONS), coordinates.shape)
         # the synthesized vertices lie inside the access region
         lower_bounds = np.array(BOUNDING_BOX[0::2])
         upper_bounds = np.array(BOUNDING_BOX[1::2])
@@ -630,9 +640,7 @@ class TestBindings(TestCase):
 
     def test_write_block_vector_gradient_data(self):
         participant, vertex_ids = self._initialized_participant(n_vertices=4)
-        gradients = np.random.rand(
-            len(vertex_ids), MESH_DIMENSIONS * MESH_DIMENSIONS
-        )
+        gradients = np.random.rand(len(vertex_ids), MESH_DIMENSIONS * MESH_DIMENSIONS)
         participant.write_gradient_data(
             MESH_NAME, VECTOR_WRITE_DATA, vertex_ids, gradients
         )
