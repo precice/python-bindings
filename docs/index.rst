@@ -10,6 +10,6 @@ The preCICE python bindings
    ReleaseGuide
 
 .. toctree::
-   :caption: preCICE:
+   :caption: External pages:
 
    Coupling API overview <https://precice.org/couple-your-code-api.html>
