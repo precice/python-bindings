@@ -3,3 +3,4 @@ venv
 .idea
 *.log
 __pycache__
+precice-profiling
