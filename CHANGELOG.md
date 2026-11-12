@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## latest
+## 3.5.0
 
 * Fixed passing custom MPI communicators to the Participant https://github.com/precice/python-bindings/pull/256
 
